@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Web Synth</title>
+  <link rel="stylesheet" href="src/styles.css">
+</head>
+
+<body>
+  <div class="container">
+    <h1>Web Synth</h1>
+
+    <section>
+      <h2>Visual Keyboard</h2>
+      <piano-keyboard id="keyboard-upper" octave="5" keys="qwertyu,23567"></piano-keyboard>
+  
+      <piano-keyboard id="keyboard-lower" octave="4" keys="zxcvbnm,sdghj"></piano-keyboard>
+    </section>
+
+    <section>
+      <h2>Oscillators</h2>
+      <div id="oscillator-list" class="oscillator-list"></div>
+      <button id="add-oscillator">Add Oscillator</button>
+    </section>
+
+    <section>
+      <h2>Synth Controls</h2>
+
+      <div class="controls">
+        <label>
+          <input type="checkbox" id="poly" checked> Polyphonic
+        </label>
+        
+        <label>
+          Attack
+          <input type="range" id="attack" min="0.001" max="1" step="0.01" value="0.01">
+        </label>
+        
+        <label>
+          Release
+          <input type="range" id="release" min="0.01" max="2" step="0.01" value="0.2">
+        </label>
+      </div>
+    </section>
+
+    <section>
+      <h2>Input Controls</h2>
+      <div class="controls">
+        <label>
+          Upper Octave
+          <select id="octave-upper">
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5" selected>5</option>
+            <option value="6">6</option>
+          </select>
+        </label>
+  
+        <label>
+          Lower Octave
+          <select id="octave-lower">
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4" selected>4</option>
+            <option value="5">5</option>
+          </select>
+        </label>
+  
+        <label class="midi-control">
+          <input type="checkbox" id="midi-enabled"> Enable MIDI
+          <span id="midi-status" class="midi-status"></span>
+        </label>
+      </div>
+    </section>
+
+    <section>
+      <h2>Recording Controls</h2>
+      <div class="controls">
+        <button id="record">Start Recording</button>
+    </div>
+
+    <article class="instructions">
+      <h2>Instructions & Features</h2>
+      
+      <h3>Playing Notes</h3>
+      <ul>
+        <li><strong>Keyboard:</strong> Use your computer keyboard to play notes
+          <ul>
+            <li>Lower octave white keys: Z, X, C, V, B, N, M (C-B)</li>
+            <li>Lower octave black keys: S, D, G, H, J (sharps/flats)</li>
+            <li>Upper octave white keys: Q, W, E, R, T, Y, U (C-B)</li>
+            <li>Upper octave black keys: 2, 3, 5, 6, 7 (sharps/flats)</li>
+          </ul>
+        </li>
+        <li><strong>Mouse/Touch:</strong> Click or tap any key on the visual keyboard</li>
+        <li><strong>MIDI:</strong> Enable MIDI to use an external MIDI keyboard or controller</li>
+      </ul>
+
+      <h3>Oscillators</h3>
+      <ul>
+        <li><strong>Multiple Oscillators:</strong> Add up to multiple oscillators to layer and create richer sounds</li>
+        <li><strong>Waveform:</strong> Choose between Sine (smooth), Square (hollow), Sawtooth (bright), or Triangle (mellow) waves for each oscillator</li>
+        <li><strong>Detune:</strong> Adjust frequency offset (-1200 to +1200 cents) to create chorus, detuning, and unison effects
+          <ul>
+            <li>+1200 cents = one octave up</li>
+            <li>-1200 cents = one octave down</li>
+            <li>Small values (±5-20 cents) create subtle thickness</li>
+            <li>Larger values create interval harmonies</li>
+          </ul>
+        </li>
+        <li><strong>Level:</strong> Control the volume/mix of each oscillator (0-100%)</li>
+        <li><strong>Add Oscillator:</strong> Click to add a new oscillator to the stack</li>
+        <li><strong>Remove:</strong> Click the Remove button on any oscillator (must keep at least one)</li>
+      </ul>
+
+      <h3>Sound Controls</h3>
+      <ul>
+        <li><strong>Polyphonic:</strong> When checked, play multiple notes simultaneously. Unchecked plays one note at a time</li>
+        <li><strong>Attack:</strong> Controls how quickly notes fade in (0.001s to 1s). Lower = instant, higher = gradual</li>
+        <li><strong>Release:</strong> Controls how quickly notes fade out after release (0.01s to 2s)</li>
+      </ul>
+
+      <h3>Octave Selection</h3>
+      <ul>
+        <li><strong>Upper Octave:</strong> Set the octave range (3-6) for the top keyboard (QWERTY keys)</li>
+        <li><strong>Lower Octave:</strong> Set the octave range (2-5) for the bottom keyboard (ZXCV keys)</li>
+        <li>Changes take effect immediately and update both sound and visual display</li>
+        <li>Note: Octave settings don't affect MIDI input (MIDI uses absolute note numbers)</li>
+      </ul>
+
+      <h3>MIDI Support</h3>
+      <ul>
+        <li><strong>Enable MIDI:</strong> Check the box to connect MIDI devices</li>
+        <li>Works with USB MIDI keyboards, controllers, and other MIDI input devices</li>
+        <li>Supports velocity sensitivity for dynamic playing</li>
+        <li>Hot-plugging supported - devices can be connected while the app is running</li>
+        <li>MIDI and keyboard/mouse input can be used simultaneously</li>
+      </ul>
+
+      <h3>Recording</h3>
+      <ul>
+        <li><strong>Start Recording:</strong> Click to begin capturing your performance</li>
+        <li><strong>Stop Recording:</strong> Click again to stop and automatically download as a .webm audio file</li>
+        <li>Recordings capture all notes, oscillators, and effects in real-time</li>
+        <li>Works with keyboard, mouse, and MIDI input</li>
+      </ul>
+
+      <h3>Tips</h3>
+      <ul>
+        <li><strong>Thick Sound:</strong> Add 2-3 sawtooth oscillators with slight detuning (±5-15 cents)</li>
+        <li><strong>Organ Sound:</strong> Layer sine waves at different octaves using detune (0, +1200, +1900 cents)</li>
+        <li><strong>Chorus Effect:</strong> Duplicate oscillators with same waveform but different detune values</li>
+        <li><strong>Bass Sound:</strong> Use square or sawtooth with low level sine wave one octave down (-1200 cents)</li>
+      </ul>
+    </article>
+  </div>
+
+  <script type="module" src="src/main.ts"></script>
+</body>
+</html>
+
