@@ -13,52 +13,74 @@ export class OscillatorControl extends HTMLElement {
     
     this.innerHTML = `
       <style>
-        .oscillator-item {
+        oscillator-control .osc-container {
           display: flex;
           flex-wrap: wrap;
-          gap: 0.75rem;
+          gap: 1rem;
           align-items: flex-end;
-          padding: 1rem;
-          background: #f7f7f8;
+          padding: 1.25rem;
+          background: linear-gradient(135deg, #1a1a1a 0%, #0d0d0d 100%);
           border-radius: 6px;
-          border: 1px solid #e0e0e0;
+          border: 1px solid rgba(255, 255, 255, 0.1);
+          box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.5);
         }
 
-        .oscillator-item label {
+        oscillator-control .osc-label {
           display: flex;
           flex-direction: column;
-          font-size: .9rem;
-          gap: 0.25rem;
+          font-size: 0.75rem;
+          color: #999;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+          font-weight: 600;
+          gap: 0.5rem;
         }
 
-        .oscillator-item select,
-        .oscillator-item input[type="range"] {
-          margin-top: 0.25rem;
+        oscillator-control select {
+          margin-top: 0.5rem;
+          padding: 0.5rem;
+          background: #0a0a0a;
+          color: #e0e0e0;
+          border: 1px solid rgba(255, 255, 255, 0.2);
+          border-radius: 4px;
+          font-size: 0.9rem;
+          cursor: pointer;
+          transition: border-color 0.2s ease;
         }
 
-        .oscillator-item .detune-value,
-        .oscillator-item .level-value {
-          font-size: 0.8rem;
-          color: #666;
-          margin-top: 0.125rem;
+        oscillator-control select:hover {
+          border-color: #4a9eff;
         }
 
-        .oscillator-item button {
+        oscillator-control select:focus {
+          outline: none;
+          border-color: #4a9eff;
+          box-shadow: 0 0 0 2px rgba(74, 158, 255, 0.2);
+        }
+
+        oscillator-control .remove-osc {
           padding: 0.5rem 1rem;
           background: #dc3545;
           color: white;
           border: none;
           border-radius: 4px;
           cursor: pointer;
-          font-size: 0.9rem;
+          font-size: 0.85rem;
+          font-weight: 600;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+          transition: all 0.2s ease;
+          box-shadow: 0 2px 4px rgba(220, 53, 69, 0.3);
         }
 
-        .oscillator-item button:hover {
+        oscillator-control .remove-osc:hover {
           background: #c82333;
+          box-shadow: 0 3px 6px rgba(220, 53, 69, 0.5);
+          transform: translateY(-1px);
         }
       </style>
-      <div class="oscillator-item">
-        <label>
+      <div class="osc-container">
+        <label class="osc-label">
           Waveform
           <select class="osc-wave">
             <option value="sine" ${waveform === "sine" ? "selected" : ""}>Sine</option>
