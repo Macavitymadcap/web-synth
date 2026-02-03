@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,43 +10,61 @@
 
 <body>
   <div class="container">
-    <h1>Web Synth</h1>
+    <header>
+      <h1>Web Synth</h1>
+      <button id="help-button" type="button" popovertarget="help-popover">Help & Instructions</button>
+    </header>
 
-    <section>
-      <h2>Visual Keyboard</h2>
+    <article class="instructions" id="help-popover" popover>
+      <header>
+        <h2>Instructions & Features</h2>
+        <button type="button" popovertarget="help-popover" popovertargetaction="close">Close</button>
+      </header>
+
+      <p>
+        This web-based synthesizer allows you to create and customize sounds using various synthesis parameters.
+        You can play notes using the visual keyboard, your computer keyboard, or an external MIDI device. Adjust
+        oscillators, envelopes, filters, LFOs, and effects to shape your sound. Use the recording feature to capture
+        your creations and download them as audio files.
+      </p>
+
+      <p>
+        Experiment with different settings to explore a wide range of sounds, from lush pads to punchy basses and
+        soaring leads. The intuitive interface makes it easy to understand synthesis concepts while having fun
+        creating music.
+      </p>
+
+      <h3>Sound Design Tips</h3>
+      <ul>
+        <li><strong>Pad Sound:</strong> 2-3 detuned saws, slow attack (0.5-1s), high sustain, LFO to filter</li>
+        <li><strong>Pluck/Bass:</strong> Fast attack (0.001s), short decay, low sustain, filter envelope with high
+          amount</li>
+        <li><strong>Lead:</strong> Sawtooth waves, moderate filter cutoff with envelope, pitch LFO for vibrato</li>
+        <li><strong>Wobble Bass:</strong> Sawtooth, low filter cutoff, high LFO to filter with square wave</li>
+        <li><strong>Space Effect:</strong> Long delay time (0.5-1s), high feedback (60-80%), moderate mix</li>
+      </ul>
+
+      <h3>Instrument Sounds</h3>
+      <ul>
+        <li><strong>Piano:</strong> 3 oscillators (sine, triangle, square), short attack, moderate decay, high sustain,
+          low release</li>
+        <li><strong>Organ:</strong> 2-3 square waves, no filter envelope, slow attack, high sustain</li>
+        <li><strong>Strings:</strong> 2 detuned sawtooths, slow attack (1-2s), high sustain, light delay effect</li>
+        <li><strong>Bass Guitar:</strong> 1-2 sawtooths, fast attack, short decay, low sustain, moderate release</li>
+        <li><strong>Flute:</strong> Sine wave, moderate attack and release, high sustain, light filter cutoff</li>
+      </ul>
+    </article>
+
+
+    <section class="module">
+      <header>
+        <h2>Visual Keyboard</h2>
+        <button type="button" popovertarget="keyboard-instructions">Instructions</button>
+      </header>
       <piano-keyboard id="keyboard-upper" octave="5" keys="qwertyu,23567"></piano-keyboard>
-  
+
       <piano-keyboard id="keyboard-lower" octave="4" keys="zxcvbnm,sdghj"></piano-keyboard>
-    </section>
 
-    <section>
-      <h2>Oscillators</h2>
-      <div id="oscillator-list" class="oscillator-list"></div>
-      <button id="add-oscillator">Add Oscillator</button>
-    </section>
-
-    <section>
-      <h2>Synth Controls</h2>
-
-      <div class="controls">
-        <label>
-          <input type="checkbox" id="poly" checked> Polyphonic
-        </label>
-        
-        <label>
-          Attack
-          <input type="range" id="attack" min="0.001" max="1" step="0.01" value="0.01">
-        </label>
-        
-        <label>
-          Release
-          <input type="range" id="release" min="0.01" max="2" step="0.01" value="0.2">
-        </label>
-      </div>
-    </section>
-
-    <section>
-      <h2>Input Controls</h2>
       <div class="controls">
         <label>
           Upper Octave
@@ -56,7 +75,7 @@
             <option value="6">6</option>
           </select>
         </label>
-  
+
         <label>
           Lower Octave
           <select id="octave-lower">
@@ -66,97 +85,360 @@
             <option value="5">5</option>
           </select>
         </label>
-  
+
         <label class="midi-control">
           <input type="checkbox" id="midi-enabled"> Enable MIDI
-          <span id="midi-status" class="midi-status"></span>
+        </label>
+        <div id="midi-status" class="midi-status"></div>
+      </div>
+
+      <article class="instructions" id="keyboard-instructions" popover>
+        <header>
+          <h3>Playing Notes</h3>
+          <button type="button" popovertarget="keyboard-instructions" popovertargetaction="close">Close</button>
+        </header>
+
+        <p>
+          You can play notes using the visual keyboard, your computer keyboard, or an external MIDI device.
+        </p>
+
+        <ul>
+          <li><strong>Keyboard:</strong> Use your computer keyboard to play notes
+            <ul>
+              <li>Lower octave white keys: Z, X, C, V, B, N, M (C-B)</li>
+              <li>Lower octave black keys: S, D, G, H, J (sharps/flats)</li>
+              <li>Upper octave white keys: Q, W, E, R, T, Y, U (C-B)</li>
+              <li>Upper octave black keys: 2, 3, 5, 6, 7 (sharps/flats)</li>
+            </ul>
+          </li>
+          <li><strong>Mouse/Touch:</strong> Click or tap any key on the visual keyboard</li>
+          <li><strong>Upper/Lower Octave:</strong> Use the dropdowns to change the octave of each keyboard</li>
+          <li><strong>MIDI:</strong> Enable MIDI to use an external MIDI keyboard or controller</li>
+        </ul>
+      </article>
+    </section>
+
+    <section class="module">
+      <header>
+        <h2>Oscillators</h2>
+        <button type="button" popovertarget="oscillator-instructions">Instructions</button>
+      </header>
+
+      <article class="instructions" id="oscillator-instructions" popover>
+        <header>
+          <h3>Oscillators</h3>
+          <button type="button" popovertarget="oscillator-instructions" popovertargetaction="close">Close</button>
+        </header>
+
+        <p>
+          Oscillators are the primary sound sources in the synthesizer. You can add multiple oscillators to layer
+          sounds and create richer tones.
+        </p>
+
+        <ul>
+          <li><strong>Multiple Oscillators:</strong> Add multiple oscillators to layer and create richer sounds</li>
+          <li><strong>Waveform:</strong> Choose between Sine (smooth), Square (hollow), Sawtooth (bright), or Triangle
+            (mellow)</li>
+          <li><strong>Detune:</strong> Adjust frequency offset (-1200 to +1200 cents) for chorus and unison effects</li>
+          <li><strong>Level:</strong> Control the volume/mix of each oscillator (0-100%)</li>
+        </ul>
+      </article>
+
+      <div id="oscillator-list" class="oscillator-list"></div>
+      <button id="add-oscillator">Add Oscillator</button>
+    </section>
+
+    <section class="module">
+      <header>
+        <h2>Amplitude Envelope (ADSR)</h2>
+        <button type="button" popovertarget="adsr-instructions">Instructions</button>
+      </header>
+
+      <article class="instructions" id="adsr-instructions" popover>
+        <header>
+          <h3>Amplitude Envelope (ADSR)</h3>
+          <button type="button" popovertarget="adsr-instructions" popovertargetaction="close">Close</button>
+        </header>
+
+        <p>
+          The amplitude envelope shapes the volume of the sound over time using four stages: Attack, Decay, Sustain,
+          and Release.
+        </p>
+
+        <ul>
+          <li><strong>Attack:</strong> How quickly the note reaches full volume (0.001s - 2s)</li>
+          <li><strong>Decay:</strong> How quickly it falls to sustain level after attack</li>
+          <li><strong>Sustain:</strong> The held volume level while note is pressed (0-100%)</li>
+          <li><strong>Release:</strong> How quickly the note fades after release (0.01s - 3s)</li>
+        </ul>
+      </article>
+
+      <div class="controls">
+        <label>
+          Attack
+          <input type="range" id="attack" min="0.001" max="2" step="0.001" value="0.01">
+          <span id="attack-value"></span>
+        </label>
+
+        <label>
+          Decay
+          <input type="range" id="decay" min="0.001" max="2" step="0.001" value="0.3">
+          <span id="decay-value"></span>
+        </label>
+
+        <label>
+          Sustain
+          <input type="range" id="sustain" min="0" max="1" step="0.01" value="0.7">
+          <span id="sustain-value"></span>
+        </label>
+
+        <label>
+          Release
+          <input type="range" id="release" min="0.01" max="3" step="0.01" value="0.5">
+          <span id="release-value"></span>
+        </label>
+      </div>
+    </section>
+
+    <section class="module">
+      <header>
+        <h2>Filter</h2>
+        <button type="button" popovertarget="filter-instructions">Instructions</button>
+      </header>
+
+      <article class="instructions" id="filter-instructions" popover>
+        <header>
+          <h3>Filter</h3>
+          <button type="button" popovertarget="filter-instructions" popovertargetaction="close">Close</button>
+        </header>
+
+        <p>
+          The filter shapes the tonal quality of the sound by cutting off frequencies above a certain point. You can
+          adjust the cutoff frequency, resonance, and how the filter envelope modulates the cutoff over time.
+        </p>
+
+        <ul>
+          <li><strong>Cutoff:</strong> Frequency where filter starts cutting (20Hz - 20kHz). Lower = darker sound</li>
+          <li><strong>Resonance:</strong> Emphasis at cutoff frequency (0.1 - 30). Higher = more pronounced peak</li>
+          <li><strong>Envelope Amount:</strong> How much the filter envelope modulates cutoff (0 - 10000 Hz)</li>
+          <li><strong>Filter Envelope:</strong> Separate ADSR for filter cutoff modulation over time</li>
+        </ul>
+      </article>
+
+      <div class="controls">
+        <label>
+          Cutoff
+          <input type="range" id="filter-cutoff" min="20" max="20000" step="1" value="2000">
+          <span id="filter-cutoff-value"></span>
+        </label>
+
+        <label>
+          Resonance
+          <input type="range" id="filter-resonance" min="0.1" max="30" step="0.1" value="1">
+          <span id="filter-resonance-value"></span>
+        </label>
+
+        <label>
+          Envelope Amount
+          <input type="range" id="filter-env-amount" min="0" max="10000" step="10" value="2000">
+          <span id="filter-env-amount-value"></span>
+        </label>
+      </div>
+
+      <h3>Filter Envelope</h3>
+      <div class="controls">
+        <label>
+          Attack
+          <input type="range" id="filter-attack" min="0.001" max="2" step="0.001" value="0.1">
+          <span id="filter-attack-value"></span>
+        </label>
+
+        <label>
+          Decay
+          <input type="range" id="filter-decay" min="0.001" max="2" step="0.001" value="0.3">
+          <span id="filter-decay-value"></span>
+        </label>
+
+        <label>
+          Sustain
+          <input type="range" id="filter-sustain" min="0" max="1" step="0.01" value="0.5">
+          <span id="filter-sustain-value"></span>
+        </label>
+
+        <label>
+          Release
+          <input type="range" id="filter-release" min="0.01" max="3" step="0.01" value="0.5">
+          <span id="filter-release-value"></span>
+        </label>
+      </div>
+    </section>
+
+    <section class="module">
+      <header>
+        <h2>LFO (Modulation)</h2>
+        <button type="button" popovertarget="lfo-instructions">Instructions</button>
+      </header>
+
+      <article class="instructions" id="lfo-instructions" popover>
+        <header>
+          <h3>LFO (Low Frequency Oscillator)</h3>
+          <button type="button" popovertarget="lfo-instructions" popovertargetaction="close">Close</button>
+        </header>
+
+        <p>
+          The LFO modulates parameters like filter cutoff and pitch to add movement and variation to the sound.
+        </p>
+
+        <ul>
+          <li><strong>Waveform:</strong> Shape of the modulation wave</li>
+          <li><strong>Rate:</strong> Speed of modulation (0.1 - 20 Hz)</li>
+          <li><strong>To Filter:</strong> Amount of filter cutoff wobble (0 - 5000 Hz)</li>
+          <li><strong>To Pitch:</strong> Amount of pitch vibrato (0 - 100 cents)</li>
+        </ul>
+      </article>
+
+      <div class="controls">
+        <label>
+          Waveform
+          <select id="lfo-waveform">
+            <option value="sine" selected>Sine</option>
+            <option value="square">Square</option>
+            <option value="sawtooth">Sawtooth</option>
+            <option value="triangle">Triangle</option>
+          </select>
+        </label>
+
+        <label>
+          Rate
+          <input type="range" id="lfo-rate" min="0.1" max="20" step="0.1" value="5">
+          <span id="lfo-rate-value"></span>
+        </label>
+
+        <label>
+          To Filter
+          <input type="range" id="lfo-to-filter" min="0" max="5000" step="10" value="0">
+          <span id="lfo-to-filter-value"></span>
+        </label>
+
+        <label>
+          To Pitch
+          <input type="range" id="lfo-to-pitch" min="0" max="100" step="1" value="0">
+          <span id="lfo-to-pitch-value"></span>
+        </label>
+      </div>
+    </section>
+
+    <section class="module">
+      <header>
+        <h2>Delay Effect</h2>
+        <button type="button" popovertarget="delay-instructions">Instructions</button>
+      </header>
+
+      <article class="instructions" id="delay-instructions" popover>
+        <header>
+          <h3>Delay Effect</h3>
+          <button type="button" popovertarget="delay-instructions" popovertargetaction="close">Close</button>
+        </header>
+
+        <p>
+          The delay effect creates echoes of the sound, adding depth and space to your audio.
+        </p>
+
+        <ul>
+          <li><strong>Time:</strong> Delay time in seconds (0 - 2s)</li>
+          <li><strong>Feedback:</strong> How much the delay repeats (0 - 95%)</li>
+          <li><strong>Mix:</strong> Balance between dry (original) and wet (delayed) signal (0 - 100%)</li>
+        </ul>
+      </article>
+
+      <div class="controls">
+        <label>
+          Time
+          <input type="range" id="delay-time" min="0" max="2" step="0.01" value="0.375">
+          <span id="delay-time-value"></span>
+        </label>
+
+        <label>
+          Feedback
+          <input type="range" id="delay-feedback" min="0" max="0.95" step="0.01" value="0.3">
+          <span id="delay-feedback-value"></span>
+        </label>
+
+        <label>
+          Mix
+          <input type="range" id="delay-mix" min="0" max="1" step="0.01" value="0.2">
+          <span id="delay-mix-value"></span>
         </label>
       </div>
     </section>
 
     <section>
-      <h2>Recording Controls</h2>
+      <header>
+        <h2>Master Controls</h2>
+        <button type="button" popovertarget="master-instructions">Instructions</button>
+      </header>
+
+      <article class="instructions" id="master-instructions" popover>
+        <header>
+          <h3>Master Controls</h3>
+          <button type="button" popovertarget="master-instructions" popovertargetaction="close">Close</button>
+        </header>
+
+        <p>
+          Master controls affect the overall synthesizer output.
+        </p>
+
+        <ul>
+          <li><strong>Polyphonic:</strong> Toggle between polyphonic (multiple notes) and monophonic (single note)
+            modes</li>
+          <li><strong>Master Volume:</strong> Overall output volume control (0 - 100%)</li>
+        </ul>
+      </article>
+
+      <div class="controls">
+        <label>
+          <input type="checkbox" id="poly" checked> Polyphonic
+        </label>
+
+        <label>
+          Master Volume
+          <input type="range" id="master-volume" min="0" max="1" step="0.01" value="0.3">
+          <span id="master-volume-value"></span>
+        </label>
+      </div>
+    </section>
+
+    <section>
+      <header>
+        <h2>Recording Controls</h2>
+        <button type="button" popovertarget="recording-instructions">Instructions</button>
+      </header>
+
+      <article class="instructions" id="recording-instructions" popover>
+        <header>
+          <h3>Recording Controls</h3>
+          <button type="button" popovertarget="recording-instructions" popovertargetaction="close">Close</button>
+        </header>
+
+        <p>
+          Use the recording controls to capture your synthesizer sessions. This feature allows you to save your creations
+          as audio files for sharing or further editing.
+        </p>
+
+        <ul>
+          <li><strong>Start Recording:</strong> Click the "Start Recording" button to begin capturing audio output</li>
+          <li><strong>Stop Recording:</strong> Click the button again (now "Stop Recording") to end the recording session</li>
+          <li><strong>Download:</strong> After stopping, a download link will appear to save the recorded audio as a .webm file</li>
+        </ul>
+      </article>
+
       <div class="controls">
         <button id="record">Start Recording</button>
-    </div>
-
-    <article class="instructions">
-      <h2>Instructions & Features</h2>
-      
-      <h3>Playing Notes</h3>
-      <ul>
-        <li><strong>Keyboard:</strong> Use your computer keyboard to play notes
-          <ul>
-            <li>Lower octave white keys: Z, X, C, V, B, N, M (C-B)</li>
-            <li>Lower octave black keys: S, D, G, H, J (sharps/flats)</li>
-            <li>Upper octave white keys: Q, W, E, R, T, Y, U (C-B)</li>
-            <li>Upper octave black keys: 2, 3, 5, 6, 7 (sharps/flats)</li>
-          </ul>
-        </li>
-        <li><strong>Mouse/Touch:</strong> Click or tap any key on the visual keyboard</li>
-        <li><strong>MIDI:</strong> Enable MIDI to use an external MIDI keyboard or controller</li>
-      </ul>
-
-      <h3>Oscillators</h3>
-      <ul>
-        <li><strong>Multiple Oscillators:</strong> Add up to multiple oscillators to layer and create richer sounds</li>
-        <li><strong>Waveform:</strong> Choose between Sine (smooth), Square (hollow), Sawtooth (bright), or Triangle (mellow) waves for each oscillator</li>
-        <li><strong>Detune:</strong> Adjust frequency offset (-1200 to +1200 cents) to create chorus, detuning, and unison effects
-          <ul>
-            <li>+1200 cents = one octave up</li>
-            <li>-1200 cents = one octave down</li>
-            <li>Small values (±5-20 cents) create subtle thickness</li>
-            <li>Larger values create interval harmonies</li>
-          </ul>
-        </li>
-        <li><strong>Level:</strong> Control the volume/mix of each oscillator (0-100%)</li>
-        <li><strong>Add Oscillator:</strong> Click to add a new oscillator to the stack</li>
-        <li><strong>Remove:</strong> Click the Remove button on any oscillator (must keep at least one)</li>
-      </ul>
-
-      <h3>Sound Controls</h3>
-      <ul>
-        <li><strong>Polyphonic:</strong> When checked, play multiple notes simultaneously. Unchecked plays one note at a time</li>
-        <li><strong>Attack:</strong> Controls how quickly notes fade in (0.001s to 1s). Lower = instant, higher = gradual</li>
-        <li><strong>Release:</strong> Controls how quickly notes fade out after release (0.01s to 2s)</li>
-      </ul>
-
-      <h3>Octave Selection</h3>
-      <ul>
-        <li><strong>Upper Octave:</strong> Set the octave range (3-6) for the top keyboard (QWERTY keys)</li>
-        <li><strong>Lower Octave:</strong> Set the octave range (2-5) for the bottom keyboard (ZXCV keys)</li>
-        <li>Changes take effect immediately and update both sound and visual display</li>
-        <li>Note: Octave settings don't affect MIDI input (MIDI uses absolute note numbers)</li>
-      </ul>
-
-      <h3>MIDI Support</h3>
-      <ul>
-        <li><strong>Enable MIDI:</strong> Check the box to connect MIDI devices</li>
-        <li>Works with USB MIDI keyboards, controllers, and other MIDI input devices</li>
-        <li>Supports velocity sensitivity for dynamic playing</li>
-        <li>Hot-plugging supported - devices can be connected while the app is running</li>
-        <li>MIDI and keyboard/mouse input can be used simultaneously</li>
-      </ul>
-
-      <h3>Recording</h3>
-      <ul>
-        <li><strong>Start Recording:</strong> Click to begin capturing your performance</li>
-        <li><strong>Stop Recording:</strong> Click again to stop and automatically download as a .webm audio file</li>
-        <li>Recordings capture all notes, oscillators, and effects in real-time</li>
-        <li>Works with keyboard, mouse, and MIDI input</li>
-      </ul>
-
-      <h3>Tips</h3>
-      <ul>
-        <li><strong>Thick Sound:</strong> Add 2-3 sawtooth oscillators with slight detuning (±5-15 cents)</li>
-        <li><strong>Organ Sound:</strong> Layer sine waves at different octaves using detune (0, +1200, +1900 cents)</li>
-        <li><strong>Chorus Effect:</strong> Duplicate oscillators with same waveform but different detune values</li>
-        <li><strong>Bass Sound:</strong> Use square or sawtooth with low level sine wave one octave down (-1200 cents)</li>
-      </ul>
-    </article>
+      </div>
+    </section>
   </div>
 
   <script type="module" src="src/main.ts"></script>
 </body>
-</html>
 
+</html>
