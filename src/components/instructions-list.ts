@@ -1,16 +1,30 @@
 export class InstructionList extends HTMLElement {
   connectedCallback() {
-    const items = Array.from(this.querySelectorAll('instruction-item'));
-    
-    let html = '<ul>';
-    items.forEach(item => {
-      const label = item.getAttribute('label') || '';
-      const text = item.textContent || '';
-      html += `<li><strong>${label}:</strong> ${text}</li>`;
+    // Wait for children to be available
+    requestAnimationFrame(() => {
+      const items = Array.from(this.querySelectorAll('instruction-item'));
+      
+      if (items.length === 0) return;
+      
+      const ul = document.createElement('ul');
+      
+      items.forEach(item => {
+        const label = item.getAttribute('label') || '';
+        const text = item.textContent || '';
+        
+        const li = document.createElement('li');
+        const strong = document.createElement('strong');
+        strong.textContent = `${label}: `;
+        li.appendChild(strong);
+        li.appendChild(document.createTextNode(text));
+        
+        ul.appendChild(li);
+      });
+      
+      // Clear and append
+      this.innerHTML = '';
+      this.appendChild(ul);
     });
-    html += '</ul>';
-    
-    this.innerHTML = html;
   }
 }
 

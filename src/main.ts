@@ -24,6 +24,11 @@ import "./components/adsr-controls";
 import "./components/controls-group";
 import "./components/instructions-list";
 import "./components/subsection-header";
+import "./components/app-header";
+import "./components/help-popover";
+import "./components/dual-keyboard";
+import "./components/keyboard-mapping-info";
+import "./components/oscillator-section";
 
 // Keyboard and MIDI controls
 const octaveUpper = document.getElementById("octave-upper") as HTMLSelectElement;
