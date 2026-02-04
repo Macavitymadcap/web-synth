@@ -1,13 +1,14 @@
 export class ToggleSwitch extends HTMLElement {
   private checkbox!: HTMLInputElement;
   private labelSpan!: HTMLSpanElement;
+  private labelConfig!: { type: 'static' | 'dynamic'; staticText?: string; onText?: string; offText?: string };
 
   connectedCallback() {
     const id = this.getAttribute('id') || '';
     const checked = this.hasAttribute('checked');
-    const labelOn = this.getAttribute('label-on') || this.getAttribute('label') || 'On';
-    const labelOff = this.getAttribute('label-off') || this.getAttribute('label') || 'Off';
-    const staticLabel = this.hasAttribute('label') && !this.hasAttribute('label-on') && !this.hasAttribute('label-off');
+    
+    // Determine label configuration
+    this.labelConfig = this.getLabelConfig();
     
     this.innerHTML = `
       <style>
@@ -114,11 +115,11 @@ export class ToggleSwitch extends HTMLElement {
     this.labelSpan = this.querySelector('.toggle-label')!;
     
     // Update label based on state
-    this.updateLabel(staticLabel, labelOn, labelOff);
+    this.updateLabel();
     
     // Listen for changes
     this.checkbox.addEventListener('change', () => {
-      this.updateLabel(staticLabel, labelOn, labelOff);
+      this.updateLabel();
       
       // Dispatch custom event
       this.dispatchEvent(new CustomEvent('togglechange', {
@@ -128,12 +129,39 @@ export class ToggleSwitch extends HTMLElement {
     });
   }
   
-  private updateLabel(staticLabel: boolean, labelOn: string, labelOff: string) {
-    if (staticLabel) {
-      this.labelSpan.textContent = labelOn;
-    } else {
-      this.labelSpan.textContent = this.checkbox.checked ? labelOn : labelOff;
+  private getLabelConfig() {
+    const hasStaticLabel = this.hasAttribute('label') && !this.hasAttribute('label-on') && !this.hasAttribute('label-off');
+    
+    if (hasStaticLabel) {
+      return {
+        type: 'static' as const,
+        staticText: this.getAttribute('label') || 'Toggle'
+      };
     }
+    
+    return {
+      type: 'dynamic' as const,
+      onText: this.getAttribute('label-on') || this.getAttribute('label') || 'On',
+      offText: this.getAttribute('label-off') || this.getAttribute('label') || 'Off'
+    };
+  }
+  
+  private updateLabel() {
+    if (this.labelConfig.type === 'static') {
+      this.updateStaticLabel();
+    } else {
+      this.updateDynamicLabel();
+    }
+  }
+  
+  private updateStaticLabel() {
+    this.labelSpan.textContent = this.labelConfig.staticText!;
+  }
+  
+  private updateDynamicLabel() {
+    this.labelSpan.textContent = this.checkbox.checked 
+      ? this.labelConfig.onText! 
+      : this.labelConfig.offText!;
   }
   
   // Allow external code to get the checkbox element
@@ -148,10 +176,8 @@ export class ToggleSwitch extends HTMLElement {
   
   set checked(value: boolean) {
     this.checkbox.checked = value;
-    const staticLabel = this.hasAttribute('label') && !this.hasAttribute('label-on') && !this.hasAttribute('label-off');
-    const labelOn = this.getAttribute('label-on') || this.getAttribute('label') || 'On';
-    const labelOff = this.getAttribute('label-off') || this.getAttribute('label') || 'Off';
-    this.updateLabel(staticLabel, labelOn, labelOff);
+    this.labelConfig = this.getLabelConfig();
+    this.updateLabel();
   }
 }
 
