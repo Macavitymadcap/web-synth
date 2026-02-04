@@ -4,18 +4,13 @@ export class DualKeyboard extends HTMLElement {
     const lowerOctave = this.getAttribute('lower-octave') || '4';
     const upperKeys = this.getAttribute('upper-keys') || 'qwertyu,23567';
     const lowerKeys = this.getAttribute('lower-keys') || 'zxcvbnm,sdghj';
-    
+
     this.innerHTML = `
-      <style>
-        dual-keyboard {
-          display: block;
-        }
-      </style>
       <piano-keyboard id="keyboard-upper" octave="${upperOctave}" keys="${upperKeys}"></piano-keyboard>
       <piano-keyboard id="keyboard-lower" octave="${lowerOctave}" keys="${lowerKeys}"></piano-keyboard>
 
       <controls-group>
-        <octave-picker id="octave-upper" label="Upper Octave" value="${upperOctave}" min="3" max="6"></octave-picker>
+        <octave-picker id="octave-upper" label="Upper Octave" value="${upperOctave}" min="2" max="5"></octave-picker>
         <octave-picker id="octave-lower" label="Lower Octave" value="${lowerOctave}" min="2" max="5"></octave-picker>
         <toggle-switch id="midi-enabled" label-on="MIDI: Connected" label-off="MIDI: Disabled"></toggle-switch>
       </controls-group>

@@ -8,11 +8,6 @@ export class MidiHandler {
   }
 
   async initialize(): Promise<boolean> {
-    if (!navigator.requestMIDIAccess) {
-      console.warn("Web MIDI API not supported");
-      return false;
-    }
-
     try {
       this.midiAccess = await navigator.requestMIDIAccess();
       this.setupInputs();
