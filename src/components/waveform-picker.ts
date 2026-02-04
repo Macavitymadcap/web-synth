@@ -20,33 +20,37 @@ export class WaveformPicker extends HTMLElement {
           text-transform: uppercase;
           letter-spacing: 0.5px;
           font-weight: 600;
+          text-shadow: 0 0 5px var(--text-secondary);
         }
         
         waveform-picker .waveform-select {
           padding: 0.5rem;
-          background: #0a0a0a;
+          background: rgba(10, 0, 21, 0.8);
           color: var(--text-primary);
-          border: 1px solid rgba(255, 255, 255, 0.2);
+          border: 2px solid var(--neon-cyan);
           border-radius: 4px;
           font-size: 0.9rem;
           cursor: pointer;
           transition: all 0.2s ease;
           min-width: 120px;
+          box-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
+          text-shadow: 0 0 5px var(--text-primary);
         }
         
         waveform-picker .waveform-select:hover {
-          border-color: var(--accent-blue);
-          background: #0f0f0f;
+          border-color: var(--neon-pink);
+          background: rgba(26, 0, 51, 0.9);
+          box-shadow: 0 0 15px rgba(255, 0, 255, 0.5);
         }
         
         waveform-picker .waveform-select:focus {
           outline: none;
-          border-color: var(--accent-blue);
-          box-shadow: 0 0 0 2px rgba(74, 158, 255, 0.2);
+          border-color: var(--neon-pink);
+          box-shadow: 0 0 20px rgba(255, 0, 255, 0.6);
         }
         
         waveform-picker .waveform-select option {
-          background: #0a0a0a;
+          background: #0a0015;
           color: var(--text-primary);
           padding: 0.5rem;
         }

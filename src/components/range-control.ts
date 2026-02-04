@@ -22,72 +22,79 @@ export class RangeControl extends HTMLElement {
           display: flex;
           flex-direction: column;
           font-size: 0.75rem;
-          color: #999;
+          color: var(--text-secondary);
           text-transform: uppercase;
           letter-spacing: 0.5px;
           font-weight: 600;
           gap: 0.5rem;
+          text-shadow: 0 0 5px var(--text-secondary);
         }
         
         range-control input[type="range"] {
           width: 100px;
           height: 6px;
-          background: #0a0a0a;
-          border: 1px solid rgba(255, 255, 255, 0.2);
+          background: rgba(10, 0, 21, 0.8);
+          border: 2px solid var(--neon-cyan);
           border-radius: 3px;
           outline: none;
           cursor: pointer;
           -webkit-appearance: none;
+          box-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
         }
         
         range-control input[type="range"]::-webkit-slider-thumb {
           -webkit-appearance: none;
           width: 20px;
           height: 20px;
-          background: linear-gradient(145deg, #4a9eff, #3a7ed0);
-          border: 2px solid #2a5ea0;
+          background: linear-gradient(145deg, var(--neon-cyan), var(--accent-blue));
+          border: 2px solid var(--neon-cyan);
           border-radius: 50%;
           cursor: pointer;
           box-shadow: 
+            0 0 15px var(--neon-cyan),
             0 2px 4px rgba(0, 0, 0, 0.5),
             inset 0 1px 0 rgba(255, 255, 255, 0.3);
           transition: all 0.1s ease;
         }
         
         range-control input[type="range"]::-webkit-slider-thumb:hover {
-          background: linear-gradient(145deg, #5aaeff, #4a8ee0);
+          background: linear-gradient(145deg, #00ffff, #00d4ff);
           box-shadow: 
-            0 3px 6px rgba(74, 158, 255, 0.5),
-            inset 0 1px 0 rgba(255, 255, 255, 0.4);
+            0 0 25px var(--neon-cyan),
+            0 3px 6px rgba(0, 255, 255, 0.5);
+          transform: scale(1.1);
         }
         
         range-control input[type="range"]::-webkit-slider-thumb:active {
-          background: linear-gradient(145deg, #3a7ed0, #2a6ec0);
+          background: linear-gradient(145deg, var(--accent-blue), #0099cc);
           transform: scale(0.95);
         }
         
         range-control input[type="range"]::-moz-range-thumb {
           width: 20px;
           height: 20px;
-          background: linear-gradient(145deg, #4a9eff, #3a7ed0);
-          border: 2px solid #2a5ea0;
+          background: linear-gradient(145deg, var(--neon-cyan), var(--accent-blue));
+          border: 2px solid var(--neon-cyan);
           border-radius: 50%;
           cursor: pointer;
           box-shadow: 
+            0 0 15px var(--neon-cyan),
             0 2px 4px rgba(0, 0, 0, 0.5),
             inset 0 1px 0 rgba(255, 255, 255, 0.3);
         }
         
         range-control span {
           font-size: 0.85rem;
-          color: #4a9eff;
+          color: var(--neon-cyan);
           font-weight: 700;
           text-align: center;
           padding: 0.25rem 0.5rem;
-          background: rgba(74, 158, 255, 0.1);
-          border: 1px solid rgba(74, 158, 255, 0.3);
+          background: rgba(0, 255, 255, 0.1);
+          border: 1px solid var(--neon-cyan);
           border-radius: 3px;
           min-width: 60px;
+          box-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
+          text-shadow: 0 0 10px var(--neon-cyan);
         }
       </style>
       <label>
