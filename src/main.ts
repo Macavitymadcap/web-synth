@@ -16,6 +16,7 @@ import type { PianoKeyboard } from "./components/piano-keyboard";
 import "./components/range-control";
 import type { RangeControl } from "./components/range-control";
 import "./components/oscillator-control";
+import "./components/toggle-switch";
 
 // Keyboard and MIDI controls
 const octaveUpper = document.getElementById("octave-upper") as HTMLSelectElement;

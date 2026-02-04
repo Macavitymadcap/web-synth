@@ -1,0 +1,158 @@
+export class ToggleSwitch extends HTMLElement {
+  private checkbox!: HTMLInputElement;
+  private labelSpan!: HTMLSpanElement;
+
+  connectedCallback() {
+    const id = this.getAttribute('id') || '';
+    const checked = this.hasAttribute('checked');
+    const labelOn = this.getAttribute('label-on') || this.getAttribute('label') || 'On';
+    const labelOff = this.getAttribute('label-off') || this.getAttribute('label') || 'Off';
+    const staticLabel = this.hasAttribute('label') && !this.hasAttribute('label-on') && !this.hasAttribute('label-off');
+    
+    this.innerHTML = `
+      <style>
+        toggle-switch {
+          display: flex;
+          align-items: center;
+          gap: 0.75rem;
+          user-select: none;
+        }
+        
+        toggle-switch .toggle-container {
+          position: relative;
+          width: 56px;
+          height: 28px;
+          cursor: pointer;
+        }
+        
+        toggle-switch input[type="checkbox"] {
+          opacity: 0;
+          width: 0;
+          height: 0;
+          position: absolute;
+        }
+        
+        toggle-switch .toggle-track {
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background: linear-gradient(135deg, #1a1a1a 0%, #0d0d0d 100%);
+          border: 2px solid rgba(255, 255, 255, 0.2);
+          border-radius: 14px;
+          transition: all 0.3s ease;
+          box-shadow: 
+            inset 0 2px 4px rgba(0, 0, 0, 0.5),
+            0 1px 2px rgba(0, 0, 0, 0.3);
+        }
+        
+        toggle-switch input:checked + .toggle-track {
+          background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+          border-color: #27ae60;
+          box-shadow: 
+            inset 0 2px 4px rgba(0, 0, 0, 0.3),
+            0 2px 8px rgba(46, 204, 113, 0.4);
+        }
+        
+        toggle-switch .toggle-thumb {
+          position: absolute;
+          top: 2px;
+          left: 2px;
+          width: 20px;
+          height: 20px;
+          background: linear-gradient(145deg, #e0e0e0, #c0c0c0);
+          border-radius: 50%;
+          transition: all 0.3s ease;
+          box-shadow: 
+            0 2px 4px rgba(0, 0, 0, 0.3),
+            inset 0 1px 0 rgba(255, 255, 255, 0.5);
+        }
+        
+        toggle-switch input:checked + .toggle-track .toggle-thumb {
+          transform: translateX(28px);
+          background: linear-gradient(145deg, #ffffff, #e0e0e0);
+          box-shadow: 
+            0 2px 6px rgba(0, 0, 0, 0.4),
+            inset 0 1px 0 rgba(255, 255, 255, 0.8);
+        }
+        
+        toggle-switch .toggle-track:hover {
+          border-color: var(--accent-blue);
+        }
+        
+        toggle-switch input:focus + .toggle-track {
+          border-color: var(--accent-blue);
+          box-shadow: 
+            inset 0 2px 4px rgba(0, 0, 0, 0.5),
+            0 0 0 2px rgba(74, 158, 255, 0.2);
+        }
+        
+        toggle-switch .toggle-label {
+          font-size: 0.85rem;
+          color: var(--text-secondary);
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+          font-weight: 600;
+          transition: color 0.3s ease;
+        }
+        
+        toggle-switch input:checked ~ .toggle-label {
+          color: var(--accent-green);
+        }
+      </style>
+      <label class="toggle-container">
+        <input type="checkbox" id="${id}" ${checked ? 'checked' : ''}>
+        <span class="toggle-track">
+          <span class="toggle-thumb"></span>
+        </span>
+      </label>
+      <span class="toggle-label"></span>
+    `;
+    
+    this.checkbox = this.querySelector('input')!;
+    this.labelSpan = this.querySelector('.toggle-label')!;
+    
+    // Update label based on state
+    this.updateLabel(staticLabel, labelOn, labelOff);
+    
+    // Listen for changes
+    this.checkbox.addEventListener('change', () => {
+      this.updateLabel(staticLabel, labelOn, labelOff);
+      
+      // Dispatch custom event
+      this.dispatchEvent(new CustomEvent('togglechange', {
+        detail: { checked: this.checkbox.checked },
+        bubbles: true
+      }));
+    });
+  }
+  
+  private updateLabel(staticLabel: boolean, labelOn: string, labelOff: string) {
+    if (staticLabel) {
+      this.labelSpan.textContent = labelOn;
+    } else {
+      this.labelSpan.textContent = this.checkbox.checked ? labelOn : labelOff;
+    }
+  }
+  
+  // Allow external code to get the checkbox element
+  getCheckbox(): HTMLInputElement {
+    return this.checkbox;
+  }
+  
+  // Allow getting/setting checked state
+  get checked(): boolean {
+    return this.checkbox.checked;
+  }
+  
+  set checked(value: boolean) {
+    this.checkbox.checked = value;
+    const staticLabel = this.hasAttribute('label') && !this.hasAttribute('label-on') && !this.hasAttribute('label-off');
+    const labelOn = this.getAttribute('label-on') || this.getAttribute('label') || 'On';
+    const labelOff = this.getAttribute('label-off') || this.getAttribute('label') || 'Off';
+    this.updateLabel(staticLabel, labelOn, labelOff);
+  }
+}
+
+customElements.define('toggle-switch', ToggleSwitch);
