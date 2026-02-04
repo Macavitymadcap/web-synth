@@ -1,30 +1,22 @@
 import { keyInfo } from "./keys";
 import { OscillatorBank, type OscillatorInstance } from "./oscillator-bank";
 import { EnvelopeModule } from "./modules/envelope-module";
+import { FilterModule, type FilterInstance } from "./modules/filter-module";
+import { LFOModule } from "./modules/lfo-module";
 
 type Voice = { 
   oscillators: OscillatorInstance[]; 
   gain: GainNode; 
-  filter: BiquadFilterNode;
-  filterEnv: GainNode;
+  filterInstance: FilterInstance;
   note: number 
 };
 
 type ConstructorConfig = {
   oscillatorBank: OscillatorBank;
   ampEnvelope: EnvelopeModule;
+  filterModule: FilterModule;
+  lfoModule: LFOModule;
   polyEl: HTMLInputElement;
-  filterCutoffEl: HTMLInputElement;
-  filterResonanceEl: HTMLInputElement;
-  filterEnvAmountEl: HTMLInputElement;
-  filterAttackEl: HTMLInputElement;
-  filterDecayEl: HTMLInputElement;
-  filterSustainEl: HTMLInputElement;
-  filterReleaseEl: HTMLInputElement;
-  lfoRateEl: HTMLInputElement;
-  lfoToFilterEl: HTMLInputElement;
-  lfoToPitchEl: HTMLInputElement;
-  lfoWaveformEl: HTMLSelectElement;
   delayTimeEl: HTMLInputElement;
   delayFeedbackEl: HTMLInputElement;
   delayMixEl: HTMLInputElement;
@@ -43,32 +35,13 @@ export class Synth {
   delayDry!: GainNode;
   effectsMix!: GainNode;
 
-  // LFO
-  lfo!: OscillatorNode;
-  lfoGain!: GainNode;
-  lfoToFilter!: GainNode;
-  lfoToPitch!: GainNode;
-
   // Modules
   private readonly oscillatorBank: OscillatorBank;
   private readonly ampEnvelope: EnvelopeModule;
+  private readonly filterModule: FilterModule;
+  private readonly lfoModule: LFOModule;
 
   polyEl: HTMLInputElement;
-  
-  // Filter controls
-  filterCutoffEl: HTMLInputElement;
-  filterResonanceEl: HTMLInputElement;
-  filterEnvAmountEl: HTMLInputElement;
-  filterAttackEl: HTMLInputElement;
-  filterDecayEl: HTMLInputElement;
-  filterSustainEl: HTMLInputElement;
-  filterReleaseEl: HTMLInputElement;
-  
-  // LFO controls
-  lfoRateEl: HTMLInputElement;
-  lfoToFilterEl: HTMLInputElement;
-  lfoToPitchEl: HTMLInputElement;
-  lfoWaveformEl: HTMLSelectElement;
   
   // Delay controls
   delayTimeEl: HTMLInputElement;
@@ -81,18 +54,9 @@ export class Synth {
   constructor({
     oscillatorBank,
     ampEnvelope,
+    filterModule,
+    lfoModule,
     polyEl,
-    filterCutoffEl,
-    filterResonanceEl,
-    filterEnvAmountEl,
-    filterAttackEl,
-    filterDecayEl,
-    filterSustainEl,
-    filterReleaseEl,
-    lfoRateEl,
-    lfoToFilterEl,
-    lfoToPitchEl,
-    lfoWaveformEl,
     delayTimeEl,
     delayFeedbackEl,
     delayMixEl,
@@ -100,20 +64,9 @@ export class Synth {
   }: ConstructorConfig) {
     this.oscillatorBank = oscillatorBank;
     this.ampEnvelope = ampEnvelope;
+    this.filterModule = filterModule;
+    this.lfoModule = lfoModule;
     this.polyEl = polyEl;
-    
-    this.filterCutoffEl = filterCutoffEl;
-    this.filterResonanceEl = filterResonanceEl;
-    this.filterEnvAmountEl = filterEnvAmountEl;
-    this.filterAttackEl = filterAttackEl;
-    this.filterDecayEl = filterDecayEl;
-    this.filterSustainEl = filterSustainEl;
-    this.filterReleaseEl = filterReleaseEl;
-    
-    this.lfoRateEl = lfoRateEl;
-    this.lfoToFilterEl = lfoToFilterEl;
-    this.lfoToPitchEl = lfoToPitchEl;
-    this.lfoWaveformEl = lfoWaveformEl;
     
     this.delayTimeEl = delayTimeEl;
     this.delayFeedbackEl = delayFeedbackEl;
@@ -153,31 +106,6 @@ export class Synth {
         this.delayDry.gain.value = 1 - mix;
       }
     });
-    
-    // LFO parameters
-    this.lfoRateEl.addEventListener('input', () => {
-      if (this.lfo) {
-        this.lfo.frequency.value = Number.parseFloat(this.lfoRateEl.value);
-      }
-    });
-    
-    this.lfoToFilterEl.addEventListener('input', () => {
-      if (this.lfoToFilter) {
-        this.lfoToFilter.gain.value = Number.parseFloat(this.lfoToFilterEl.value);
-      }
-    });
-    
-    this.lfoToPitchEl.addEventListener('input', () => {
-      if (this.lfoToPitch) {
-        this.lfoToPitch.gain.value = Number.parseFloat(this.lfoToPitchEl.value);
-      }
-    });
-    
-    this.lfoWaveformEl.addEventListener('change', () => {
-      if (this.lfo) {
-        this.lfo.type = this.lfoWaveformEl.value as OscillatorType;
-      }
-    });
   }
 
   ensureAudio() {
@@ -215,25 +143,8 @@ export class Synth {
       this.delayDry.connect(this.masterGain);
       this.delayWet.connect(this.masterGain);
       
-      // LFO setup
-      this.lfo = this.audioCtx.createOscillator();
-      this.lfo.type = this.lfoWaveformEl.value as OscillatorType;
-      this.lfo.frequency.value = Number.parseFloat(this.lfoRateEl.value);
-      
-      this.lfoGain = this.audioCtx.createGain();
-      this.lfoGain.gain.value = 1;
-      
-      this.lfoToFilter = this.audioCtx.createGain();
-      this.lfoToFilter.gain.value = Number.parseFloat(this.lfoToFilterEl.value);
-      
-      this.lfoToPitch = this.audioCtx.createGain();
-      this.lfoToPitch.gain.value = Number.parseFloat(this.lfoToPitchEl.value);
-      
-      this.lfo.connect(this.lfoGain);
-      this.lfoGain.connect(this.lfoToFilter);
-      this.lfoGain.connect(this.lfoToPitch);
-      
-      this.lfo.start();
+      // Initialize LFO
+      this.lfoModule.initialize(this.audioCtx);
       
       this.masterGain.connect(this.audioCtx.destination);
     }
@@ -257,20 +168,12 @@ export class Synth {
       this.voices.clear();
     }
 
-    // Create filter
-    const filter = this.audioCtx.createBiquadFilter();
-    filter.type = 'lowpass';
-    filter.frequency.value = Number.parseFloat(this.filterCutoffEl.value);
-    filter.Q.value = Number.parseFloat(this.filterResonanceEl.value);
-    
-    // Filter envelope modulation amount
-    const filterEnv = this.audioCtx.createGain();
-    const filterEnvAmount = Number.parseFloat(this.filterEnvAmountEl.value);
-    filterEnv.gain.value = filterEnvAmount;
-    filterEnv.connect(filter.frequency);
-    
-    // Connect LFO to filter
-    this.lfoToFilter.connect(filter.frequency);
+    // Get LFO modulation nodes
+    const lfoToFilter = this.lfoModule.getFilterModulation();
+    const lfoToPitch = this.lfoModule.getPitchModulation();
+
+    // Create filter using FilterModule
+    const filterInstance = this.filterModule.createFilter(this.audioCtx, lfoToFilter ?? undefined);
     
     // Voice gain
     const gain = this.audioCtx.createGain();
@@ -279,12 +182,12 @@ export class Synth {
     const oscillators = this.oscillatorBank.createOscillators(
       this.audioCtx,
       freq,
-      filter,
-      this.lfoToPitch
+      filterInstance.filter,
+      lfoToPitch ?? undefined
     );
     
     // Connect filter to gain to effects
-    filter.connect(gain);
+    filterInstance.filter.connect(gain);
     gain.connect(this.effectsMix);
 
     const now = this.audioCtx.currentTime;
@@ -293,19 +196,13 @@ export class Synth {
     const targetGain = 0.3 * velocity;
     this.ampEnvelope.applyEnvelope(gain.gain, now, 0, targetGain);
     
-    // Filter envelope (ADSR) - still using old approach for now
-    const filterAttack = Number.parseFloat(this.filterAttackEl.value);
-    const filterDecay = Number.parseFloat(this.filterDecayEl.value);
-    const filterSustain = Number.parseFloat(this.filterSustainEl.value);
-    
-    filterEnv.gain.setValueAtTime(0, now);
-    filterEnv.gain.linearRampToValueAtTime(filterEnvAmount, now + filterAttack);
-    filterEnv.gain.linearRampToValueAtTime(filterEnvAmount * filterSustain, now + filterAttack + filterDecay);
+    // Apply filter envelope using FilterModule
+    this.filterModule.applyEnvelope(filterInstance, now);
 
     // Start all oscillators
     this.oscillatorBank.startOscillators(oscillators);
     
-    this.voices.set(key, { oscillators, gain, filter, filterEnv, note: 0 });
+    this.voices.set(key, { oscillators, gain, filterInstance, note: 0 });
   }
 
   stopVoice(key: string) {
@@ -315,15 +212,12 @@ export class Synth {
     const now = this.audioCtx.currentTime;
     
     // Apply amplitude release using EnvelopeModule
-    const release = this.ampEnvelope.applyRelease(v.gain.gain, now);
+    const ampRelease = this.ampEnvelope.applyRelease(v.gain.gain, now);
     
-    // Filter release - still using old approach for now
-    const filterRelease = Number.parseFloat(this.filterReleaseEl.value);
-    v.filterEnv.gain.cancelScheduledValues(now);
-    v.filterEnv.gain.setValueAtTime(v.filterEnv.gain.value, now);
-    v.filterEnv.gain.linearRampToValueAtTime(0, now + filterRelease);
+    // Apply filter release using FilterModule
+    const filterRelease = this.filterModule.applyRelease(v.filterInstance, now);
     
-    const maxReleaseTime = Math.max(release, filterRelease);
+    const maxReleaseTime = Math.max(ampRelease, filterRelease);
     this.oscillatorBank.stopOscillators(v.oscillators, now + maxReleaseTime);
     
     this.voices.delete(key);

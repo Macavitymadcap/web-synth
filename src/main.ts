@@ -1,6 +1,8 @@
 import { Synth } from "./synth";
 import { OscillatorBank } from "./oscillator-bank";
 import { EnvelopeModule } from "./modules/envelope-module";
+import { FilterModule } from "./modules/filter-module";
+import { LFOModule } from "./modules/lfo-module";
 import { buildKeyInfo } from "./keys";
 import { MidiHandler } from "./midi";
 import "./components/piano-keyboard";
@@ -54,25 +56,23 @@ const recordBtn = document.getElementById("record") as HTMLButtonElement;
 // Create Oscillator Bank
 const oscillatorBank = new OscillatorBank();
 
-// Create Envelope Module
+// Create Envelope Modules
 const ampEnvelope = new EnvelopeModule(attack, decay, sustain, release);
+const filterEnvelope = new EnvelopeModule(filterAttack, filterDecay, filterSustain, filterRelease);
+
+// Create Filter Module
+const filterModule = new FilterModule(filterCutoff, filterResonance, filterEnvAmount, filterEnvelope);
+
+// Create LFO Module
+const lfoModule = new LFOModule(lfoRate, lfoWaveform, lfoToFilter, lfoToPitch);
 
 // Create Synth Instance with dependency injection
 const synth = new Synth({
   oscillatorBank,
   ampEnvelope,
+  filterModule,
+  lfoModule,
   polyEl: poly,
-  filterCutoffEl: filterCutoff,
-  filterResonanceEl: filterResonance,
-  filterEnvAmountEl: filterEnvAmount,
-  filterAttackEl: filterAttack,
-  filterDecayEl: filterDecay,
-  filterSustainEl: filterSustain,
-  filterReleaseEl: filterRelease,
-  lfoRateEl: lfoRate,
-  lfoToFilterEl: lfoToFilter,
-  lfoToPitchEl: lfoToPitch,
-  lfoWaveformEl: lfoWaveform,
   delayTimeEl: delayTime,
   delayFeedbackEl: delayFeedback,
   delayMixEl: delayMix,
