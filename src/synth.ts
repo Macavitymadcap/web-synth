@@ -3,6 +3,7 @@ import { OscillatorBank, type OscillatorInstance } from "./oscillator-bank";
 import { EnvelopeModule } from "./modules/envelope-module";
 import { FilterModule, type FilterInstance } from "./modules/filter-module";
 import { LFOModule } from "./modules/lfo-module";
+import { DelayModule } from "./modules/delay-module";
 
 type Voice = { 
   oscillators: OscillatorInstance[]; 
@@ -16,39 +17,31 @@ type ConstructorConfig = {
   ampEnvelope: EnvelopeModule;
   filterModule: FilterModule;
   lfoModule: LFOModule;
+  delayModule: DelayModule;
   polyEl: HTMLInputElement;
-  delayTimeEl: HTMLInputElement;
-  delayFeedbackEl: HTMLInputElement;
-  delayMixEl: HTMLInputElement;
   masterVolumeEl: HTMLInputElement;
 }
 
+/**
+ * Synth class orchestrates all synthesizer modules
+ * Manages voices, audio routing, and module coordination
+ */
 export class Synth {
   audioCtx: AudioContext | null = null;
   masterGain!: GainNode;
   voices = new Map<string, Voice>();
   
-  // Effects chain
-  delayNode!: DelayNode;
-  delayFeedback!: GainNode;
-  delayWet!: GainNode;
-  delayDry!: GainNode;
-  effectsMix!: GainNode;
+  // Effects routing
+  effectsInput!: GainNode;
 
   // Modules
   private readonly oscillatorBank: OscillatorBank;
   private readonly ampEnvelope: EnvelopeModule;
   private readonly filterModule: FilterModule;
   private readonly lfoModule: LFOModule;
+  private readonly delayModule: DelayModule;
 
   polyEl: HTMLInputElement;
-  
-  // Delay controls
-  delayTimeEl: HTMLInputElement;
-  delayFeedbackEl: HTMLInputElement;
-  delayMixEl: HTMLInputElement;
-  
-  // Master volume
   masterVolumeEl: HTMLInputElement;
 
   constructor({
@@ -56,58 +49,37 @@ export class Synth {
     ampEnvelope,
     filterModule,
     lfoModule,
+    delayModule,
     polyEl,
-    delayTimeEl,
-    delayFeedbackEl,
-    delayMixEl,
     masterVolumeEl
   }: ConstructorConfig) {
     this.oscillatorBank = oscillatorBank;
     this.ampEnvelope = ampEnvelope;
     this.filterModule = filterModule;
     this.lfoModule = lfoModule;
+    this.delayModule = delayModule;
     this.polyEl = polyEl;
-    
-    this.delayTimeEl = delayTimeEl;
-    this.delayFeedbackEl = delayFeedbackEl;
-    this.delayMixEl = delayMixEl;
-    
     this.masterVolumeEl = masterVolumeEl;
     
-    // Setup event listeners for real-time parameter changes
     this.setupParameterListeners();
   }
 
+  /**
+   * Setup event listeners for master parameters
+   * @private
+   */
   private setupParameterListeners() {
-    // Master volume
     this.masterVolumeEl.addEventListener('input', () => {
       if (this.masterGain) {
         this.masterGain.gain.value = Number.parseFloat(this.masterVolumeEl.value);
       }
     });
-    
-    // Delay parameters
-    this.delayTimeEl.addEventListener('input', () => {
-      if (this.delayNode) {
-        this.delayNode.delayTime.value = Number.parseFloat(this.delayTimeEl.value);
-      }
-    });
-    
-    this.delayFeedbackEl.addEventListener('input', () => {
-      if (this.delayFeedback) {
-        this.delayFeedback.gain.value = Number.parseFloat(this.delayFeedbackEl.value);
-      }
-    });
-    
-    this.delayMixEl.addEventListener('input', () => {
-      if (this.delayWet && this.delayDry) {
-        const mix = Number.parseFloat(this.delayMixEl.value);
-        this.delayWet.gain.value = mix;
-        this.delayDry.gain.value = 1 - mix;
-      }
-    });
   }
 
+  /**
+   * Ensure audio context and all modules are initialized
+   * Sets up the complete audio signal chain
+   */
   ensureAudio() {
     if (!this.audioCtx) {
       this.audioCtx = new AudioContext();
@@ -116,46 +88,34 @@ export class Synth {
       this.masterGain = this.audioCtx.createGain();
       this.masterGain.gain.value = Number.parseFloat(this.masterVolumeEl.value);
       
-      // Effects mix (dry/wet routing)
-      this.effectsMix = this.audioCtx.createGain();
-      
-      // Delay effect
-      this.delayNode = this.audioCtx.createDelay(2);
-      this.delayNode.delayTime.value = Number.parseFloat(this.delayTimeEl.value);
-      
-      this.delayFeedback = this.audioCtx.createGain();
-      this.delayFeedback.gain.value = Number.parseFloat(this.delayFeedbackEl.value);
-      
-      this.delayWet = this.audioCtx.createGain();
-      this.delayDry = this.audioCtx.createGain();
-      
-      const delayMix = Number.parseFloat(this.delayMixEl.value);
-      this.delayWet.gain.value = delayMix;
-      this.delayDry.gain.value = 1 - delayMix;
-      
-      // Wire up delay
-      this.effectsMix.connect(this.delayDry);
-      this.effectsMix.connect(this.delayNode);
-      this.delayNode.connect(this.delayFeedback);
-      this.delayFeedback.connect(this.delayNode);
-      this.delayNode.connect(this.delayWet);
-      
-      this.delayDry.connect(this.masterGain);
-      this.delayWet.connect(this.masterGain);
-      
       // Initialize LFO
       this.lfoModule.initialize(this.audioCtx);
       
+      // Initialize delay effect
+      const delayNodes = this.delayModule.initialize(this.audioCtx, this.masterGain);
+      this.effectsInput = delayNodes.input;
+      
+      // Connect master to output
       this.masterGain.connect(this.audioCtx.destination);
     }
   }
 
+  /**
+   * Trigger a note on event using a keyboard key
+   * @param key - The keyboard key pressed
+   */
   noteOn(key: string) {
     const info = keyInfo[key];
     if (!info) return;
     this.playFrequency(key, info.freq, 1);
   }
 
+  /**
+   * Play a frequency with the synthesizer
+   * @param key - Unique identifier for this voice
+   * @param freq - Frequency to play in Hz
+   * @param velocity - Note velocity (0-1)
+   */
   playFrequency(key: string, freq: number, velocity: number = 1) {
     this.ensureAudio();
     if (!this.audioCtx) return;
@@ -188,7 +148,7 @@ export class Synth {
     
     // Connect filter to gain to effects
     filterInstance.filter.connect(gain);
-    gain.connect(this.effectsMix);
+    gain.connect(this.effectsInput);
 
     const now = this.audioCtx.currentTime;
     
@@ -205,6 +165,10 @@ export class Synth {
     this.voices.set(key, { oscillators, gain, filterInstance, note: 0 });
   }
 
+  /**
+   * Stop a voice by its key identifier
+   * @param key - The key identifier for the voice to stop
+   */
   stopVoice(key: string) {
     const v = this.voices.get(key);
     if (!v || !this.audioCtx) return;

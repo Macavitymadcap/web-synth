@@ -3,6 +3,7 @@ import { OscillatorBank } from "./oscillator-bank";
 import { EnvelopeModule } from "./modules/envelope-module";
 import { FilterModule } from "./modules/filter-module";
 import { LFOModule } from "./modules/lfo-module";
+import { DelayModule } from "./modules/delay-module";
 import { buildKeyInfo } from "./keys";
 import { MidiHandler } from "./midi";
 import "./components/piano-keyboard";
@@ -66,16 +67,17 @@ const filterModule = new FilterModule(filterCutoff, filterResonance, filterEnvAm
 // Create LFO Module
 const lfoModule = new LFOModule(lfoRate, lfoWaveform, lfoToFilter, lfoToPitch);
 
+// Create Delay Module
+const delayModule = new DelayModule(delayTime, delayFeedback, delayMix);
+
 // Create Synth Instance with dependency injection
 const synth = new Synth({
   oscillatorBank,
   ampEnvelope,
   filterModule,
   lfoModule,
+  delayModule,
   polyEl: poly,
-  delayTimeEl: delayTime,
-  delayFeedbackEl: delayFeedback,
-  delayMixEl: delayMix,
   masterVolumeEl: masterVolume
 });
 
