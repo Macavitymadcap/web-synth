@@ -4,9 +4,12 @@ import { EnvelopeModule } from "./modules/envelope-module";
 import { FilterModule } from "./modules/filter-module";
 import { LFOModule } from "./modules/lfo-module";
 import { DelayModule } from "./modules/delay-module";
+import { MasterModule } from "./modules/master-module";
+import { VoiceManager } from "./modules/voice-manager";
 import { buildKeyInfo } from "./keys";
 import { MidiHandler } from "./midi";
 import "./components/piano-keyboard";
+import type { PianoKeyboard } from "./components/piano-keyboard";
 import "./components/range-control";
 import type { RangeControl } from "./components/range-control";
 import "./components/oscillator-control";
@@ -15,8 +18,8 @@ import type { OscillatorControl } from "./components/oscillator-control";
 // Keyboard and MIDI controls
 const octaveUpper = document.getElementById("octave-upper") as HTMLSelectElement;
 const octaveLower = document.getElementById("octave-lower") as HTMLSelectElement;
-const keyboardUpper = document.getElementById("keyboard-upper") as HTMLElement;
-const keyboardLower = document.getElementById("keyboard-lower") as HTMLElement;
+const keyboardUpper = document.getElementById("keyboard-upper") as PianoKeyboard;
+const keyboardLower = document.getElementById("keyboard-lower") as PianoKeyboard;
 const midiToggle = document.getElementById("midi-enabled") as HTMLInputElement;
 const midiStatus = document.getElementById("midi-status") as HTMLElement;
 
@@ -53,33 +56,27 @@ const masterVolume = (document.getElementById("master-volume") as RangeControl).
 // Record controls
 const recordBtn = document.getElementById("record") as HTMLButtonElement;
 
-
-// Create Oscillator Bank
 const oscillatorBank = new OscillatorBank();
-
-// Create Envelope Modules
 const ampEnvelope = new EnvelopeModule(attack, decay, sustain, release);
 const filterEnvelope = new EnvelopeModule(filterAttack, filterDecay, filterSustain, filterRelease);
-
-// Create Filter Module
 const filterModule = new FilterModule(filterCutoff, filterResonance, filterEnvAmount, filterEnvelope);
-
-// Create LFO Module
 const lfoModule = new LFOModule(lfoRate, lfoWaveform, lfoToFilter, lfoToPitch);
-
-// Create Delay Module
 const delayModule = new DelayModule(delayTime, delayFeedback, delayMix);
-
-// Create Synth Instance with dependency injection
-const synth = new Synth({
+const masterModule = new MasterModule(masterVolume);
+const voiceManager = new VoiceManager(
+  poly,
   oscillatorBank,
   ampEnvelope,
   filterModule,
+  lfoModule
+);
+
+const synth = new Synth(
   lfoModule,
   delayModule,
-  polyEl: poly,
-  masterVolumeEl: masterVolume
-});
+  masterModule,
+  voiceManager
+);
 
 // Oscillator management
 const oscillatorList = document.getElementById("oscillator-list") as HTMLElement;
@@ -226,8 +223,8 @@ const octaveChangeHandler = () => {
   keyboardUpper.setAttribute("octave", upper.toString());
   keyboardLower.setAttribute("octave", lower.toString());
   
-  (keyboardUpper as any).connectedCallback?.();
-  (keyboardLower as any).connectedCallback?.();
+  keyboardUpper.connectedCallback?.();
+  keyboardLower.connectedCallback?.();
 };
 
 const midiToggleHandler = async () => {
