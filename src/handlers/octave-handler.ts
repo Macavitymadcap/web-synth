@@ -1,5 +1,5 @@
 import type { PianoKeyboard } from "../components/piano-keyboard";
-import { buildKeyInfo } from "../keys";
+import { buildKeyInfo } from "../core/keys";
 
 export function createOctaveChangeHandler(
   octaveUpper: HTMLSelectElement,

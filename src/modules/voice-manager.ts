@@ -1,4 +1,4 @@
-import { OscillatorBank, type OscillatorInstance } from "../oscillator-bank";
+import { OscillatorBank, type OscillatorInstance } from "../core/oscillator-bank";
 import { EnvelopeModule } from "./envelope-module";
 import { FilterModule, type FilterInstance } from "./filter-module";
 import { LFOModule } from "./lfo-module";

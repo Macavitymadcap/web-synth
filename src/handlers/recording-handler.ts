@@ -1,4 +1,4 @@
-import type { Synth } from "../synth";
+import type { Synth } from "../core/synth";
 
 export function createRecordingHandler(
   synth: Synth,

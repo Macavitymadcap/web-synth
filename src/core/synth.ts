@@ -1,8 +1,8 @@
 import { keyInfo } from "./keys";
-import { LFOModule } from "./modules/lfo-module";
-import { DelayModule } from "./modules/delay-module";
-import { MasterModule } from "./modules/master-module";
-import { VoiceManager } from "./modules/voice-manager";
+import { LFOModule } from "../modules/lfo-module";
+import { DelayModule } from "../modules/delay-module";
+import { MasterModule } from "../modules/master-module";
+import { VoiceManager } from "../modules/voice-manager";
 
 /**
  * Synth class orchestrates all synthesizer modules

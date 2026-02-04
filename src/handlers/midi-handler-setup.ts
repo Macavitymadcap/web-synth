@@ -1,5 +1,5 @@
-import type { Synth } from "../synth";
-import { MidiHandler } from "../midi";
+import type { Synth } from "../core/synth";
+import { MidiHandler } from "../audio/midi";
 
 export function createMidiToggleHandler(
   synth: Synth,

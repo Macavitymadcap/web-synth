@@ -1,4 +1,4 @@
-import type { OscillatorBank } from "../oscillator-bank";
+import type { OscillatorBank } from "../core/oscillator-bank";
 import type { OscillatorControl } from "../components/oscillator-control";
 
 export function createOscillatorManager(

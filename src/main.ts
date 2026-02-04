@@ -1,5 +1,5 @@
-import { Synth } from "./synth";
-import { OscillatorBank } from "./oscillator-bank";
+import { Synth } from "./core/synth";
+import { OscillatorBank } from "./core/oscillator-bank";
 import { EnvelopeModule } from "./modules/envelope-module";
 import { FilterModule } from "./modules/filter-module";
 import { LFOModule } from "./modules/lfo-module";

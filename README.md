@@ -1,43 +1,48 @@
 # Web Synth
 
 A feature-rich, browser-based polyphonic synthesizer built with the Web Audio
-API and TypeScript. Create and shape sounds using multiple oscillators, filters,
+API and TypeScript. Create and shape sounds using multiple oscillators, filters, 
 envelopes, LFO modulation, and delay effects.
 
 ## Features
 
 ### Sound Generation
-- **Multiple Oscillators**: Layer up to multiple oscillators with independent waveform, detune, and level controls
-- **Waveforms**: Sine, Square, Sawtooth, and Triangle waves
-- **Polyphonic/Monophonic Modes**: Play multiple notes simultaneously or one at a time
-- **Detune Control**: Fine-tune each oscillator from -1200 to +1200 cents for chorus and unison effects
+
+* **Multiple Oscillators**: Layer up to multiple oscillators with independent waveform, detune, and level controls
+* **Waveforms**: Sine, Square, Sawtooth, and Triangle waves
+* **Polyphonic/Monophonic Modes**: Play multiple notes simultaneously or one at a time
+* **Detune Control**: Fine-tune each oscillator from -1200 to +1200 cents for chorus and unison effects
 
 ### Sound Shaping
-- **Amplitude Envelope (ADSR)**: Control attack, decay, sustain, and release of note volume
-- **Lowpass Filter**: Shape tone with adjustable cutoff (20Hz-20kHz) and resonance (0.1-30)
-- **Filter Envelope**: Independent ADSR envelope for dynamic filter modulation
-- **LFO Modulation**: Add vibrato (pitch) and wobble (filter) effects with adjustable rate and depth
+
+* **Amplitude Envelope (ADSR)**: Control attack, decay, sustain, and release of note volume
+* **Lowpass Filter**: Shape tone with adjustable cutoff (20Hz-20kHz) and resonance (0.1-30)
+* **Filter Envelope**: Independent ADSR envelope for dynamic filter modulation
+* **LFO Modulation**: Add vibrato (pitch) and wobble (filter) effects with adjustable rate and depth
 
 ### Effects
-- **Delay**: Configurable delay time, feedback, and wet/dry mix for spatial effects
-- **Master Volume**: Global output level control
+
+* **Delay**: Configurable delay time, feedback, and wet/dry mix for spatial effects
+* **Master Volume**: Global output level control
 
 ### Input Methods
-- **Visual Keyboard**: On-screen piano keyboard with mouse/touch support
-- **Computer Keyboard**: 
-  - Lower octave: Z-M keys (white), S-J keys (black)
-  - Upper octave: Q-U keys (white), 2-7 keys (black)
-- **MIDI Support**: Connect external MIDI keyboards and controllers
-- **Octave Selection**: Independently adjust upper and lower keyboard octaves (2-6)
+
+* **Visual Keyboard**: On-screen piano keyboard with mouse/touch support
+* **Computer Keyboard**: 
+  + Lower octave: Z-M keys (white), S-J keys (black)
+  + Upper octave: Q-U keys (white), 2-7 keys (black)
+* **MIDI Support**: Connect external MIDI keyboards and controllers
+* **Octave Selection**: Independently adjust upper and lower keyboard octaves (2-6)
 
 ### Recording
-- **Audio Recording**: Capture your performance and download as WebM audio files
-- **One-Click Recording**: Start/stop recording with a single button
+
+* **Audio Recording**: Capture your performance and download as WebM audio files
+* **One-Click Recording**: Start/stop recording with a single button
 
 ## Requirements
 
-- [Bun](https://bun.sh) v1.3.0 or higher
-- Modern web browser with Web Audio API support (Chrome, Firefox, Safari, Edge)
+* [Bun](https://bun.sh) v1.3.0 or higher
+* Modern web browser with Web Audio API support (Chrome, Firefox, Safari, Edge)
 
 ## Installation
 
@@ -84,71 +89,87 @@ bun run preview
 ### Preset Ideas
 
 **Pad Sound**
-- 2-3 sawtooth oscillators, detuned ±10-20 cents
-- Attack: 0.5-1s, Sustain: 70-90%, Release: 1-2s
-- Filter cutoff: 1000-2000 Hz
-- LFO to filter: 200-500 Hz at 0.5-2 Hz rate
+* 2-3 sawtooth oscillators, detuned ±10-20 cents
+* Attack: 0.5-1s, Sustain: 70-90%, Release: 1-2s
+* Filter cutoff: 1000-2000 Hz
+* LFO to filter: 200-500 Hz at 0.5-2 Hz rate
 
 **Pluck/Bass**
-- 1-2 sawtooth oscillators
-- Attack: 0.001-0.01s, Decay: 0.1-0.3s, Sustain: 0-30%, Release: 0.1-0.3s
-- Filter envelope amount: 3000-5000 Hz
-- Filter attack: 0.001s, Filter decay: 0.2-0.4s
+* 1-2 sawtooth oscillators
+* Attack: 0.001-0.01s, Decay: 0.1-0.3s, Sustain: 0-30%, Release: 0.1-0.3s
+* Filter envelope amount: 3000-5000 Hz
+* Filter attack: 0.001s, Filter decay: 0.2-0.4s
 
 **Lead Synth**
-- 1-2 sawtooth oscillators
-- Filter cutoff: 2000-4000 Hz with envelope amount: 2000-4000 Hz
-- Attack: 0.01-0.05s, Sustain: 80-100%
-- LFO to pitch: 5-15 cents at 4-6 Hz for vibrato
+* 1-2 sawtooth oscillators
+* Filter cutoff: 2000-4000 Hz with envelope amount: 2000-4000 Hz
+* Attack: 0.01-0.05s, Sustain: 80-100%
+* LFO to pitch: 5-15 cents at 4-6 Hz for vibrato
 
 **Wobble Bass**
-- Sawtooth oscillator
-- Low filter cutoff: 200-800 Hz, Resonance: 10-20
-- LFO to filter: 1000-3000 Hz with square wave at 1-8 Hz
-- Attack: 0.001s, Sustain: 100%
+* Sawtooth oscillator
+* Low filter cutoff: 200-800 Hz, Resonance: 10-20
+* LFO to filter: 1000-3000 Hz with square wave at 1-8 Hz
+* Attack: 0.001s, Sustain: 100%
 
 ### Keyboard Shortcuts
 
-- **Z-M**: Lower octave white keys (C-B)
-- **S, D, G, H, J**: Lower octave black keys (sharps/flats)
-- **Q-U**: Upper octave white keys (C-B)
-- **2, 3, 5, 6, 7**: Upper octave black keys (sharps/flats)
+* **Z-M**: Lower octave white keys (C-B)
+* **S, D, G, H, J**: Lower octave black keys (sharps/flats)
+* **Q-U**: Upper octave white keys (C-B)
+* **2, 3, 5, 6, 7**: Upper octave black keys (sharps/flats)
 
-## Project Structure
+### Architecture Overview
 
-```
-web-synth/
-├── src/
-│   ├── components/
-│   │   ├── oscillator-control.ts    # Oscillator UI component
-│   │   ├── piano-keyboard.ts        # Visual keyboard component
-│   │   └── range-control.ts         # Range slider component
-│   ├── keys.ts                      # Keyboard mapping and frequencies
-│   ├── main.ts                      # Application entry point
-│   ├── midi.ts                      # MIDI input handler
-│   ├── oscillator-bank.ts           # Oscillator management
-│   ├── styles.css                   # Global styles
-│   └── synth.ts                     # Core synthesis engine
-├── index.html                       # Main HTML document
-├── package.json                     # Dependencies
-├── tsconfig.json                    # TypeScript configuration
-├── vite.config.ts                   # Vite build configuration
-└── README.md                        # This file
-```
+**Core Layer** ( `core/` )
+* Contains the fundamental synthesizer logic
+* `synth.ts` orchestrates all modules and manages the audio context
+* `oscillator-bank.ts` handles multiple oscillator creation and management
+* `keys.ts` maps keyboard inputs to musical frequencies
+
+**Audio Layer** ( `audio/` )
+* Handles audio input/output concerns
+* `midi.ts` manages MIDI device connections and note events
+
+**Modules Layer** ( `modules/` )
+* Self-contained audio processing units
+* Each module encapsulates a specific synthesis component (envelopes, filters, LFO, etc.)
+* Modules expose configuration interfaces and Web Audio node connections
+* Designed for reusability and testability
+
+**Components Layer** ( `components/` )
+* Custom web components for the user interface
+* Built with native Web Components API
+* Encapsulate both UI and behaviour
+
+**Handlers Layer** ( `handlers/` )
+* Event handlers and UI interaction logic
+* Separated from core audio logic for better maintainability
+* Each handler manages a specific aspect of user interaction
 
 ## Technologies
 
-- **TypeScript**: Type-safe JavaScript
-- **Web Audio API**: Browser-based audio synthesis
-- **Web Components**: Custom HTML elements for UI
-- **Vite**: Fast development server and build tool
-- **Bun**: JavaScript runtime and package manager
+* **TypeScript**: Type-safe JavaScript for robust code
+* **Web Audio API**: Browser-based audio synthesis
+* **Web Components**: Custom HTML elements for modular UI
+* **Vite**: Fast development server and build tool
+* **Bun**: JavaScript runtime and package manager
+
+## Architecture Principles
+
+The codebase follows these principles:
+
+1. **Separation of Concerns**: Audio logic, UI, and event handling are clearly separated
+2. **Modularity**: Each module has a single, well-defined responsibility
+3. **Composability**: Modules can be combined in different ways
+4. **Type Safety**: TypeScript provides compile-time guarantees
+5. **Testability**: Modules can be tested independently
 
 ## Browser Compatibility
 
-- Chrome/Edge: Full support
-- Firefox: Full support
-- Safari: Full support (MIDI may require user permission)
+* Chrome/Edge: Full support
+* Firefox: Full support
+* Safari: Full support (MIDI may require user permission)
 
 ## License
 
