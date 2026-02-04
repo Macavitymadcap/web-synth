@@ -29,6 +29,8 @@ import "./components/help-popover";
 import "./components/dual-keyboard";
 import "./components/keyboard-mapping-info";
 import "./components/oscillator-section";
+import "./components/preset-selector";
+import { SettingsManager } from "./core/settings-manager";
 
 // Keyboard and MIDI controls
 const octaveUpper = document.getElementById("octave-upper") as HTMLSelectElement;
@@ -36,7 +38,6 @@ const octaveLower = document.getElementById("octave-lower") as HTMLSelectElement
 const keyboardUpper = document.getElementById("keyboard-upper") as PianoKeyboard;
 const keyboardLower = document.getElementById("keyboard-lower") as PianoKeyboard;
 const midiToggle = document.getElementById("midi-enabled") as HTMLInputElement;
-const midiStatus = document.getElementById("midi-status") as HTMLElement;
 
 // ASDR controls
 const attack = (document.getElementById("attack") as RangeControl).getInput();
@@ -98,8 +99,17 @@ const synth = new Synth(
   voiceManager
 );
 
+// Initialize settings manager and connect it to oscillator bank
+const settingsManager = new SettingsManager();
+settingsManager.setOscillatorBank(oscillatorBank);
+
+const presetSelector = document.querySelector("preset-selector");
+if (presetSelector) {
+  (presetSelector as any).setSettingsManager(settingsManager);
+}
+
 // Initialize handlers
-const { keyDownHandler, keyUpHandler, pointerDownHandler, pointerUpHandler } = 
+const { keyDownHandler, keyUpHandler, pointerDownHandler, pointerUpHandler, pointerCancelHandler } = 
   createKeyboardHandlers(synth);
 const recordButtonClickHandler = createRecordingHandler(synth, recordBtn);
 const octaveChangeHandler = createOctaveChangeHandler(
@@ -108,7 +118,7 @@ const octaveChangeHandler = createOctaveChangeHandler(
   keyboardUpper,
   keyboardLower
 );
-const midiToggleHandler = createMidiToggleHandler(synth, midiToggle, midiStatus);
+const midiToggleHandler = createMidiToggleHandler(synth, midiToggle);
 const oscillatorManager = createOscillatorManager(
   oscillatorBank,
   oscillatorList,
@@ -118,11 +128,30 @@ const oscillatorManager = createOscillatorManager(
 // Initialize oscillator management
 oscillatorManager.initialize();
 
+// Load saved settings on startup
+window.addEventListener("load", () => {
+  const saved = settingsManager.loadFromLocalStorage();
+  if (saved) {
+    settingsManager.applySettings(saved);
+  }
+});
+
+// Auto-save on any control change
+document.addEventListener("change", () => {
+  settingsManager.saveToLocalStorage();
+});
+
+// Also save on input events (for range controls)
+document.addEventListener("input", () => {
+  settingsManager.saveToLocalStorage();
+});
+
 // Attach Event Listeners
 document.addEventListener("keydown", keyDownHandler);
 document.addEventListener("keyup", keyUpHandler);
 document.addEventListener("pointerdown", pointerDownHandler);
 document.addEventListener("pointerup", pointerUpHandler);
+document.addEventListener("pointercancel", pointerCancelHandler);
 recordBtn.addEventListener("click", recordButtonClickHandler);
 octaveUpper.addEventListener("change", octaveChangeHandler);
 octaveLower.addEventListener("change", octaveChangeHandler);

@@ -1,4 +1,5 @@
 export type OscillatorConfig = {
+  id?: number;
   waveform: OscillatorType;
   detune: number;
   level: number;

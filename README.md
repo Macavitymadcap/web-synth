@@ -25,12 +25,26 @@ envelopes, LFO modulation, and delay effects.
 * **Delay**: Configurable delay time, feedback, and wet/dry mix for spatial effects
 * **Master Volume**: Global output level control
 
+### Presets & Settings
+
+* **Factory Presets**: 11 built-in instrument presets including:
+  - Pad Sound (lush, atmospheric)
+  - Pluck Bass (punchy, tight)
+  - Lead Synth (bright with vibrato)
+  - Wobble Bass (dubstep-style)
+  - Piano, Organ, Strings
+  - Electric Piano, Bass Guitar
+  - Flute, Brass
+* **User Presets**: Save your custom sounds with names and descriptions
+* **Export/Import**: Share settings as JSON files
+* **Auto-Save**: Current settings automatically persist in browser storage
+
 ### Input Methods
 
 * **Visual Keyboard**: On-screen piano keyboard with mouse/touch support
 * **Computer Keyboard**: 
-  + Lower octave: Z-M keys (white), S-J keys (black)
-  + Upper octave: Q-U keys (white), 2-7 keys (black)
+  - Lower octave: Z-M keys (white), S-J keys (black)
+  - Upper octave: Q-U keys (white), 2-7 keys (black)
 * **MIDI Support**: Connect external MIDI keyboards and controllers
 * **Octave Selection**: Independently adjust upper and lower keyboard octaves (2-6)
 
@@ -76,6 +90,14 @@ bun run preview
 
 ## Usage Guide
 
+### Getting Started with Presets
+
+1. **Load a Preset**: Select from the factory presets dropdown (Pad Sound, Pluck Bass, Lead Synth, etc.)
+2. **Click "Load"**: Apply the preset settings to hear the sound
+3. **Experiment**: Adjust any parameters to customize the sound
+4. **Save Custom Presets**: Click "Save As..." to store your modifications
+5. **Export/Import**: Share your settings as JSON files with others
+
 ### Basic Sound Design
 
 1. **Start Simple**: Begin with one oscillator to understand the basic sound
@@ -86,32 +108,6 @@ bun run preview
 6. **Add Movement**: Use LFO modulation for vibrato and filter wobble effects
 7. **Create Space**: Add delay for depth and ambience
 
-### Preset Ideas
-
-**Pad Sound**
-* 2-3 sawtooth oscillators, detuned ±10-20 cents
-* Attack: 0.5-1s, Sustain: 70-90%, Release: 1-2s
-* Filter cutoff: 1000-2000 Hz
-* LFO to filter: 200-500 Hz at 0.5-2 Hz rate
-
-**Pluck/Bass**
-* 1-2 sawtooth oscillators
-* Attack: 0.001-0.01s, Decay: 0.1-0.3s, Sustain: 0-30%, Release: 0.1-0.3s
-* Filter envelope amount: 3000-5000 Hz
-* Filter attack: 0.001s, Filter decay: 0.2-0.4s
-
-**Lead Synth**
-* 1-2 sawtooth oscillators
-* Filter cutoff: 2000-4000 Hz with envelope amount: 2000-4000 Hz
-* Attack: 0.01-0.05s, Sustain: 80-100%
-* LFO to pitch: 5-15 cents at 4-6 Hz for vibrato
-
-**Wobble Bass**
-* Sawtooth oscillator
-* Low filter cutoff: 200-800 Hz, Resonance: 10-20
-* LFO to filter: 1000-3000 Hz with square wave at 1-8 Hz
-* Attack: 0.001s, Sustain: 100%
-
 ### Keyboard Shortcuts
 
 * **Z-M**: Lower octave white keys (C-B)
@@ -121,28 +117,30 @@ bun run preview
 
 ### Architecture Overview
 
-**Core Layer** ( `core/` )
+**Core Layer** (`core/`)
 * Contains the fundamental synthesizer logic
 * `synth.ts` orchestrates all modules and manages the audio context
 * `oscillator-bank.ts` handles multiple oscillator creation and management
 * `keys.ts` maps keyboard inputs to musical frequencies
+* `settings-manager.ts` manages presets, settings persistence, and import/export
 
-**Audio Layer** ( `audio/` )
+**Audio Layer** (`audio/`)
 * Handles audio input/output concerns
 * `midi.ts` manages MIDI device connections and note events
 
-**Modules Layer** ( `modules/` )
+**Modules Layer** (`modules/`)
 * Self-contained audio processing units
 * Each module encapsulates a specific synthesis component (envelopes, filters, LFO, etc.)
 * Modules expose configuration interfaces and Web Audio node connections
 * Designed for reusability and testability
 
-**Components Layer** ( `components/` )
+**Components Layer** (`components/`)
 * Custom web components for the user interface
 * Built with native Web Components API
 * Encapsulate both UI and behaviour
+* `preset-selector.ts` provides the preset management interface
 
-**Handlers Layer** ( `handlers/` )
+**Handlers Layer** (`handlers/`)
 * Event handlers and UI interaction logic
 * Separated from core audio logic for better maintainability
 * Each handler manages a specific aspect of user interaction
