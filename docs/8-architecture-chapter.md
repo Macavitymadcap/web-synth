@@ -10,10 +10,10 @@ Web Synth represents a modern, modular approach to sound synthesis, leveraging w
 flowchart TD
     subgraph Audio Signal Chain
     OSC[Oscillators] --> MIX[Mixer]
-    LFO[LFO] --> MIX
     MIX --> FILT[Filter]
-    ENV[Envelope] --> FILT
+    LFO[LFO] -->|Modulate| FILT
     FILT --> AMP[Amplifier]
+    ENV[Envelope] -->|Control| AMP
     AMP --> DELAY[Delay]
     DELAY --> OUT[Output]
     end

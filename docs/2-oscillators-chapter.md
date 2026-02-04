@@ -4,19 +4,11 @@
 
 ### What are Oscillators?
 
-Oscillators are the fundamental sound generators in a synthesizer. They create periodic electrical signals that, when converted to audio, produce distinct tonal characteristics. In essence, an oscillator is a circuit that generates a repeating waveform at a specific frequency.
+Oscillators are the fundamental sound generators in a synthesizer. They create periodic electrical signals that, when converted to audio, produce distinct tonal characteristics. They are circuits that generate repeating waveforms at a specific frequencies.
 
 ### Waveform Fundamentals
 
-Each waveform has a unique harmonic content that defines its tonal quality:
-
-```mermaid
-flowchart LR
-    SINE[Sine Wave] --> |Purest Tone| SOUND[Sound Characteristics]
-    SQUARE[Square Wave] --> |Hollow, Reedy| SOUND
-    SAW[Sawtooth Wave] --> |Bright, Aggressive| SOUND
-    TRI[Triangle Wave] --> |Soft, Mellow| SOUND
-```
+The **Web Audio API** gives access to four waveforms, each providing unique harmonic content that defines its tonal quality:
 
 #### 1. Sine Wave
 - Purest form of sound
@@ -65,9 +57,9 @@ Synthesists often use multiple oscillators to create richer sounds:
 
 ```mermaid
 flowchart LR
-    OSC1[Oscillator 1\nBase Frequency] --> MIX[Mixer]
-    OSC2[Oscillator 2\nSlightly Detuned] --> MIX
-    OSC3[Oscillator 3\nAlternate Waveform] --> MIX
+    OSC1[Oscillator 1: Base Frequency] --> MIX[Mixer]
+    OSC2[Oscillator 2: Slightly Detuned] --> MIX
+    OSC3[Oscillator 3: Alternate Waveform] --> MIX
     
     MIX --> OUT[Complex Sound]
     
@@ -105,20 +97,6 @@ class OscillatorBank {
   }
 }
 ```
-
-### Practical Exploration
-
-Experiment with:
-- Mixing different waveforms
-- Slight detune amounts
-- Oscillator level balancing
-
-### Performance Considerations
-
-Web Audio API oscillators are computationally efficient, but:
-- Limit total number of simultaneous oscillators
-- Use gainNodes for level control
-- Optimize for browser performance
 
 ---
 
