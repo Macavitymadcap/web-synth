@@ -99,7 +99,7 @@ const synth = new Synth(
 );
 
 // Initialize handlers
-const { keyDownHandler, keyUpHandler, pointerDownHandler, pointerUpHandler } = 
+const { keyDownHandler, keyUpHandler, pointerDownHandler, pointerUpHandler, pointerCancelHandler } = 
   createKeyboardHandlers(synth);
 const recordButtonClickHandler = createRecordingHandler(synth, recordBtn);
 const octaveChangeHandler = createOctaveChangeHandler(
@@ -123,6 +123,7 @@ document.addEventListener("keydown", keyDownHandler);
 document.addEventListener("keyup", keyUpHandler);
 document.addEventListener("pointerdown", pointerDownHandler);
 document.addEventListener("pointerup", pointerUpHandler);
+document.addEventListener("pointercancel", pointerCancelHandler);
 recordBtn.addEventListener("click", recordButtonClickHandler);
 octaveUpper.addEventListener("change", octaveChangeHandler);
 octaveLower.addEventListener("change", octaveChangeHandler);
