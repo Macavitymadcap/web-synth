@@ -13,16 +13,8 @@ export class OscillatorControl extends HTMLElement {
     
     this.innerHTML = `
       <style>
-        oscillator-control .osc-container {
-          display: flex;
-          flex-wrap: wrap;
-          gap: 1rem;
-          align-items: flex-end;
-          padding: 1.25rem;
-          background: linear-gradient(135deg, #1a1a1a 0%, #0d0d0d 100%);
-          border-radius: 6px;
-          border: 1px solid rgba(255, 255, 255, 0.1);
-          box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.5);
+        oscillator-control {
+          display: block;
         }
 
         oscillator-control .osc-label {
@@ -34,6 +26,8 @@ export class OscillatorControl extends HTMLElement {
           letter-spacing: 0.5px;
           font-weight: 600;
           gap: 0.5rem;
+          flex: 0 1 auto;
+          min-width: fit-content;
         }
 
         oscillator-control select {
@@ -57,29 +51,8 @@ export class OscillatorControl extends HTMLElement {
           border-color: #4a9eff;
           box-shadow: 0 0 0 2px rgba(74, 158, 255, 0.2);
         }
-
-        oscillator-control .remove-osc {
-          padding: 0.5rem 1rem;
-          background: #dc3545;
-          color: white;
-          border: none;
-          border-radius: 4px;
-          cursor: pointer;
-          font-size: 0.85rem;
-          font-weight: 600;
-          text-transform: uppercase;
-          letter-spacing: 0.5px;
-          transition: all 0.2s ease;
-          box-shadow: 0 2px 4px rgba(220, 53, 69, 0.3);
-        }
-
-        oscillator-control .remove-osc:hover {
-          background: #c82333;
-          box-shadow: 0 3px 6px rgba(220, 53, 69, 0.5);
-          transform: translateY(-1px);
-        }
       </style>
-      <div class="osc-container">
+      <controls-group>
         <label class="osc-label">
           Waveform
           <select class="osc-wave">
@@ -110,14 +83,14 @@ export class OscillatorControl extends HTMLElement {
           formatter="percentage">
         </range-control>
         
-        <button class="remove-osc">Remove</button>
-      </div>
+        <button class="danger">Remove</button>
+      </controls-group>
     `;
     
     this.waveSelect = this.querySelector('.osc-wave')!;
     this.detuneControl = this.querySelector('.osc-detune') as RangeControl;
     this.levelControl = this.querySelector('.osc-level') as RangeControl;
-    this.removeBtn = this.querySelector('.remove-osc')!;
+    this.removeBtn = this.querySelector('button')!;
     
     // Listen for changes and dispatch custom event
     this.waveSelect.addEventListener('change', () => this.notifyChange());

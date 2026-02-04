@@ -26,39 +26,35 @@ class PresetSelector extends HTMLElement {
           flex: 1;
           min-width: 200px;
           padding: 0.5rem;
-          border: 1px solid var(--border-color, #ccc);
+          border: 1px solid rgba(255, 255, 255, 0.2);
           border-radius: 4px;
-          background: var(--bg-color, white);
-          color: var(--text-color, black);
+          background: #0a0a0a;
+          color: var(--text-primary);
           font-size: 0.9rem;
         }
 
         .preset-buttons {
           display: flex;
           gap: 0.5rem;
+          flex-wrap: wrap;
+          flex: 1;
+          min-width: 0;
         }
 
-        .preset-btn {
-          padding: 0.5rem 1rem;
-          border: none;
-          border-radius: 4px;
-          background: var(--primary-color, #007bff);
-          color: white;
-          cursor: pointer;
-          font-size: 0.9rem;
-          transition: background 0.2s;
+        .preset-buttons button {
+          flex: 1 1 auto;
+          min-width: fit-content;
         }
 
-        .preset-btn:hover {
-          background: var(--primary-hover, #0056b3);
-        }
-
-        .preset-btn.secondary {
-          background: var(--secondary-color, #6c757d);
-        }
-
-        .preset-btn.secondary:hover {
-          background: var(--secondary-hover, #545b62);
+        @media (max-width: 640px) {
+          .preset-select {
+            width: 100%;
+            flex: 1 1 100%;
+          }
+          
+          .preset-buttons {
+            width: 100%;
+          }
         }
       </style>
 
@@ -74,10 +70,10 @@ class PresetSelector extends HTMLElement {
         </select>
 
         <div class="preset-buttons">
-          <button class="preset-btn" id="load-preset">Load</button>
-          <button class="preset-btn secondary" id="save-preset">Save As...</button>
-          <button class="preset-btn secondary" id="export-settings">Export</button>
-          <button class="preset-btn secondary" id="import-settings">Import</button>
+          <button id="load-preset">Load</button>
+          <button id="save-preset" class="secondary">Save As...</button>
+          <button id="export-settings">Export</button>
+          <button id="import-settings">Import</button>
         </div>
       </div>
     `;

@@ -29,24 +29,6 @@ export class AppHeader extends HTMLElement {
           letter-spacing: 2px;
           text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
         }
-        
-        app-header button {
-          background: var(--accent-blue);
-          color: white;
-          border: none;
-          padding: 0.5rem 1.25rem;
-          border-radius: 4px;
-          font-weight: 600;
-          cursor: pointer;
-          box-shadow: 0 2px 8px rgba(74, 158, 255, 0.3);
-          transition: all 0.2s ease;
-        }
-        
-        app-header button:hover {
-          background: #3a8eef;
-          box-shadow: 0 4px 12px rgba(74, 158, 255, 0.5);
-          transform: translateY(-1px);
-        }
       </style>
       <header>
         <h1>${title}</h1>
