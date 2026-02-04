@@ -19,6 +19,11 @@ import "./components/oscillator-control";
 import "./components/toggle-switch";
 import "./components/waveform-picker";
 import "./components/octave-picker";
+import "./components/module-section";
+import "./components/adsr-controls";
+import "./components/controls-group";
+import "./components/instructions-list";
+import "./components/subsection-header";
 
 // Keyboard and MIDI controls
 const octaveUpper = document.getElementById("octave-upper") as HTMLSelectElement;

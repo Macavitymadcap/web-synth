@@ -131,67 +131,6 @@ body {
   color: var(--accent-blue);
 }
 
-.module h3 {
-  color: var(--text-secondary);
-  font-size: 0.95rem;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  margin: 1.5rem 0 0.75rem 0;
-  padding-top: 1rem;
-  border-top: 1px solid rgba(255, 255, 255, 0.05);
-}
-
-.controls {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1.25rem;
-  align-items: center;
-  padding: 1rem;
-  background: var(--panel-bg);
-  border-radius: 6px;
-  border: 1px solid rgba(255, 255, 255, 0.05);
-}
-
-.controls label {
-  display: flex;
-  flex-direction: column;
-  font-size: 0.85rem;
-  color: var(--text-secondary);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  font-weight: 500;
-}
-
-.controls input[type="checkbox"] {
-  margin-right: 0.5rem;
-  accent-color: var(--accent-green);
-  width: 18px;
-  height: 18px;
-  cursor: pointer;
-}
-
-.controls select {
-  margin-top: 0.5rem;
-  padding: 0.5rem;
-  background: #0a0a0a;
-  color: var(--text-primary);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 4px;
-  font-size: 0.9rem;
-  cursor: pointer;
-  transition: border-color 0.2s ease;
-}
-
-.controls select:hover {
-  border-color: var(--accent-blue);
-}
-
-.controls select:focus {
-  outline: none;
-  border-color: var(--accent-blue);
-  box-shadow: 0 0 0 2px rgba(74, 158, 255, 0.2);
-}
-
 .midi-control {
   display: flex;
   flex-direction: row;
