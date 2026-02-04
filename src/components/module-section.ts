@@ -17,7 +17,7 @@ export class ModuleSection extends HTMLElement {
       <section class="module" id="${id}">
         <header>
           <h2>${title}</h2>
-          <button type="button" popovertarget="${instructionsId}">Instructions</button>
+          <button type="button" popovertarget="${instructionsId}">Info</button>
         </header>
 
         <article class="instructions" id="${instructionsId}" popover>
