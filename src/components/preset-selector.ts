@@ -23,8 +23,7 @@ class PresetSelector extends HTMLElement {
         }
 
         .preset-select {
-          flex: 1;
-          min-width: 200px;
+          flex: 2 1 300px;
           padding: 0.5rem;
           border: 1px solid rgba(255, 255, 255, 0.2);
           border-radius: 4px;
@@ -37,7 +36,7 @@ class PresetSelector extends HTMLElement {
           display: flex;
           gap: 0.5rem;
           flex-wrap: wrap;
-          flex: 1;
+          flex: 1 1 400px;
           min-width: 0;
         }
 

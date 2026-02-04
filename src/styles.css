@@ -22,7 +22,7 @@ body {
 }
 
 .container {
-  max-width: 900px;
+  max-width: 1800px; 
   margin: 0 auto;
   background: #0d0d0d;
   padding: 2rem;
@@ -32,8 +32,78 @@ body {
     0 20px 60px rgba(0, 0, 0, 0.8);
 }
 
+/* Multi-column masonry layout for modules */
+.modules-grid {
+  column-gap: 1.5rem;
+  margin-top: 2rem;
+}
+
+/* Mobile: Single column (< 900px) */
+@media (max-width: 899px) {
+  .modules-grid {
+    column-count: 1;
+  }
+  
+  .container {
+    padding: 1rem;
+  }
+  
+  body {
+    padding: 1rem;
+  }
+}
+
+/* Tablet/Small laptop: 2 columns (900px - 1399px) */
+@media (min-width: 900px) and (max-width: 1399px) {
+  .modules-grid {
+    column-count: 2;
+  }
+  
+  .container {
+    max-width: 1000px;
+  }
+}
+
+/* Desktop: 3 columns (≥ 1400px) */
+@media (min-width: 1400px) {
+  .modules-grid {
+    column-count: 3;
+  }
+  
+  .container {
+    max-width: 1500px;
+  }
+}
+
+/* Prevent modules from breaking across columns */
+.modules-grid .module,
+.modules-grid > * {
+  break-inside: avoid;
+  page-break-inside: avoid;
+  -webkit-column-break-inside: avoid;
+  margin-bottom: 1.5rem;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Adjust module margins since grid handles spacing */
+.modules-grid .module {
+  margin-block: 0;
+}
+
+/* Ensure app-header spans full width */
+.container > app-header {
+  width: 100%;
+  margin-bottom: 1.5rem;
+}
+
+/* Optional: Force specific modules to span full width */
+.module.full-width {
+  grid-column: 1 / -1;
+}
+
 .module {
-  margin-block: 2rem;
+  margin-block: 2rem; /* Only applies when NOT in grid */
   background: var(--module-bg);
   border: 2px solid var(--module-border);
   border-radius: 10px;
@@ -211,8 +281,6 @@ body {
   touch-action: none; /* Prevent browser from handling touch events */
   -webkit-tap-highlight-color: transparent; /* Remove iOS tap highlight */
 }
-
-/* Add these button styles to your existing CSS file */
 
 /* Base button styles */
 button {
