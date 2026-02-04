@@ -147,24 +147,6 @@ bun run preview
 * Separated from core audio logic for better maintainability
 * Each handler manages a specific aspect of user interaction
 
-## Technologies
-
-* **TypeScript**: Type-safe JavaScript for robust code
-* **Web Audio API**: Browser-based audio synthesis
-* **Web Components**: Custom HTML elements for modular UI
-* **Vite**: Fast development server and build tool
-* **Bun**: JavaScript runtime and package manager
-
-## Architecture Principles
-
-The codebase follows these principles:
-
-1. **Separation of Concerns**: Audio logic, UI, and event handling are clearly separated
-2. **Modularity**: Each module has a single, well-defined responsibility
-3. **Composability**: Modules can be combined in different ways
-4. **Type Safety**: TypeScript provides compile-time guarantees
-5. **Testability**: Modules can be tested independently
-
 ## Browser Compatibility
 
 * Chrome/Edge: Full support
