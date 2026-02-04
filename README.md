@@ -1,6 +1,8 @@
 # Web Synth
 
-A feature-rich, browser-based polyphonic synthesizer built with Web Audio API and TypeScript. Create and shape sounds using multiple oscillators, filters, envelopes, LFO modulation, and delay effects.
+A feature-rich, browser-based polyphonic synthesizer built with the Web Audio
+API and TypeScript. Create and shape sounds using multiple oscillators, filters,
+envelopes, LFO modulation, and delay effects.
 
 ## Features
 
@@ -151,10 +153,6 @@ web-synth/
 ## License
 
 MIT
-
-## Contributing
-
-Contributions are welcome! Please feel free to submit issues or pull requests.
 
 ## Acknowledgments
 

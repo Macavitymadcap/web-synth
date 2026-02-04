@@ -1,5 +1,6 @@
 import { keyInfo } from "./keys";
 import { OscillatorBank, type OscillatorInstance } from "./oscillator-bank";
+import { EnvelopeModule } from "./modules/envelope-module";
 
 type Voice = { 
   oscillators: OscillatorInstance[]; 
@@ -11,11 +12,8 @@ type Voice = {
 
 type ConstructorConfig = {
   oscillatorBank: OscillatorBank;
+  ampEnvelope: EnvelopeModule;
   polyEl: HTMLInputElement;
-  attackEl: HTMLInputElement;
-  decayEl: HTMLInputElement;
-  sustainEl: HTMLInputElement;
-  releaseEl: HTMLInputElement;
   filterCutoffEl: HTMLInputElement;
   filterResonanceEl: HTMLInputElement;
   filterEnvAmountEl: HTMLInputElement;
@@ -51,14 +49,11 @@ export class Synth {
   lfoToFilter!: GainNode;
   lfoToPitch!: GainNode;
 
-  // Oscillator bank
+  // Modules
   private readonly oscillatorBank: OscillatorBank;
+  private readonly ampEnvelope: EnvelopeModule;
 
   polyEl: HTMLInputElement;
-  attackEl: HTMLInputElement;
-  decayEl: HTMLInputElement;
-  sustainEl: HTMLInputElement;
-  releaseEl: HTMLInputElement;
   
   // Filter controls
   filterCutoffEl: HTMLInputElement;
@@ -85,11 +80,8 @@ export class Synth {
 
   constructor({
     oscillatorBank,
+    ampEnvelope,
     polyEl,
-    attackEl,
-    decayEl,
-    sustainEl,
-    releaseEl,
     filterCutoffEl,
     filterResonanceEl,
     filterEnvAmountEl,
@@ -107,11 +99,8 @@ export class Synth {
     masterVolumeEl
   }: ConstructorConfig) {
     this.oscillatorBank = oscillatorBank;
+    this.ampEnvelope = ampEnvelope;
     this.polyEl = polyEl;
-    this.attackEl = attackEl;
-    this.decayEl = decayEl;
-    this.sustainEl = sustainEl;
-    this.releaseEl = releaseEl;
     
     this.filterCutoffEl = filterCutoffEl;
     this.filterResonanceEl = filterResonanceEl;
@@ -300,17 +289,11 @@ export class Synth {
 
     const now = this.audioCtx.currentTime;
     
-    // Amplitude envelope (ADSR)
-    const attack = Number.parseFloat(this.attackEl.value);
-    const decay = Number.parseFloat(this.decayEl.value);
-    const sustain = Number.parseFloat(this.sustainEl.value);
+    // Apply amplitude envelope using EnvelopeModule
     const targetGain = 0.3 * velocity;
+    this.ampEnvelope.applyEnvelope(gain.gain, now, 0, targetGain);
     
-    gain.gain.setValueAtTime(0, now);
-    gain.gain.linearRampToValueAtTime(targetGain, now + attack);
-    gain.gain.linearRampToValueAtTime(targetGain * sustain, now + attack + decay);
-    
-    // Filter envelope (ADSR)
+    // Filter envelope (ADSR) - still using old approach for now
     const filterAttack = Number.parseFloat(this.filterAttackEl.value);
     const filterDecay = Number.parseFloat(this.filterDecayEl.value);
     const filterSustain = Number.parseFloat(this.filterSustainEl.value);
@@ -330,15 +313,12 @@ export class Synth {
     if (!v || !this.audioCtx) return;
 
     const now = this.audioCtx.currentTime;
-    const release = Number.parseFloat(this.releaseEl.value);
+    
+    // Apply amplitude release using EnvelopeModule
+    const release = this.ampEnvelope.applyRelease(v.gain.gain, now);
+    
+    // Filter release - still using old approach for now
     const filterRelease = Number.parseFloat(this.filterReleaseEl.value);
-    
-    // Amplitude release
-    v.gain.gain.cancelScheduledValues(now);
-    v.gain.gain.setValueAtTime(v.gain.gain.value, now);
-    v.gain.gain.linearRampToValueAtTime(0, now + release);
-    
-    // Filter release
     v.filterEnv.gain.cancelScheduledValues(now);
     v.filterEnv.gain.setValueAtTime(v.filterEnv.gain.value, now);
     v.filterEnv.gain.linearRampToValueAtTime(0, now + filterRelease);

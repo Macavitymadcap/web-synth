@@ -1,5 +1,6 @@
 import { Synth } from "./synth";
 import { OscillatorBank } from "./oscillator-bank";
+import { EnvelopeModule } from "./modules/envelope-module";
 import { buildKeyInfo } from "./keys";
 import { MidiHandler } from "./midi";
 import "./components/piano-keyboard";
@@ -53,14 +54,14 @@ const recordBtn = document.getElementById("record") as HTMLButtonElement;
 // Create Oscillator Bank
 const oscillatorBank = new OscillatorBank();
 
+// Create Envelope Module
+const ampEnvelope = new EnvelopeModule(attack, decay, sustain, release);
+
 // Create Synth Instance with dependency injection
 const synth = new Synth({
   oscillatorBank,
+  ampEnvelope,
   polyEl: poly,
-  attackEl: attack,
-  decayEl: decay,
-  sustainEl: sustain,
-  releaseEl: release,
   filterCutoffEl: filterCutoff,
   filterResonanceEl: filterResonance,
   filterEnvAmountEl: filterEnvAmount,
