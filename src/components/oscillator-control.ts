@@ -21,35 +21,45 @@ export class OscillatorControl extends HTMLElement {
           display: flex;
           flex-direction: column;
           font-size: 0.75rem;
-          color: #999;
+          color: var(--text-secondary);
           text-transform: uppercase;
           letter-spacing: 0.5px;
           font-weight: 600;
           gap: 0.5rem;
           flex: 0 1 auto;
           min-width: fit-content;
+          text-shadow: 0 0 5px var(--text-secondary);
         }
 
         oscillator-control select {
           margin-top: 0.5rem;
           padding: 0.5rem;
-          background: #0a0a0a;
-          color: #e0e0e0;
-          border: 1px solid rgba(255, 255, 255, 0.2);
+          background: rgba(10, 0, 21, 0.8);
+          color: var(--text-primary);
+          border: 2px solid var(--neon-cyan);
           border-radius: 4px;
           font-size: 0.9rem;
           cursor: pointer;
-          transition: border-color 0.2s ease;
+          transition: all 0.2s ease;
+          box-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
+          text-shadow: 0 0 5px var(--text-primary);
         }
 
         oscillator-control select:hover {
-          border-color: #4a9eff;
+          border-color: var(--neon-pink);
+          background: rgba(26, 0, 51, 0.9);
+          box-shadow: 0 0 15px rgba(255, 0, 255, 0.5);
         }
 
         oscillator-control select:focus {
           outline: none;
-          border-color: #4a9eff;
-          box-shadow: 0 0 0 2px rgba(74, 158, 255, 0.2);
+          border-color: var(--neon-pink);
+          box-shadow: 0 0 20px rgba(255, 0, 255, 0.6);
+        }
+        
+        oscillator-control select option {
+          background: #0a0015;
+          color: var(--text-primary);
         }
       </style>
       <controls-group>

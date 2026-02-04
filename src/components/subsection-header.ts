@@ -11,7 +11,8 @@ export class SubsectionHeader extends HTMLElement {
           letter-spacing: 1px;
           margin: 1.5rem 0 0.75rem 0;
           padding-top: 1rem;
-          border-top: 1px solid rgba(255, 255, 255, 0.05);
+          border-top: 1px solid rgba(255, 0, 255, 0.3);
+          text-shadow: 0 0 10px var(--text-secondary);
         }
       </style>
       <h3>${text}</h3>

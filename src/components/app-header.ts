@@ -26,8 +26,12 @@ export class AppHeader extends HTMLElement {
           font-size: 2rem;
           font-weight: 700;
           text-transform: uppercase;
-          letter-spacing: 2px;
-          text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+          letter-spacing: 4px;
+          text-shadow: 
+            0 0 20px var(--accent-orange),
+            0 0 40px var(--accent-orange),
+            0 0 60px rgba(255, 51, 102, 0.5),
+            0 2px 4px rgba(0, 0, 0, 0.8);
         }
       </style>
       <header>

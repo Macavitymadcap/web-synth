@@ -39,21 +39,22 @@ export class ToggleSwitch extends HTMLElement {
           left: 0;
           right: 0;
           bottom: 0;
-          background: linear-gradient(135deg, #1a1a1a 0%, #0d0d0d 100%);
-          border: 2px solid rgba(255, 255, 255, 0.2);
+          background: linear-gradient(135deg, #1a0033 0%, #0a0015 100%);
+          border: 2px solid rgba(255, 0, 255, 0.4);
           border-radius: 14px;
           transition: all 0.3s ease;
           box-shadow: 
-            inset 0 2px 4px rgba(0, 0, 0, 0.5),
-            0 1px 2px rgba(0, 0, 0, 0.3);
+            inset 0 2px 8px rgba(0, 0, 0, 0.8),
+            0 0 10px rgba(255, 0, 255, 0.3);
         }
         
         toggle-switch input:checked + .toggle-track {
-          background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
-          border-color: #27ae60;
+          background: linear-gradient(135deg, rgba(0, 255, 136, 0.3) 0%, rgba(0, 204, 109, 0.3) 100%);
+          border-color: var(--accent-green);
           box-shadow: 
-            inset 0 2px 4px rgba(0, 0, 0, 0.3),
-            0 2px 8px rgba(46, 204, 113, 0.4);
+            inset 0 2px 8px rgba(0, 0, 0, 0.5),
+            0 0 20px rgba(0, 255, 136, 0.6),
+            0 0 30px rgba(0, 255, 136, 0.4);
         }
         
         toggle-switch .toggle-thumb {
@@ -62,31 +63,47 @@ export class ToggleSwitch extends HTMLElement {
           left: 2px;
           width: 20px;
           height: 20px;
-          background: linear-gradient(145deg, #e0e0e0, #c0c0c0);
+          background: linear-gradient(145deg, var(--neon-pink), #cc00cc);
+          border: 1px solid var(--neon-pink);
           border-radius: 50%;
           transition: all 0.3s ease;
           box-shadow: 
-            0 2px 4px rgba(0, 0, 0, 0.3),
-            inset 0 1px 0 rgba(255, 255, 255, 0.5);
+            0 0 15px rgba(255, 0, 255, 0.8),
+            0 2px 6px rgba(0, 0, 0, 0.5),
+            inset 0 1px 2px rgba(255, 255, 255, 0.3);
         }
         
         toggle-switch input:checked + .toggle-track .toggle-thumb {
           transform: translateX(28px);
-          background: linear-gradient(145deg, #ffffff, #e0e0e0);
+          background: linear-gradient(145deg, var(--accent-green), #00cc6d);
+          border-color: var(--accent-green);
           box-shadow: 
-            0 2px 6px rgba(0, 0, 0, 0.4),
-            inset 0 1px 0 rgba(255, 255, 255, 0.8);
+            0 0 20px rgba(0, 255, 136, 1),
+            0 0 30px rgba(0, 255, 136, 0.6),
+            0 2px 8px rgba(0, 0, 0, 0.6),
+            inset 0 1px 2px rgba(255, 255, 255, 0.4);
         }
         
         toggle-switch .toggle-track:hover {
-          border-color: var(--accent-blue);
+          border-color: var(--neon-cyan);
+          box-shadow: 
+            inset 0 2px 8px rgba(0, 0, 0, 0.8),
+            0 0 15px rgba(0, 255, 255, 0.5);
+        }
+        
+        toggle-switch input:checked + .toggle-track:hover {
+          border-color: var(--neon-cyan);
+          box-shadow: 
+            inset 0 2px 8px rgba(0, 0, 0, 0.5),
+            0 0 25px rgba(0, 255, 136, 0.8),
+            0 0 40px rgba(0, 255, 255, 0.4);
         }
         
         toggle-switch input:focus + .toggle-track {
-          border-color: var(--accent-blue);
+          border-color: var(--neon-cyan);
           box-shadow: 
-            inset 0 2px 4px rgba(0, 0, 0, 0.5),
-            0 0 0 2px rgba(74, 158, 255, 0.2);
+            inset 0 2px 8px rgba(0, 0, 0, 0.8),
+            0 0 20px rgba(0, 255, 255, 0.8);
         }
         
         toggle-switch .toggle-label {
@@ -95,11 +112,15 @@ export class ToggleSwitch extends HTMLElement {
           text-transform: uppercase;
           letter-spacing: 0.5px;
           font-weight: 600;
-          transition: color 0.3s ease;
+          transition: all 0.3s ease;
+          text-shadow: 0 0 5px var(--text-secondary);
         }
         
         toggle-switch input:checked ~ .toggle-label {
           color: var(--accent-green);
+          text-shadow: 
+            0 0 10px var(--accent-green),
+            0 0 20px rgba(0, 255, 136, 0.5);
         }
       </style>
       <label class="toggle-container">
