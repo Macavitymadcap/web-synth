@@ -5,7 +5,7 @@ import { MasterModule } from "../modules/master-module";
 import { VoiceManager } from "../modules/voice-manager";
 
 /**
- * Synth class orchestrates all synthesizer modules
+ * Synth class orchestrates all synthesiser modules
  * Manages audio context initialization and module coordination
  */
 export class Synth {
@@ -63,7 +63,7 @@ export class Synth {
   }
 
   /**
-   * Play a frequency with the synthesizer
+   * Play a frequency with the synthesiser
    * @param key - Unique identifier for this voice
    * @param freq - Frequency to play in Hz
    * @param velocity - Note velocity (0-1)

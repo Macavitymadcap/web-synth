@@ -54,6 +54,10 @@ label {
     inset 0 0 60px rgba(255, 0, 255, 0.1);
 }
 
+
+/*
+--------MODULES--------
+*/
 /* Multi-column masonry layout for modules */
 .modules-grid {
   column-gap: 1.5rem;
@@ -124,6 +128,10 @@ label {
   grid-column: 1 / -1;
 }
 
+/*
+--------MASTER--------
+*/
+
 .midi-control {
   display: flex;
   flex-direction: row;
@@ -181,7 +189,9 @@ label {
   transform: translateY(-2px);
 }
 
-/* Base button styles */
+/*
+--------BUTTONS--------
+*/
 button {
   padding: 0.5rem 1.25rem;
   border: 2px solid;

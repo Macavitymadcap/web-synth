@@ -1,6 +1,6 @@
 # Web Synth
 
-A feature-rich, browser-based polyphonic synthesizer built with the Web Audio
+A feature-rich, browser-based polyphonic synthesiser built with the Web Audio
 API and TypeScript. Create and shape sounds using multiple oscillators, filters, 
 envelopes, LFO modulation, and delay effects.
 
@@ -118,7 +118,7 @@ bun run preview
 ### Architecture Overview
 
 **Core Layer** (`core/`)
-* Contains the fundamental synthesizer logic
+* Contains the fundamental synthesiser logic
 * `synth.ts` orchestrates all modules and manages the audio context
 * `oscillator-bank.ts` handles multiple oscillator creation and management
 * `keys.ts` maps keyboard inputs to musical frequencies
@@ -157,4 +157,4 @@ MIT
 
 ## Acknowledgments
 
-Built with the Web Audio API and inspired by classic hardware synthesizers.
+Built with the Web Audio API and inspired by classic hardware synthesisers.
