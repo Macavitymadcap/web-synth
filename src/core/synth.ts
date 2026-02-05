@@ -1,5 +1,6 @@
 import { keyInfo } from "./keys";
 import { LFOModule } from "../modules/lfo-module";
+import { ChorusModule } from "../modules/chorus-module";
 import { DelayModule } from "../modules/delay-module";
 import { MasterModule } from "../modules/master-module";
 import { ReverbModule } from "../modules/reverb-module";
@@ -18,6 +19,7 @@ export class Synth {
 
   // Modules
   private readonly lfoModule: LFOModule;
+  private readonly chorusModule: ChorusModule;
   private readonly delayModule: DelayModule;
   private readonly masterModule: MasterModule;
   private readonly reverbModule: ReverbModule;
@@ -25,12 +27,14 @@ export class Synth {
 
   constructor(
     lfoModule: LFOModule,
+    chorusModule: ChorusModule,
     delayModule: DelayModule,
     masterModule: MasterModule,
     reverbModule: ReverbModule,
     voiceManager: VoiceManager
   ) {
     this.lfoModule = lfoModule;
+    this.chorusModule = chorusModule;
     this.delayModule = delayModule;
     this.masterModule = masterModule;
     this.reverbModule = reverbModule;
@@ -42,21 +46,28 @@ export class Synth {
    * Sets up the complete audio signal chain
    */
   ensureAudio() {
-    if (!this.audioCtx) {
-      this.audioCtx = this.masterModule.initialize();
-      this.masterGain = this.masterModule.getMasterGain()!;
+  if (!this.audioCtx) {
+    // Initialize master module (creates AudioContext and master gain)
+    this.audioCtx = this.masterModule.initialize();
+    this.masterGain = this.masterModule.getMasterGain()!;
 
-      // Initialize LFO
-      this.lfoModule.initialize(this.audioCtx);
+    // Initialize LFO
+    this.lfoModule.initialize(this.audioCtx);
 
-      // Initialize reverb effect (before delay)
-      const reverbNodes = this.reverbModule.initialize(this.audioCtx, this.masterGain);
-
-      // Initialize delay effect (connects to reverb output)
-      const delayNodes = this.delayModule.initialize(this.audioCtx, reverbNodes.input);
-      this.effectsInput = delayNodes.input;
-    }
+    // Initialize effects chain (back to front)
+    // Reverb connects to master
+    const reverbNodes = this.reverbModule.initialize(this.audioCtx, this.masterGain);
+    
+    // Delay connects to reverb
+    const delayNodes = this.delayModule.initialize(this.audioCtx, reverbNodes.input);
+    
+    // Chorus connects to delay (this is the first effect in the chain)
+    const chorusNodes = this.chorusModule.initialize(this.audioCtx, delayNodes.input);
+    
+    // Voices connect to chorus input
+    this.effectsInput = chorusNodes.input;
   }
+}
 
   /**
    * Trigger a note on event using a keyboard key

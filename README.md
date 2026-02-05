@@ -22,6 +22,7 @@ envelopes, LFO modulation, and delay effects.
 
 ### Effects
 
+* **Chorus**: Thicken sounds with multiple modulated delay lines creating a rich, wide stereo effect
 * **Reverb**: Simulate room acoustics with adjustable decay and wet/dry mix for spatial effects
 * **Delay**: Configurable delay time, feedback, and wet/dry mix for spatial effects
 * **Master Volume**: Global output level control
@@ -107,7 +108,7 @@ bun run preview
 4. **Shape with Envelopes**: Adjust ADSR to control how notes start and end
 5. **Filter Brightness**: Lower the filter cutoff for darker tones, raise it for brighter sounds
 6. **Add Movement**: Use LFO modulation for vibrato and filter wobble effects
-7. **Create Space**: Add delay for depth and ambience
+7. **Add Movement and Space**: Use chorus for width and thickness, reverb for room ambience, and delay for rhythmic echoes
 
 ### Keyboard Shortcuts
 

@@ -3,6 +3,7 @@ import { OscillatorBank } from "./core/oscillator-bank";
 import { EnvelopeModule } from "./modules/envelope-module";
 import { FilterModule } from "./modules/filter-module";
 import { LFOModule } from "./modules/lfo-module";
+import { ChorusModule } from "./modules/chorus-module";
 import { DelayModule } from "./modules/delay-module";
 import { MasterModule } from "./modules/master-module";
 import { VoiceManager } from "./modules/voice-manager";
@@ -61,6 +62,11 @@ const lfoToFilter = (document.getElementById("lfo-to-filter") as RangeControl).g
 const lfoToPitch = (document.getElementById("lfo-to-pitch") as RangeControl).getInput();
 const lfoWaveform = document.getElementById("lfo-waveform") as HTMLSelectElement;
 
+// Chorus controls
+const chorusRate = (document.getElementById("chorus-rate") as RangeControl).getInput();
+const chorusDepth = (document.getElementById("chorus-depth") as RangeControl).getInput();
+const chorusMix = (document.getElementById("chorus-mix") as RangeControl).getInput();
+
 // Delay controls
 const delayTime = (document.getElementById("delay-time") as RangeControl).getInput();
 const delayFeedback = (document.getElementById("delay-feedback") as RangeControl).getInput();
@@ -87,6 +93,7 @@ const ampEnvelope = new EnvelopeModule(attack, decay, sustain, release);
 const filterEnvelope = new EnvelopeModule(filterAttack, filterDecay, filterSustain, filterRelease);
 const filterModule = new FilterModule(filterCutoff, filterResonance, filterEnvAmount, filterEnvelope);
 const lfoModule = new LFOModule(lfoRate, lfoWaveform, lfoToFilter, lfoToPitch);
+const chorusModule = new ChorusModule(chorusRate, chorusDepth, chorusMix);
 const delayModule = new DelayModule(delayTime, delayFeedback, delayMix);
 const masterModule = new MasterModule(masterVolume);
 const reverbModule = new ReverbModule(reverbDecay, reverbMix);
@@ -100,6 +107,7 @@ const voiceManager = new VoiceManager(
 
 const synth = new Synth(
   lfoModule,
+  chorusModule,
   delayModule,
   masterModule,
   reverbModule,

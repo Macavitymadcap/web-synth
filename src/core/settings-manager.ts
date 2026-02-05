@@ -1,5 +1,6 @@
 import type { OscillatorBank } from "./oscillator-bank";
 import type { OscillatorSection } from "../components/oscillator-section";
+import type { RangeControl } from "../components/range-control";
 
 export interface SynthSettings {
   // Master
@@ -33,6 +34,11 @@ export interface SynthSettings {
   lfoRate: number;
   lfoToFilter: number;
   lfoToPitch: number;
+
+  // Chorus
+  chorusRate: number;
+  chorusDepth: number;
+  chorusMix: number;
   
   // Reverb
   reverbDecay: number;
@@ -85,6 +91,10 @@ export class SettingsManager {
       lfoToFilter: Number.parseFloat((document.getElementById("lfo-to-filter") as HTMLInputElement)?.value ?? "0"),
       lfoToPitch: Number.parseFloat((document.getElementById("lfo-to-pitch") as HTMLInputElement)?.value ?? "0"),
       
+      chorusRate: Number.parseFloat((document.getElementById("chorus-rate") as HTMLInputElement)?.value ?? "1.5"),
+      chorusDepth: Number.parseFloat((document.getElementById("chorus-depth") as HTMLInputElement)?.value ?? "0.5"),
+      chorusMix: Number.parseFloat((document.getElementById("chorus-mix") as HTMLInputElement)?.value ?? "0.5"),
+
       reverbDecay: Number.parseFloat((document.getElementById("reverb-decay") as HTMLInputElement)?.value ?? "1.5"),
       reverbMix: Number.parseFloat((document.getElementById("reverb-mix") as HTMLInputElement)?.value ?? "0.2"),
 
@@ -159,6 +169,11 @@ export class SettingsManager {
     this.setControlValue("lfo-to-filter", settings.lfoToFilter);
     this.setControlValue("lfo-to-pitch", settings.lfoToPitch);
     
+    // Chorus
+    this.setControlValue("chorus-rate", settings.chorusRate);
+    this.setControlValue("chorus-depth", settings.chorusDepth);
+    this.setControlValue("chorus-mix", settings.chorusMix);
+
     // Reverb
     this.setControlValue("reverb-decay", settings.reverbDecay);
     this.setControlValue("reverb-mix", settings.reverbMix);
@@ -170,14 +185,23 @@ export class SettingsManager {
   }
 
   private setControlValue(id: string, value: number): void {
-    const control = document.getElementById(id) as HTMLInputElement;
-    if (control) {
-      control.value = value.toString();
-      // Trigger both input and change events
-      control.dispatchEvent(new Event("input", { bubbles: true }));
-      control.dispatchEvent(new Event("change", { bubbles: true }));
+  const element = document.getElementById(id);
+  if (!element) return;
+  
+  // Check if it's a RangeControl custom element
+  if (element.tagName.toLowerCase() === 'range-control') {
+    const rangeControl = element as RangeControl;
+    if (rangeControl.setValue) {
+      rangeControl.setValue(value);
     }
+  } else {
+    // It's a regular input element
+    const control = element as HTMLInputElement;
+    control.value = value.toString();
+    control.dispatchEvent(new Event("input", { bubbles: true }));
+    control.dispatchEvent(new Event("change", { bubbles: true }));
   }
+}
 
   private applyOscillatorSettings(oscillators: Array<{ waveform: OscillatorType; detune: number; level: number }>): void {
     const section = document.querySelector("oscillator-section") as OscillatorSection;
