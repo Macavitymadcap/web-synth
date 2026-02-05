@@ -13,10 +13,12 @@ export class HelpPopover extends HTMLElement {
           border: 2px solid var(--neon-cyan);
           border-radius: 12px;
           padding: 1.5rem;
-          max-width: 600px;
+          max-width: 90vw;
+          max-height: 90vh;
           box-shadow: 
             0 0 20px rgba(0, 255, 255, 0.5),
             0 10px 40px rgba(0, 0, 0, 0.8);
+          overflow: auto; /* Add this */
         }
 
         help-popover .instructions::backdrop {
@@ -31,6 +33,10 @@ export class HelpPopover extends HTMLElement {
           margin-bottom: 1rem;
           padding-bottom: 0.75rem;
           border-bottom: 1px solid rgba(0, 255, 255, 0.3);
+          position: sticky;      /* Sticky header */
+          top: 0;                /* Stick to top */
+          background: inherit;   /* Keep background */
+          z-index: 2;            /* Above content */
         }
 
         help-popover .instructions header h2 {

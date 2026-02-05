@@ -9,7 +9,8 @@ export class ModuleSection extends HTMLElement {
     
     // Restore collapsed state from localStorage
     const savedState = localStorage.getItem(`module-${id}-expanded`);
-    this.isExpanded = savedState !== null ? savedState === 'true' : true;
+    const hasSavedState = savedState !== null;
+    this.isExpanded = hasSavedState ? savedState === 'true' : true;
 
     // Store the slotted content
     const instructionsContent = this.querySelector('[slot="instructions"]');
@@ -177,10 +178,12 @@ export class ModuleSection extends HTMLElement {
           border: 2px solid var(--neon-cyan);
           border-radius: 12px;
           padding: 1.5rem;
-          max-width: 600px;
+          max-width: 90vw;
+          max-height: 90vh;
           box-shadow: 
             0 0 20px rgba(0, 255, 255, 0.5),
             0 10px 40px rgba(0, 0, 0, 0.8);
+          overflow: auto; /* Add this */
         }
 
         .instructions::backdrop {
@@ -195,6 +198,10 @@ export class ModuleSection extends HTMLElement {
           margin-bottom: 1rem;
           padding-bottom: 0.75rem;
           border-bottom: 1px solid rgba(0, 255, 255, 0.3);
+          position: sticky;      /* Sticky header */
+          top: 0;                /* Stick to top */
+          background: inherit;   /* Keep background */
+          z-index: 2;            /* Above content */
         }
 
         .instructions header h2 {
