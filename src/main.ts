@@ -6,6 +6,7 @@ import { LFOModule } from "./modules/lfo-module";
 import { DelayModule } from "./modules/delay-module";
 import { MasterModule } from "./modules/master-module";
 import { VoiceManager } from "./modules/voice-manager";
+import { ReverbModule } from "./modules/reverb-module";
 import { createKeyboardHandlers } from "./handlers/keyboard-handlers";
 import { createRecordingHandler } from "./handlers/recording-handler";
 import { createOctaveChangeHandler } from "./handlers/octave-handler";
@@ -65,6 +66,10 @@ const delayTime = (document.getElementById("delay-time") as RangeControl).getInp
 const delayFeedback = (document.getElementById("delay-feedback") as RangeControl).getInput();
 const delayMix = (document.getElementById("delay-mix") as RangeControl).getInput();
 
+// Reverb controls
+const reverbDecay = (document.getElementById("reverb-decay") as RangeControl).getInput();
+const reverbMix = (document.getElementById("reverb-mix") as RangeControl).getInput();
+
 // Master controls
 const poly = document.getElementById("poly") as HTMLInputElement;
 const masterVolume = (document.getElementById("master-volume") as RangeControl).getInput();
@@ -84,6 +89,7 @@ const filterModule = new FilterModule(filterCutoff, filterResonance, filterEnvAm
 const lfoModule = new LFOModule(lfoRate, lfoWaveform, lfoToFilter, lfoToPitch);
 const delayModule = new DelayModule(delayTime, delayFeedback, delayMix);
 const masterModule = new MasterModule(masterVolume);
+const reverbModule = new ReverbModule(reverbDecay, reverbMix);
 const voiceManager = new VoiceManager(
   poly,
   oscillatorBank,
@@ -96,6 +102,7 @@ const synth = new Synth(
   lfoModule,
   delayModule,
   masterModule,
+  reverbModule,
   voiceManager
 );
 
@@ -156,3 +163,9 @@ recordBtn.addEventListener("click", recordButtonClickHandler);
 octaveUpper.addEventListener("change", octaveChangeHandler);
 octaveLower.addEventListener("change", octaveChangeHandler);
 midiToggle.addEventListener("change", midiToggleHandler);
+document.addEventListener('decay-changed', () => {
+  if (synth.audioCtx) {
+    reverbModule.updateWithContext(synth.audioCtx);
+  }
+});
+

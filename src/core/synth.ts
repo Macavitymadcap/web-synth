@@ -2,6 +2,7 @@ import { keyInfo } from "./keys";
 import { LFOModule } from "../modules/lfo-module";
 import { DelayModule } from "../modules/delay-module";
 import { MasterModule } from "../modules/master-module";
+import { ReverbModule } from "../modules/reverb-module";
 import { VoiceManager } from "../modules/voice-manager";
 
 /**
@@ -11,7 +12,7 @@ import { VoiceManager } from "../modules/voice-manager";
 export class Synth {
   audioCtx: AudioContext | null = null;
   masterGain!: GainNode;
-  
+
   // Effects routing
   effectsInput!: GainNode;
 
@@ -19,17 +20,20 @@ export class Synth {
   private readonly lfoModule: LFOModule;
   private readonly delayModule: DelayModule;
   private readonly masterModule: MasterModule;
+  private readonly reverbModule: ReverbModule;
   private readonly voiceManager: VoiceManager;
 
   constructor(
     lfoModule: LFOModule,
     delayModule: DelayModule,
     masterModule: MasterModule,
+    reverbModule: ReverbModule,
     voiceManager: VoiceManager
   ) {
     this.lfoModule = lfoModule;
     this.delayModule = delayModule;
     this.masterModule = masterModule;
+    this.reverbModule = reverbModule;
     this.voiceManager = voiceManager;
   }
 
@@ -39,15 +43,17 @@ export class Synth {
    */
   ensureAudio() {
     if (!this.audioCtx) {
-      // Initialize master module (creates AudioContext and master gain)
       this.audioCtx = this.masterModule.initialize();
       this.masterGain = this.masterModule.getMasterGain()!;
-      
+
       // Initialize LFO
       this.lfoModule.initialize(this.audioCtx);
-      
-      // Initialize delay effect
-      const delayNodes = this.delayModule.initialize(this.audioCtx, this.masterGain);
+
+      // Initialize reverb effect (before delay)
+      const reverbNodes = this.reverbModule.initialize(this.audioCtx, this.masterGain);
+
+      // Initialize delay effect (connects to reverb output)
+      const delayNodes = this.delayModule.initialize(this.audioCtx, reverbNodes.input);
       this.effectsInput = delayNodes.input;
     }
   }

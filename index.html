@@ -39,7 +39,7 @@
             Master controls affect the overall synthesiser output and recording functionality, allowing you to save your
             creations as audio files for sharing or further editing.
           </p>
-  
+
           <instruction-list>
             <instruction-item label="Polyphonic">Toggle between polyphonic (multiple notes) and monophonic (single note)
               modes</instruction-item>
@@ -48,11 +48,12 @@
               output</instruction-item>
             <instruction-item label="Stop Recording">Click the button again (now "Stop Recording") to end the recording
               session</instruction-item>
-            <instruction-item label="Download">After stopping, a download link will appear to save the recorded audio as a
+            <instruction-item label="Download">After stopping, a download link will appear to save the recorded audio as
+              a
               .webm file</instruction-item>
           </instruction-list>
         </div>
-  
+
         <div slot="content">
           <controls-group>
             <toggle-switch id="poly" label-on="Polyphony: On" label-off="Polyphony: Off" checked></toggle-switch>
@@ -62,11 +63,11 @@
           </controls-group>
         </div>
       </module-section>
-  
+
       <module-section id="visual-keyboard" title="Visual Keyboard">
         <div slot="instructions">
           <p>You can play notes using the visual keyboard, your computer keyboard, or an external MIDI device.</p>
-  
+
           <instruction-list>
             <instruction-item label="Keyboard">Use your computer keyboard to play notes</instruction-item>
             <instruction-item label="Mouse/Touch">Click or tap any key on the visual keyboard</instruction-item>
@@ -75,20 +76,20 @@
             <instruction-item label="MIDI">Enable MIDI to use an external MIDI keyboard or controller (Desktop
               Chrome/Edge/Opera only - not supported on iOS)</instruction-item>
           </instruction-list>
-  
+
           <keyboard-mapping-info></keyboard-mapping-info>
         </div>
-  
+
         <div slot="content">
           <dual-keyboard upper-octave="5" lower-octave="4" upper-keys="qwertyu,23567" lower-keys="zxcvbnm,sdghj">
           </dual-keyboard>
         </div>
       </module-section>
-  
+
       <module-section id="presets" title="Presets">
         <div slot="instructions">
           <p>Load factory presets or save your own custom sounds.</p>
-  
+
           <instruction-list>
             <instruction-item label="Load Preset">Select a preset and click "Load" to apply settings</instruction-item>
             <instruction-item label="Save Preset">Click "Save As..." to save current settings as a new
@@ -97,17 +98,17 @@
             <instruction-item label="Import">Load settings from a previously exported JSON file</instruction-item>
           </instruction-list>
         </div>
-  
+
         <div slot="content">
           <preset-selector></preset-selector>
         </div>
       </module-section>
-  
+
       <module-section id="oscillator-controls" title="Oscillators">
         <div slot="instructions">
           <p>Oscillators are the primary sound sources in the synthesiser. You can add multiple oscillators to layer
             sounds and create richer tones.</p>
-  
+
           <instruction-list>
             <instruction-item label="Multiple Oscillators">Add multiple oscillators to layer and create richer
               sounds</instruction-item>
@@ -118,17 +119,17 @@
             <instruction-item label="Level">Control the volume/mix of each oscillator (0-100%)</instruction-item>
           </instruction-list>
         </div>
-  
+
         <div slot="content">
           <oscillator-section></oscillator-section>
         </div>
       </module-section>
-  
+
       <module-section id="asdr-module" title="Amplitude Envelope (ADSR)">
         <div slot="instructions">
           <p>The amplitude envelope shapes the volume of the sound over time using four stages: Attack, Decay, Sustain,
             and Release.</p>
-  
+
           <instruction-list>
             <instruction-item label="Attack">How quickly the note reaches full volume (0.001s - 2s)</instruction-item>
             <instruction-item label="Decay">How quickly it falls to sustain level after attack</instruction-item>
@@ -136,17 +137,17 @@
             <instruction-item label="Release">How quickly the note fades after release (0.01s - 3s)</instruction-item>
           </instruction-list>
         </div>
-  
+
         <div slot="content">
           <adsr-controls prefix="" attack="0.01" decay="0.01" sustain="0.7" release="0.5"></adsr-controls>
         </div>
       </module-section>
-  
+
       <module-section id="filter-module" title="Filter">
         <div slot="instructions">
           <p>The filter shapes the tonal quality of the sound by cutting off frequencies above a certain point. You can
             adjust the cutoff frequency, resonance, and how the filter envelope modulates the cutoff over time.</p>
-  
+
           <instruction-list>
             <instruction-item label="Cutoff">Frequency where filter starts cutting (20Hz - 20kHz). Lower = darker
               sound</instruction-item>
@@ -158,7 +159,7 @@
               time</instruction-item>
           </instruction-list>
         </div>
-  
+
         <div slot="content">
           <controls-group>
             <range-control label="Cutoff" id="filter-cutoff" min="20" max="20000" step="1" value="2000"></range-control>
@@ -167,16 +168,16 @@
             <range-control label="Envelope Amount" id="filter-env-amount" min="0" max="10000" step="10"
               value="2000"></range-control>
           </controls-group>
-  
+
           <subsection-header text="Filter Envelope"></subsection-header>
           <adsr-controls prefix="filter-" attack="0.1" decay="0.3" sustain="0.5" release="0.5"></adsr-controls>
         </div>
       </module-section>
-  
+
       <module-section id="lfo-module" title="LFO (Modulation)">
         <div slot="instructions">
           <p>The LFO modulates parameters like filter cutoff and pitch to add movement and variation to the sound.</p>
-  
+
           <instruction-list>
             <instruction-item label="Waveform">Shape of the modulation wave</instruction-item>
             <instruction-item label="Rate">Speed of modulation (0.1 - 20 Hz)</instruction-item>
@@ -184,7 +185,7 @@
             <instruction-item label="To Pitch">Amount of pitch vibrato (0 - 100 cents)</instruction-item>
           </instruction-list>
         </div>
-  
+
         <div slot="content">
           <controls-group>
             <waveform-picker id="lfo-waveform" label="Waveform" value="sine"></waveform-picker>
@@ -197,11 +198,34 @@
           </controls-group>
         </div>
       </module-section>
-  
+
+      <module-section id="reverb-effect" title="Reverb Effect">
+        <div slot="instructions">
+          <p>The reverb effect adds realistic room ambience and spatial depth to your sound by simulating reflections in
+            an acoustic space.</p>
+
+          <instruction-list>
+            <instruction-item label="Decay">Length of reverb tail in seconds (0.1 - 5s). Longer = larger
+              space</instruction-item>
+            <instruction-item label="Mix">Balance between dry (original) and wet (reverb) signal (0 -
+              100%)</instruction-item>
+          </instruction-list>
+        </div>
+
+        <div slot="content">
+          <controls-group>
+            <range-control label="Decay" id="reverb-decay" min="0.1" max="5" step="0.1" value="2"
+              formatter="s"></range-control>
+            <range-control label="Mix" id="reverb-mix" min="0" max="1" step="0.01" value="0.3"
+              formatter="%"></range-control>
+          </controls-group>
+        </div>
+      </module-section>
+
       <module-section id="delay-effect" title="Delay Effect">
         <div slot="instructions">
           <p>The delay effect creates echoes of the sound, adding depth and space to your audio.</p>
-  
+
           <instruction-list>
             <instruction-item label="Time">Delay time in seconds (0 - 2s)</instruction-item>
             <instruction-item label="Feedback">How much the delay repeats (0 - 95%)</instruction-item>
@@ -209,7 +233,7 @@
               100%)</instruction-item>
           </instruction-list>
         </div>
-  
+
         <div slot="content">
           <controls-group>
             <range-control label="Time" id="delay-time" min="0" max="2" step="0.01" value="0.375"

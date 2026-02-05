@@ -22,6 +22,7 @@ envelopes, LFO modulation, and delay effects.
 
 ### Effects
 
+* **Reverb**: Simulate room acoustics with adjustable decay and wet/dry mix for spatial effects
 * **Delay**: Configurable delay time, feedback, and wet/dry mix for spatial effects
 * **Master Volume**: Global output level control
 
