@@ -42,6 +42,18 @@ import type { PianoKeyboard } from "./components/organisms/piano-keyboard";
 import "./components/organisms/preset-selector";
 import type { PresetSelector } from "./components/organisms/preset-selector";
 import { CompressorModule } from "./modules/compressor-module";
+import "./components/organisms/master-controls";
+import "./components/organisms/presets-controls";
+import "./components/organisms/oscillator-controls";
+import "./components/organisms/visual-keyboard";
+import "./components/organisms/adsr-module";
+import "./components/organisms/filter-module-controls";
+import "./components/organisms/lfo-module-controls";
+import "./components/organisms/chorus-effect";
+import "./components/organisms/reverb-effect";
+import "./components/organisms/compressor-effect";
+import "./components/organisms/delay-effect";
+import "./components/organisms/waveshaper-effect";
 
 // Keyboard and MIDI controls
 const octaveUpper = document.getElementById("octave-upper") as HTMLSelectElement;
