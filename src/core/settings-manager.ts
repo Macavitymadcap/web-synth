@@ -1,6 +1,6 @@
 import type { OscillatorBank } from "./oscillator-bank";
-import type { OscillatorSection } from "../components/oscillator-section";
-import type { RangeControl } from "../components/range-control";
+import type { OscillatorSection } from "../components/organisms/oscillator-section";
+import type { RangeControl } from "../components/atoms/range-control";
 
 export interface SynthSettings {
   // Master
