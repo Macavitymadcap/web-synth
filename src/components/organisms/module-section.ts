@@ -300,7 +300,7 @@ export class ModuleSection extends HTMLElement {
         </div>
         <div id="${id}-instructions" popover class="instructions">
           <header>
-            <h2>${title} - Instructions</h2>
+            <h2>${title}</h2>
             <button popovertarget="${id}-instructions" popovertargetaction="hide" title="Close">×</button>
           </header>
           <div class="instructions-content"></div>
