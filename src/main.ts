@@ -41,6 +41,7 @@ import "./components/organisms/piano-keyboard";
 import type { PianoKeyboard } from "./components/organisms/piano-keyboard";
 import "./components/organisms/preset-selector";
 import type { PresetSelector } from "./components/organisms/preset-selector";
+import { CompressorModule } from "./modules/compressor-module";
 
 // Keyboard and MIDI controls
 const octaveUpper = document.getElementById("octave-upper") as HTMLSelectElement;
@@ -85,6 +86,13 @@ const delayMix = (document.getElementById("delay-mix") as RangeControl).getInput
 const reverbDecay = (document.getElementById("reverb-decay") as RangeControl).getInput();
 const reverbMix = (document.getElementById("reverb-mix") as RangeControl).getInput();
 
+// Compressor controls
+const compressorThreshold = (document.getElementById("compressor-threshold") as RangeControl).getInput();
+const compressorRatio = (document.getElementById("compressor-ratio") as RangeControl).getInput();
+const compressorAttack = (document.getElementById("compressor-attack") as RangeControl).getInput();
+const compressorRelease = (document.getElementById("compressor-release") as RangeControl).getInput();
+const compressorKnee = (document.getElementById("compressor-knee") as RangeControl).getInput();
+
 // Waveshaper controls
 const waveshaperDrive = (document.getElementById("waveshaper-drive") as RangeControl).getInput();
 const waveshaperBlend = (document.getElementById("waveshaper-blend") as RangeControl).getInput();
@@ -110,6 +118,13 @@ const chorusModule = new ChorusModule(chorusRate, chorusDepth, chorusMix);
 const delayModule = new DelayModule(delayTime, delayFeedback, delayMix);
 const masterModule = new MasterModule(masterVolume);
 const reverbModule = new ReverbModule(reverbDecay, reverbMix);
+const compressorModule = new CompressorModule(
+  compressorThreshold,
+  compressorRatio,
+  compressorAttack,
+  compressorRelease,
+  compressorKnee
+);
 const waveShaperModule = new WaveShaperModule(waveshaperDrive, waveshaperBlend);
 const voiceManager = new VoiceManager(
   poly,
@@ -127,6 +142,7 @@ const synth = new Synth(
   reverbModule,
   voiceManager,
   waveShaperModule,
+  compressorModule
 );
 
 // Initialize settings manager and connect it to oscillator bank

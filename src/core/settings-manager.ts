@@ -1,86 +1,20 @@
 import type { OscillatorBank } from "./oscillator-bank";
 import type { OscillatorSection } from "../components/organisms/oscillator-section";
 import type { RangeControl } from "../components/atoms/range-control";
-
-export type OscillatorType = "sine" | "square" | "sawtooth" | "triangle";
-
-export type FilterType = "lowpass" | "highpass" | "bandpass" | "notch" | "allpass" | "lowshelf" | "highshelf" | "peaking";
-
-export type MasterSettings = {
-  polyphonic: boolean;
-  masterVolume: number;
-};
-
-export type OscillatorSettings = {
-  waveform: OscillatorType;
-  detune: number;
-  level: number;
-};
-
-export type EnvelopeSettings = {
-  attack: number;
-  decay: number;
-  sustain: number;
-  release: number;
-};
-
-export type FilterSettings = {
-  type: FilterType;
-  cutoff: number;
-  resonance: number;
-  envAmount: number;
-  attack: number;
-  decay: number;
-  sustain: number;
-  release: number;
-};
-
-export type LFOSettings = {
-  waveform: OscillatorType;
-  rate: number;
-  toFilter: number;
-  toPitch: number;
-};
-
-export type ChorusSettings = {
-  rate: number;
-  depth: number;
-  mix: number;
-};
-
-export type ReverbSettings = {
-  decay: number;
-  reverbMix: number;
-};
-
-export type WaveShaperSettings = {
-  drive: number;
-  blend: number;
-};
-
-export type DelaySettings = {
-  time: number;
-  feedback: number;
-  mix: number;
-};
-
-export interface SynthSettings {
-  master: MasterSettings;
-  oscillators: OscillatorSettings[];
-  envelope: EnvelopeSettings;
-  filter: FilterSettings;
-  lfo: LFOSettings;
-  chorus: ChorusSettings;
-  reverb: ReverbSettings;
-  waveshaper: WaveShaperSettings;
-  delay: DelaySettings;
-}
-
-export interface Preset {
-  name: string;
-  description?: string;
-  settings: SynthSettings;
-}
+import { 
+  SynthSettings, 
+  MasterSettings, 
+  EnvelopeSettings, 
+  FilterSettings, 
+  FilterType, 
+  LFOSettings, 
+  ChorusSettings, 
+  WaveShaperSettings, 
+  ReverbSettings, 
+  CompressorSettings, 
+  DelaySettings, 
+  Preset 
+} from "./settings.model";
 
 const STORAGE_KEY = "web-synth-settings";
 const USER_PRESETS_KEY = "web-synth-user-presets";
@@ -101,6 +35,7 @@ export class SettingsManager {
       lfo: this.getLFOSettings(),
       chorus: this.getChorusSettings(),
       waveshaper: this.getWaveShaperSettings(),
+      compressor: this.getCompressorSettings(),
       reverb: this.getReverbSettings(),
       delay: this.getDelaySettings(),
     };
@@ -176,6 +111,16 @@ export class SettingsManager {
     };
   }
 
+  private getCompressorSettings(): CompressorSettings {
+    return {
+      threshold: Number.parseFloat((document.getElementById("compressor-threshold") as HTMLInputElement)?.value ?? "-24"),
+      ratio: Number.parseFloat((document.getElementById("compressor-ratio") as HTMLInputElement)?.value ?? "4"),
+      attack: Number.parseFloat((document.getElementById("compressor-attack") as HTMLInputElement)?.value ?? "0.003"),
+      release: Number.parseFloat((document.getElementById("compressor-release") as HTMLInputElement)?.value ?? "0.25"),
+      knee: Number.parseFloat((document.getElementById("compressor-knee") as HTMLInputElement)?.value ?? "30"),
+    };
+  }
+
   private getDelaySettings(): DelaySettings {
     return {
       time: Number.parseFloat((document.getElementById("delay-time") as HTMLInputElement)?.value ?? "0.375"),
@@ -194,6 +139,7 @@ export class SettingsManager {
     this.applyChorusSettings(settings.chorus);
     this.applyWaveShaperSettings(settings.waveshaper);
     this.applyReverbSettings(settings.reverb);
+    this.applyCompressorSettings(settings.compressor);
     this.applyDelaySettings(settings.delay);
   }
 
@@ -289,6 +235,14 @@ export class SettingsManager {
   private applyReverbSettings(settings: ReverbSettings): void {
     this.setControlValue("reverb-decay", settings.decay);
     this.setControlValue("reverb-mix", settings.reverbMix);
+  }
+
+  private applyCompressorSettings(settings: CompressorSettings): void {
+    this.setControlValue("compressor-threshold", settings.threshold);
+    this.setControlValue("compressor-ratio", settings.ratio);
+    this.setControlValue("compressor-attack", settings.attack);
+    this.setControlValue("compressor-release", settings.release);
+    this.setControlValue("compressor-knee", settings.knee);
   }
 
   private applyDelaySettings(settings: DelaySettings): void {

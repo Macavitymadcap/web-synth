@@ -6,6 +6,7 @@ import { MasterModule } from "../modules/master-module";
 import { ReverbModule } from "../modules/reverb-module";
 import { VoiceManager } from "../modules/voice-manager";
 import { WaveShaperModule } from "../modules/wave-shaper-module";
+import { CompressorModule } from "../modules/compressor-module";
 
 /**
  * Synth class orchestrates all synthesiser modules
@@ -26,6 +27,7 @@ export class Synth {
   private readonly reverbModule: ReverbModule;
   private readonly voiceManager: VoiceManager;
   private readonly waveShaperModule: WaveShaperModule;
+  private readonly compressorModule: CompressorModule;
 
   constructor(
     lfoModule: LFOModule,
@@ -34,7 +36,8 @@ export class Synth {
     masterModule: MasterModule,
     reverbModule: ReverbModule,
     voiceManager: VoiceManager,
-    waveShaperModule: WaveShaperModule
+    waveShaperModule: WaveShaperModule,
+    compressorModule: CompressorModule
   ) {
     this.lfoModule = lfoModule;
     this.chorusModule = chorusModule;
@@ -43,6 +46,7 @@ export class Synth {
     this.reverbModule = reverbModule;
     this.voiceManager = voiceManager;
     this.waveShaperModule = waveShaperModule;
+    this.compressorModule = compressorModule;
   }
 
   /**
@@ -60,7 +64,8 @@ export class Synth {
 
     // Initialize effects chain (back to front)
     const reverbNodes = this.reverbModule.initialize(this.audioCtx, this.masterGain);
-    const waveShaperNodes = this.waveShaperModule.initialize(this.audioCtx, reverbNodes.input);
+    const compressorNodes = this.compressorModule.initialize(this.audioCtx, reverbNodes.output);
+    const waveShaperNodes = this.waveShaperModule.initialize(this.audioCtx, compressorNodes.input);
     const delayNodes = this.delayModule.initialize(this.audioCtx, waveShaperNodes.input);
   
     const chorusNodes = this.chorusModule.initialize(this.audioCtx, delayNodes.input);
