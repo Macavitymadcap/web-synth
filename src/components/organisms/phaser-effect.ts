@@ -1,5 +1,3 @@
-import { PhaserModule } from "../../modules/phaser-module";
-
 export class PhaserEffect extends HTMLElement {
   connectedCallback() {
     this.innerHTML = `
