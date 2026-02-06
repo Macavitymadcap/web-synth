@@ -27,14 +27,16 @@ export const FACTORY_PRESETS: Preset[] = [
       lfoRate: 0.3,
       lfoToFilter: 150,
       lfoToPitch: 0,
-      chorusRate: 0.4,
+      chorusRate: 0.3,
       chorusDepth: 20,
       chorusMix: 0.4,
       reverbDecay: 3.5,
       reverbMix: 0.45,
       delayTime: 0.5,
       delayFeedback: 0.25,
-      delayMix: 0.15
+      delayMix: 0.15,
+      waveshaperDrive: 0.5,
+      waveshaperBlend: 0.15
     }
   },
   {
@@ -69,7 +71,9 @@ export const FACTORY_PRESETS: Preset[] = [
       reverbMix: 0.05,
       delayTime: 0.375,
       delayFeedback: 0.2,
-      delayMix: 0
+      delayMix: 0,
+      waveshaperDrive: 0.2,
+      waveshaperBlend: 0.1
     }
   },
   {
@@ -79,8 +83,8 @@ export const FACTORY_PRESETS: Preset[] = [
       polyphonic: false,
       masterVolume: 0.28,
       oscillators: [
-        { waveform: "sawtooth", detune: -1, level: 1 },
-        { waveform: "sawtooth", detune: 2, level: 1 }
+        { waveform: "sawtooth", detune: 0, level: 1 },
+        { waveform: "sawtooth", detune: 0, level: 1 }
       ],
       attack: 0.01,
       decay: 0.1,
@@ -104,7 +108,9 @@ export const FACTORY_PRESETS: Preset[] = [
       reverbMix: 0.2,
       delayTime: 0.375,
       delayFeedback: 0.3,
-      delayMix: 0.15
+      delayMix: 0.15,
+      waveshaperDrive: 2.5,
+      waveshaperBlend: 0.3
     }
   },
   {
@@ -139,7 +145,9 @@ export const FACTORY_PRESETS: Preset[] = [
       reverbMix: 0.1,
       delayTime: 0.375,
       delayFeedback: 0.2,
-      delayMix: 0
+      delayMix: 0,
+      waveshaperDrive: 1.5,
+      waveshaperBlend: 0.25
     }
   },
   {
@@ -173,7 +181,9 @@ export const FACTORY_PRESETS: Preset[] = [
       reverbMix: 0.05,
       delayTime: 0.375,
       delayFeedback: 0.2,
-      delayMix: 0
+      delayMix: 0,
+      waveshaperDrive: 2.2,
+      waveshaperBlend: 0.35
     }
   },
   {
@@ -201,14 +211,16 @@ export const FACTORY_PRESETS: Preset[] = [
       lfoRate: 5,
       lfoToFilter: 0,
       lfoToPitch: 0,
-      chorusRate: 0.7,
+      chorusRate: 0.3,
       chorusDepth: 18,
       chorusMix: 0.35,
       reverbDecay: 1.8,
       reverbMix: 0.25,
       delayTime: 0.25,
       delayFeedback: 0.15,
-      delayMix: 0.1
+      delayMix: 0.1,
+      waveshaperDrive: 0.01,
+      waveshaperBlend: 0.1
     }
   },
   {
@@ -237,14 +249,16 @@ export const FACTORY_PRESETS: Preset[] = [
       lfoRate: 6,
       lfoToFilter: 0,
       lfoToPitch: 0,
-      chorusRate: 0.8,
+      chorusRate: 0.5,
       chorusDepth: 25,
       chorusMix: 0.5,
       reverbDecay: 2.5,
       reverbMix: 0.3,
       delayTime: 0.375,
       delayFeedback: 0.2,
-      delayMix: 0
+      delayMix: 0,
+      waveshaperDrive: 0,
+      waveshaperBlend: 0
     }
   },
   {
@@ -280,7 +294,9 @@ export const FACTORY_PRESETS: Preset[] = [
       reverbMix: 0.5,
       delayTime: 0.5,
       delayFeedback: 0.25,
-      delayMix: 0.2
+      delayMix: 0.2,
+      waveshaperDrive: 0.3,
+      waveshaperBlend: 0.1
     }
   },
   {
@@ -316,7 +332,9 @@ export const FACTORY_PRESETS: Preset[] = [
       reverbMix: 0.25,
       delayTime: 0.375,
       delayFeedback: 0.2,
-      delayMix: 0
+      delayMix: 0,
+      waveshaperDrive: 1.2,
+      waveshaperBlend: 0.18
     }
   },
   {
@@ -350,7 +368,9 @@ export const FACTORY_PRESETS: Preset[] = [
       reverbMix: 0.35,
       delayTime: 0.375,
       delayFeedback: 0.25,
-      delayMix: 0.1
+      delayMix: 0.1,
+      waveshaperDrive: 0,
+      waveshaperBlend: 0
     }
   },
   {
@@ -385,7 +405,9 @@ export const FACTORY_PRESETS: Preset[] = [
       reverbMix: 0.3,
       delayTime: 0.1875,
       delayFeedback: 0.4,
-      delayMix: 0.3
+      delayMix: 0.3,
+      waveshaperDrive: 0.8,
+      waveshaperBlend: 0.2
     }
   },
   {
@@ -421,7 +443,83 @@ export const FACTORY_PRESETS: Preset[] = [
       reverbMix: 0.4,
       delayTime: 0.25,
       delayFeedback: 0.35,
-      delayMix: 0.25
+      delayMix: 0.25,
+      waveshaperDrive: 0.2,
+      waveshaperBlend: 0.1
+    }
+  },
+  {
+    name: "Gritty Lead",
+    description: "Aggressive distorted lead with lots of edge",
+    settings: {
+      polyphonic: false,
+      masterVolume: 0.22,
+      oscillators: [
+        { waveform: "sawtooth", detune: 0, level: 1 },
+        { waveform: "square", detune: 0, level: 0.5 }
+      ],
+      attack: 0.01,
+      decay: 0.08,
+      sustain: 0.7,
+      release: 0.18,
+      filterCutoff: 3200,
+      filterResonance: 1.5,
+      filterEnvAmount: 1200,
+      filterAttack: 0.01,
+      filterDecay: 0.1,
+      filterSustain: 0.6,
+      filterRelease: 0.12,
+      lfoWaveform: "sine",
+      lfoRate: 5,
+      lfoToFilter: 0,
+      lfoToPitch: 0,
+      chorusRate: 0.3,
+      chorusDepth: 10,
+      chorusMix: 0.18,
+      reverbDecay: 0.7,
+      reverbMix: 0.18,
+      delayTime: 0.18,
+      delayFeedback: 0.22,
+      delayMix: 0.12,
+      waveshaperDrive: 6,
+      waveshaperBlend: 0.7
+    }
+  },
+  {
+    name: "Lo-Fi Crunch",
+    description: "Dirty, crushed sound for lo-fi and retro vibes",
+    settings: {
+      polyphonic: true,
+      masterVolume: 0.18,
+      oscillators: [
+        { waveform: "square", detune: 0, level: 1 },
+        { waveform: "triangle", detune: 0, level: 0.4 }
+      ],
+      attack: 0.005,
+      decay: 0.12,
+      sustain: 0.3,
+      release: 0.18,
+      filterCutoff: 1800,
+      filterResonance: 2.2,
+      filterEnvAmount: 800,
+      filterAttack: 0.01,
+      filterDecay: 0.1,
+      filterSustain: 0.2,
+      filterRelease: 0.1,
+      lfoWaveform: "triangle",
+      lfoRate: 2.5,
+      lfoToFilter: 0,
+      lfoToPitch: 0,
+      chorusRate: 0.2,
+      chorusDepth: 6,
+      chorusMix: 0.1,
+      reverbDecay: 0.5,
+      reverbMix: 0.08,
+      delayTime: 0.12,
+      delayFeedback: 0.18,
+      delayMix: 0.08,
+      waveshaperDrive: 8,
+      waveshaperBlend: 0.6
     }
   }
 ];

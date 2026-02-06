@@ -1,0 +1,82 @@
+// src/modules/wave-shaper-module.ts
+export type WaveShaperConfig = {
+  curve: Float32Array;
+  oversample: 'none' | '2x' | '4x';
+};
+
+export type WaveShaperNodes = {
+  input: GainNode;
+  output: GainNode;
+};
+
+/**
+ * WaveShaperModule manages a wave shaping effect
+ * Handles the shaping curve and oversampling settings
+ */
+export class WaveShaperModule {
+  private readonly curveEl: HTMLInputElement;
+  private readonly oversampleEl: HTMLSelectElement;
+
+  private waveShaperNode: WaveShaperNode | null = null;
+  private inputGain: GainNode | null = null;
+  private outputGain: GainNode | null = null;
+
+  constructor(curveEl: HTMLInputElement, oversampleEl: HTMLSelectElement) {
+    this.curveEl = curveEl;
+    this.oversampleEl = oversampleEl;
+
+    this.setupParameterListeners();
+  }
+
+  getConfig(): WaveShaperConfig {
+    return {
+      curve: this.createCurve(),
+      oversample: this.oversampleEl.value as 'none' | '2x' | '4x',
+    };
+  }
+
+  initialize(audioCtx: AudioContext, destination: AudioNode): WaveShaperNodes {
+    const { curve, oversample } = this.getConfig();
+
+    this.inputGain = audioCtx.createGain();
+    this.outputGain = audioCtx.createGain();
+    this.waveShaperNode = audioCtx.createWaveShaper();
+    
+    this.waveShaperNode.curve = curve;
+    this.waveShaperNode.oversample = oversample;
+
+    // Connect nodes
+    this.inputGain.connect(this.waveShaperNode);
+    this.waveShaperNode.connect(this.outputGain);
+    this.outputGain.connect(destination);
+
+    return {
+      input: this.inputGain,
+      output: this.outputGain,
+    };
+  }
+
+  private createCurve(): Float32Array {
+    const curve = new Float32Array(1024);
+    const value = 2; // Example value for shaping
+    for (let i = 0; i < 1024; ++i) {
+      const x = (i * 2) / 1024 - 1; // Normalize to -1 to 1
+      curve[i] = (1 + value) * x / (1 + value * Math.abs(x));
+    }
+    return curve;
+  }
+
+  private setupParameterListeners(): void {
+    this.curveEl.addEventListener('input', () => {
+      if (this.waveShaperNode) {
+        this.waveShaperNode.curve = this.createCurve();
+      }
+    });
+
+    this.oversampleEl.addEventListener('change', () => {
+      if (this.waveShaperNode) {
+        this.waveShaperNode.oversample = this.oversampleEl.value as 'none' | '2x' | '4x';
+      }
+    });
+  }
+}

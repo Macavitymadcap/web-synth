@@ -5,6 +5,7 @@ import { DelayModule } from "../modules/delay-module";
 import { MasterModule } from "../modules/master-module";
 import { ReverbModule } from "../modules/reverb-module";
 import { VoiceManager } from "../modules/voice-manager";
+import { WaveShaperModule } from "../modules/wave-shaper-module";
 
 /**
  * Synth class orchestrates all synthesiser modules
@@ -24,6 +25,7 @@ export class Synth {
   private readonly masterModule: MasterModule;
   private readonly reverbModule: ReverbModule;
   private readonly voiceManager: VoiceManager;
+  private readonly waveShaperModule: WaveShaperModule;
 
   constructor(
     lfoModule: LFOModule,
@@ -31,7 +33,8 @@ export class Synth {
     delayModule: DelayModule,
     masterModule: MasterModule,
     reverbModule: ReverbModule,
-    voiceManager: VoiceManager
+    voiceManager: VoiceManager,
+    waveShaperModule: WaveShaperModule
   ) {
     this.lfoModule = lfoModule;
     this.chorusModule = chorusModule;
@@ -39,6 +42,7 @@ export class Synth {
     this.masterModule = masterModule;
     this.reverbModule = reverbModule;
     this.voiceManager = voiceManager;
+    this.waveShaperModule = waveShaperModule;
   }
 
   /**
@@ -55,16 +59,11 @@ export class Synth {
     this.lfoModule.initialize(this.audioCtx);
 
     // Initialize effects chain (back to front)
-    // Reverb connects to master
     const reverbNodes = this.reverbModule.initialize(this.audioCtx, this.masterGain);
-    
-    // Delay connects to reverb
-    const delayNodes = this.delayModule.initialize(this.audioCtx, reverbNodes.input);
-    
-    // Chorus connects to delay (this is the first effect in the chain)
+    const waveShaperNodes = this.waveShaperModule.initialize(this.audioCtx, reverbNodes.input);
+    const delayNodes = this.delayModule.initialize(this.audioCtx, waveShaperNodes.input);
+  
     const chorusNodes = this.chorusModule.initialize(this.audioCtx, delayNodes.input);
-    
-    // Voices connect to chorus input
     this.effectsInput = chorusNodes.input;
   }
 }

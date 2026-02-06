@@ -8,6 +8,7 @@ import { DelayModule } from "./modules/delay-module";
 import { MasterModule } from "./modules/master-module";
 import { VoiceManager } from "./modules/voice-manager";
 import { ReverbModule } from "./modules/reverb-module";
+import { WaveShaperModule } from "./modules/wave-shaper-module";
 import { createKeyboardHandlers } from "./handlers/keyboard-handlers";
 import { createRecordingHandler } from "./handlers/recording-handler";
 import { createOctaveChangeHandler } from "./handlers/octave-handler";
@@ -76,6 +77,10 @@ const delayMix = (document.getElementById("delay-mix") as RangeControl).getInput
 const reverbDecay = (document.getElementById("reverb-decay") as RangeControl).getInput();
 const reverbMix = (document.getElementById("reverb-mix") as RangeControl).getInput();
 
+// Waveshaper controls
+const waveshaperDrive = (document.getElementById("waveshaper-drive") as RangeControl).getInput();
+const waveshaperBlend = (document.getElementById("waveshaper-blend") as RangeControl).getInput();
+
 // Master controls
 const poly = document.getElementById("poly") as HTMLInputElement;
 const masterVolume = (document.getElementById("master-volume") as RangeControl).getInput();
@@ -97,6 +102,7 @@ const chorusModule = new ChorusModule(chorusRate, chorusDepth, chorusMix);
 const delayModule = new DelayModule(delayTime, delayFeedback, delayMix);
 const masterModule = new MasterModule(masterVolume);
 const reverbModule = new ReverbModule(reverbDecay, reverbMix);
+const waveShaperModule = new WaveShaperModule(waveshaperDrive, waveshaperBlend);
 const voiceManager = new VoiceManager(
   poly,
   oscillatorBank,
@@ -111,7 +117,8 @@ const synth = new Synth(
   delayModule,
   masterModule,
   reverbModule,
-  voiceManager
+  voiceManager,
+  waveShaperModule,
 );
 
 // Initialize settings manager and connect it to oscillator bank

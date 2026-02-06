@@ -43,7 +43,11 @@ export interface SynthSettings {
   // Reverb
   reverbDecay: number;
   reverbMix: number;
-  
+
+  // WaveShaper
+  waveshaperDrive: number;
+  waveshaperBlend: number;
+
   // Delay
   delayTime: number;
   delayFeedback: number;
@@ -94,6 +98,9 @@ export class SettingsManager {
       chorusRate: Number.parseFloat((document.getElementById("chorus-rate") as HTMLInputElement)?.value ?? "1.5"),
       chorusDepth: Number.parseFloat((document.getElementById("chorus-depth") as HTMLInputElement)?.value ?? "0.5"),
       chorusMix: Number.parseFloat((document.getElementById("chorus-mix") as HTMLInputElement)?.value ?? "0.5"),
+
+      waveshaperDrive: Number.parseFloat((document.getElementById("waveshaper-drive") as HTMLInputElement)?.value ?? "0"),
+      waveshaperBlend: Number.parseFloat((document.getElementById("waveshaper-blend") as HTMLInputElement)?.value ?? "0"),
 
       reverbDecay: Number.parseFloat((document.getElementById("reverb-decay") as HTMLInputElement)?.value ?? "1.5"),
       reverbMix: Number.parseFloat((document.getElementById("reverb-mix") as HTMLInputElement)?.value ?? "0.2"),
@@ -173,6 +180,10 @@ export class SettingsManager {
     this.setControlValue("chorus-rate", settings.chorusRate);
     this.setControlValue("chorus-depth", settings.chorusDepth);
     this.setControlValue("chorus-mix", settings.chorusMix);
+
+    // WaveShaper
+    this.setControlValue("waveshaper-drive", settings.waveshaperDrive);
+    this.setControlValue("waveshaper-blend", settings.waveshaperBlend);
 
     // Reverb
     this.setControlValue("reverb-decay", settings.reverbDecay);
