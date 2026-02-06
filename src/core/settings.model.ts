@@ -68,6 +68,14 @@ export type CompressorSettings = {
   knee: number;
 };
 
+export type PhaserSettings = {
+  rate: number;
+  depth: number;
+  stages: number;
+  feedback: number;
+  mix: number;
+};
+
 export interface SynthSettings {
   master: MasterSettings;
   oscillators: OscillatorSettings[];
@@ -79,6 +87,7 @@ export interface SynthSettings {
   compressor: CompressorSettings;
   waveshaper: WaveShaperSettings;
   delay: DelaySettings;
+  phaser: PhaserSettings;
 }
 
 export interface Preset {

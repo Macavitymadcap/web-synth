@@ -33,10 +33,10 @@ export class HelpPopover extends HTMLElement {
           margin-bottom: 1rem;
           padding-bottom: 0.75rem;
           border-bottom: 1px solid rgba(0, 255, 255, 0.3);
-          position: sticky;      /* Sticky header */
-          top: 0;                /* Stick to top */
-          background: inherit;   /* Keep background */
-          z-index: 2;            /* Above content */
+          position: sticky;
+          top: 0; 
+          background: inherit;
+          z-index: 2;
         }
 
         help-popover .instructions header h2 {

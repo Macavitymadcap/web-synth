@@ -62,7 +62,7 @@ export class CompressorModule {
 
     this.inputGain.connect(this.compressor);
     this.compressor.connect(this.outputGain);
-    this.outputGain.connect(destination);
+    
 
     return {
       input: this.inputGain,

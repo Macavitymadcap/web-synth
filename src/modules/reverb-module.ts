@@ -80,7 +80,7 @@ export class ReverbModule {
     this.wetGain.connect(this.outputGain);
 
     // Connect to destination
-    this.outputGain.connect(destination);
+    
 
     return {
       input: this.inputGain,

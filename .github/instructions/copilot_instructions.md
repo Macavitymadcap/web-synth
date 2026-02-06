@@ -174,27 +174,36 @@ export class [Name]Module {
 
 ### Integration Steps
 
-1. **Add HTML controls** in `index.html`:
-```html
-<module-section id="[name]-effect" title="[Name] Effect">
-  <div slot="instructions">
-    <instruction-list>
-      <instruction-item label="Param1">Description</instruction-item>
-    </instruction-list>
-  </div>
-  
-  <div slot="content">
-    <controls-group>
-      <range-control label="Param1" id="[name]-param1" 
-                     min="0" max="100" step="1" value="50">
-      </range-control>
-    </controls-group>
-  </div>
-</module-section>
+1. **Create new organism** in `src/components/organisms`:
+```typescript
+export class NewEffect extends HTMLElement {
+  connectedCallback() {
+    this.innerHTML = `
+      <module-section id="[name]-effect" title="[Name] Effect">
+        <div slot="instructions">
+          <instruction-list>
+            <instruction-item label="Param1">Description</instruction-item>
+          </instruction-list>
+        </div>
+        
+        <div slot="content">
+          <controls-group>
+            <range-control label="Param1" id="[name]-param1" 
+                          min="0" max="100" step="1" value="50">
+            </range-control>
+          </controls-group>
+        </div>
+      </module-section>
+    `;
+  }
+}
+customElements.define('new-effect', NewEffect);
 ```
 
 2. **Get DOM references** in `main.ts`:
 ```typescript
+import "./components/organisms/new-effect.ts";
+// ...
 const param1 = (document.getElementById("[name]-param1") as RangeControl).getInput();
 ```
 
@@ -216,6 +225,26 @@ const [name]Nodes = this.[name]Module.initialize(
   nextEffectInput
 );
 ```
+
+5. ** Add to web page** in `index.html`**
+```html
+<div class="modules-grid">
+    <master-controls></master-controls>
+    <visual-keyboard></visual-keyboard>
+    <presets-controls></presets-controls>
+    <oscillator-controls></oscillator-controls>
+    <adsr-module></adsr-module>
+    <filter-module></filter-module>
+    <lfo-module></lfo-module>
+    <chorus-effect></chorus-effect>
+    <reverb-effect></reverb-effect>
+    <compressor-effect></compressor-effect>
+    <delay-effect></delay-effect>
+    <waveshaper-effect></waveshaper-effect>
+    <new-effect></new-effect> // inserted here
+  </div>
+```
+
 
 5. **Update SettingsManager** to persist settings.
 
@@ -581,15 +610,3 @@ bun run preview
 ```
 
 GitHub Actions deploys to GitHub Pages on push to `main`.
-
-## Next Steps for Expansion
-
-Refer to `planning/expansions.md` for ideas on additional modules:
-- **Wave shaper** (distortion/saturation)
-- **Noise generator** (white/pink noise)
-- **Multi-mode filter** (highpass, bandpass, notch)
-- **Compressor** (dynamics control)
-- **Additional LFOs** (more modulation targets)
-- **Visualizers** (spectrum analyzer, oscilloscope)
-
-Each new module should follow the established patterns for consistency and maintainability.

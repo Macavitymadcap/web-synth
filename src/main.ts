@@ -8,6 +8,7 @@ import { EnvelopeModule } from "./modules/envelope-module";
 import { FilterModule } from "./modules/filter-module";
 import { LFOModule } from "./modules/lfo-module";
 import { ChorusModule } from "./modules/chorus-module";
+import { PhaserModule } from "./modules/phaser-module";
 import { DelayModule } from "./modules/delay-module";
 import { MasterModule } from "./modules/master-module";
 import { VoiceManager } from "./modules/voice-manager";
@@ -18,6 +19,7 @@ import { createRecordingHandler } from "./handlers/recording-handler";
 import { createOctaveChangeHandler } from "./handlers/octave-handler";
 import { createMidiToggleHandler } from "./handlers/midi-handler-setup";
 import { createOscillatorManager } from "./handlers/oscillator-management";
+import { SpectrumAnalyserModule } from "./modules/spectrum-analyser-module";
 
 // Components
 import "./components/atoms/filter-type-picker";
@@ -42,6 +44,22 @@ import type { PianoKeyboard } from "./components/organisms/piano-keyboard";
 import "./components/organisms/preset-selector";
 import type { PresetSelector } from "./components/organisms/preset-selector";
 import { CompressorModule } from "./modules/compressor-module";
+import "./components/organisms/master-controls";
+import "./components/organisms/presets-controls";
+import "./components/organisms/oscillator-controls";
+import "./components/organisms/visual-keyboard";
+import "./components/organisms/adsr-module";
+import "./components/organisms/filter-module-controls";
+import "./components/organisms/lfo-module-controls";
+import "./components/organisms/chorus-effect";
+import "./components/organisms/phaser-effect";
+import "./components/organisms/reverb-effect";
+import "./components/organisms/compressor-effect";
+import "./components/organisms/delay-effect";
+import "./components/organisms/waveshaper-effect";
+import "./components/organisms/spectrum-analyser";
+import type { SpectrumAnalyser } from "./components/organisms/spectrum-analyser";
+
 
 // Keyboard and MIDI controls
 const octaveUpper = document.getElementById("octave-upper") as HTMLSelectElement;
@@ -76,6 +94,13 @@ const lfoWaveform = document.getElementById("lfo-waveform") as HTMLSelectElement
 const chorusRate = (document.getElementById("chorus-rate") as RangeControl).getInput();
 const chorusDepth = (document.getElementById("chorus-depth") as RangeControl).getInput();
 const chorusMix = (document.getElementById("chorus-mix") as RangeControl).getInput();
+
+// Phaser controls
+const phaserRate = (document.getElementById("phaser-rate") as RangeControl).getInput();
+const phaserDepth = (document.getElementById("phaser-depth") as RangeControl).getInput();
+const phaserStages = (document.getElementById("phaser-stages") as RangeControl).getInput();
+const phaserFeedback = (document.getElementById("phaser-feedback") as RangeControl).getInput();
+const phaserMix = (document.getElementById("phaser-mix") as RangeControl).getInput();
 
 // Delay controls
 const delayTime = (document.getElementById("delay-time") as RangeControl).getInput();
@@ -115,6 +140,13 @@ const filterEnvelope = new EnvelopeModule(filterAttack, filterDecay, filterSusta
 const filterModule = new FilterModule(filterType, filterCutoff, filterResonance, filterEnvAmount, filterEnvelope);
 const lfoModule = new LFOModule(lfoRate, lfoWaveform, lfoToFilter, lfoToPitch);
 const chorusModule = new ChorusModule(chorusRate, chorusDepth, chorusMix);
+const phaserModule = new PhaserModule(
+  phaserRate,
+  phaserDepth,
+  phaserStages,
+  phaserFeedback,
+  phaserMix
+);
 const delayModule = new DelayModule(delayTime, delayFeedback, delayMix);
 const masterModule = new MasterModule(masterVolume);
 const reverbModule = new ReverbModule(reverbDecay, reverbMix);
@@ -133,16 +165,19 @@ const voiceManager = new VoiceManager(
   filterModule,
   lfoModule
 );
+const spectrumAnalyserModule = new SpectrumAnalyserModule();
 
 const synth = new Synth(
   lfoModule,
   chorusModule,
+  phaserModule,
   delayModule,
   masterModule,
   reverbModule,
   voiceManager,
   waveShaperModule,
-  compressorModule
+  compressorModule,
+  spectrumAnalyserModule
 );
 
 // Initialize settings manager and connect it to oscillator bank
@@ -208,3 +243,6 @@ document.addEventListener('decay-changed', () => {
   }
 });
 
+// After DOMContentLoaded or in window.onload:
+const spectrumAnalyserEl = document.querySelector('spectrum-analyser') as SpectrumAnalyser;
+const spectrumAnalyserCanvas = spectrumAnalyserEl?.getCanvas();
