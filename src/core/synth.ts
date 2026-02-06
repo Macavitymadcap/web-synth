@@ -7,6 +7,8 @@ import { ReverbModule } from "../modules/reverb-module";
 import { VoiceManager } from "../modules/voice-manager";
 import { WaveShaperModule } from "../modules/wave-shaper-module";
 import { CompressorModule } from "../modules/compressor-module";
+import { SpectrumAnalyserModule } from "../modules/spectrum-analyser-module";
+import { SpectrumAnalyser } from "../components/organisms/spectrum-analyser";
 
 /**
  * Synth class orchestrates all synthesiser modules
@@ -28,6 +30,7 @@ export class Synth {
   private readonly voiceManager: VoiceManager;
   private readonly waveShaperModule: WaveShaperModule;
   private readonly compressorModule: CompressorModule;
+  private readonly spectrumAnalyserModule: SpectrumAnalyserModule;
 
   constructor(
     lfoModule: LFOModule,
@@ -37,7 +40,8 @@ export class Synth {
     reverbModule: ReverbModule,
     voiceManager: VoiceManager,
     waveShaperModule: WaveShaperModule,
-    compressorModule: CompressorModule
+    compressorModule: CompressorModule,
+    spectrumAnalyserModule: SpectrumAnalyserModule
   ) {
     this.lfoModule = lfoModule;
     this.chorusModule = chorusModule;
@@ -47,6 +51,7 @@ export class Synth {
     this.voiceManager = voiceManager;
     this.waveShaperModule = waveShaperModule;
     this.compressorModule = compressorModule;
+    this.spectrumAnalyserModule = spectrumAnalyserModule;
   }
 
   /**
@@ -54,24 +59,33 @@ export class Synth {
    * Sets up the complete audio signal chain
    */
   ensureAudio() {
-  if (!this.audioCtx) {
-    // Initialize master module (creates AudioContext and master gain)
-    this.audioCtx = this.masterModule.initialize();
-    this.masterGain = this.masterModule.getMasterGain()!;
+    if (!this.audioCtx) {
+      // Initialize master module (creates AudioContext and master gain)
+      this.audioCtx = this.masterModule.initialize();
+      this.masterGain = this.masterModule.getMasterGain()!;
 
-    // Initialize LFO
-    this.lfoModule.initialize(this.audioCtx);
+      // Initialize LFO
+      this.lfoModule.initialize(this.audioCtx);
 
-    // Initialize effects chain (back to front)
-    const reverbNodes = this.reverbModule.initialize(this.audioCtx, this.masterGain);
-    const compressorNodes = this.compressorModule.initialize(this.audioCtx, reverbNodes.output);
-    const waveShaperNodes = this.waveShaperModule.initialize(this.audioCtx, compressorNodes.input);
-    const delayNodes = this.delayModule.initialize(this.audioCtx, waveShaperNodes.input);
-  
-    const chorusNodes = this.chorusModule.initialize(this.audioCtx, delayNodes.input);
-    this.effectsInput = chorusNodes.input;
+      // Initialize effects chain (back to front)
+      const reverbNodes = this.reverbModule.initialize(this.audioCtx, this.masterGain);
+      const compressorNodes = this.compressorModule.initialize(this.audioCtx, reverbNodes.output);
+      const waveShaperNodes = this.waveShaperModule.initialize(this.audioCtx, compressorNodes.input);
+      const delayNodes = this.delayModule.initialize(this.audioCtx, waveShaperNodes.input);
+    
+      const chorusNodes = this.chorusModule.initialize(this.audioCtx, delayNodes.input);
+      this.effectsInput = chorusNodes.input;
+
+      // Insert spectrum analyser before final output
+      const spectrumNodes = this.spectrumAnalyserModule.initialize(
+        this.audioCtx,
+        this.masterGain,
+        (document.querySelector('spectrum-analyser') as SpectrumAnalyser)?.getCanvas()
+      );
+
+      chorusNodes.output.connect(spectrumNodes.input);
+    }
   }
-}
 
   /**
    * Trigger a note on event using a keyboard key

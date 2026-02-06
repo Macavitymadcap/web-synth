@@ -1,4 +1,4 @@
-# Possible Expansions
+# Expansions
 
 ## Sound Generation & Processing
 
@@ -6,11 +6,6 @@
 - White, pink, brown noise sources
 - Useful for percussion, wind sounds, and sound design
 - Uses `AudioBufferSourceNode` with generated noise buffers
-
-**Wave Shaper / Distortion**
-- Adds harmonic distortion and saturation
-- Uses `WaveShaperNode` with custom transfer curves
-- Great for adding grit and warmth
 
 **Ring Modulator**
 - Multiplies two signals for metallic, bell-like tones
@@ -83,11 +78,6 @@
 - Creates swirling effects
 
 ## Analysis & Visualization
-
-**Spectrum Analyzer**
-- Visual frequency display
-- Uses `AnalyserNode`
-- Helps users see what they're hearing
 
 **Oscilloscope**
 - Waveform visualization

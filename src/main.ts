@@ -18,6 +18,7 @@ import { createRecordingHandler } from "./handlers/recording-handler";
 import { createOctaveChangeHandler } from "./handlers/octave-handler";
 import { createMidiToggleHandler } from "./handlers/midi-handler-setup";
 import { createOscillatorManager } from "./handlers/oscillator-management";
+import { SpectrumAnalyserModule } from "./modules/spectrum-analyser-module";
 
 // Components
 import "./components/atoms/filter-type-picker";
@@ -54,6 +55,9 @@ import "./components/organisms/reverb-effect";
 import "./components/organisms/compressor-effect";
 import "./components/organisms/delay-effect";
 import "./components/organisms/waveshaper-effect";
+import "./components/organisms/spectrum-analyser";
+import type { SpectrumAnalyser } from "./components/organisms/spectrum-analyser";
+
 
 // Keyboard and MIDI controls
 const octaveUpper = document.getElementById("octave-upper") as HTMLSelectElement;
@@ -145,6 +149,7 @@ const voiceManager = new VoiceManager(
   filterModule,
   lfoModule
 );
+const spectrumAnalyserModule = new SpectrumAnalyserModule();
 
 const synth = new Synth(
   lfoModule,
@@ -154,7 +159,8 @@ const synth = new Synth(
   reverbModule,
   voiceManager,
   waveShaperModule,
-  compressorModule
+  compressorModule,
+  spectrumAnalyserModule
 );
 
 // Initialize settings manager and connect it to oscillator bank
@@ -220,3 +226,6 @@ document.addEventListener('decay-changed', () => {
   }
 });
 
+// After DOMContentLoaded or in window.onload:
+const spectrumAnalyserEl = document.querySelector('spectrum-analyser') as SpectrumAnalyser;
+const spectrumAnalyserCanvas = spectrumAnalyserEl?.getCanvas();
