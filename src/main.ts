@@ -3,9 +3,11 @@ import { OscillatorBank } from "./core/oscillator-bank";
 import { EnvelopeModule } from "./modules/envelope-module";
 import { FilterModule } from "./modules/filter-module";
 import { LFOModule } from "./modules/lfo-module";
+import { ChorusModule } from "./modules/chorus-module";
 import { DelayModule } from "./modules/delay-module";
 import { MasterModule } from "./modules/master-module";
 import { VoiceManager } from "./modules/voice-manager";
+import { ReverbModule } from "./modules/reverb-module";
 import { createKeyboardHandlers } from "./handlers/keyboard-handlers";
 import { createRecordingHandler } from "./handlers/recording-handler";
 import { createOctaveChangeHandler } from "./handlers/octave-handler";
@@ -60,10 +62,19 @@ const lfoToFilter = (document.getElementById("lfo-to-filter") as RangeControl).g
 const lfoToPitch = (document.getElementById("lfo-to-pitch") as RangeControl).getInput();
 const lfoWaveform = document.getElementById("lfo-waveform") as HTMLSelectElement;
 
+// Chorus controls
+const chorusRate = (document.getElementById("chorus-rate") as RangeControl).getInput();
+const chorusDepth = (document.getElementById("chorus-depth") as RangeControl).getInput();
+const chorusMix = (document.getElementById("chorus-mix") as RangeControl).getInput();
+
 // Delay controls
 const delayTime = (document.getElementById("delay-time") as RangeControl).getInput();
 const delayFeedback = (document.getElementById("delay-feedback") as RangeControl).getInput();
 const delayMix = (document.getElementById("delay-mix") as RangeControl).getInput();
+
+// Reverb controls
+const reverbDecay = (document.getElementById("reverb-decay") as RangeControl).getInput();
+const reverbMix = (document.getElementById("reverb-mix") as RangeControl).getInput();
 
 // Master controls
 const poly = document.getElementById("poly") as HTMLInputElement;
@@ -82,8 +93,10 @@ const ampEnvelope = new EnvelopeModule(attack, decay, sustain, release);
 const filterEnvelope = new EnvelopeModule(filterAttack, filterDecay, filterSustain, filterRelease);
 const filterModule = new FilterModule(filterCutoff, filterResonance, filterEnvAmount, filterEnvelope);
 const lfoModule = new LFOModule(lfoRate, lfoWaveform, lfoToFilter, lfoToPitch);
+const chorusModule = new ChorusModule(chorusRate, chorusDepth, chorusMix);
 const delayModule = new DelayModule(delayTime, delayFeedback, delayMix);
 const masterModule = new MasterModule(masterVolume);
+const reverbModule = new ReverbModule(reverbDecay, reverbMix);
 const voiceManager = new VoiceManager(
   poly,
   oscillatorBank,
@@ -94,8 +107,10 @@ const voiceManager = new VoiceManager(
 
 const synth = new Synth(
   lfoModule,
+  chorusModule,
   delayModule,
   masterModule,
+  reverbModule,
   voiceManager
 );
 
@@ -156,3 +171,9 @@ recordBtn.addEventListener("click", recordButtonClickHandler);
 octaveUpper.addEventListener("change", octaveChangeHandler);
 octaveLower.addEventListener("change", octaveChangeHandler);
 midiToggle.addEventListener("change", midiToggleHandler);
+document.addEventListener('decay-changed', () => {
+  if (synth.audioCtx) {
+    reverbModule.updateWithContext(synth.audioCtx);
+  }
+});
+

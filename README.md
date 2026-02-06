@@ -1,6 +1,6 @@
 # Web Synth
 
-A feature-rich, browser-based polyphonic synthesizer built with the Web Audio
+A feature-rich, browser-based polyphonic synthesiser built with the Web Audio
 API and TypeScript. Create and shape sounds using multiple oscillators, filters, 
 envelopes, LFO modulation, and delay effects.
 
@@ -22,6 +22,8 @@ envelopes, LFO modulation, and delay effects.
 
 ### Effects
 
+* **Chorus**: Thicken sounds with multiple modulated delay lines creating a rich, wide stereo effect
+* **Reverb**: Simulate room acoustics with adjustable decay and wet/dry mix for spatial effects
 * **Delay**: Configurable delay time, feedback, and wet/dry mix for spatial effects
 * **Master Volume**: Global output level control
 
@@ -106,7 +108,7 @@ bun run preview
 4. **Shape with Envelopes**: Adjust ADSR to control how notes start and end
 5. **Filter Brightness**: Lower the filter cutoff for darker tones, raise it for brighter sounds
 6. **Add Movement**: Use LFO modulation for vibrato and filter wobble effects
-7. **Create Space**: Add delay for depth and ambience
+7. **Add Movement and Space**: Use chorus for width and thickness, reverb for room ambience, and delay for rhythmic echoes
 
 ### Keyboard Shortcuts
 
@@ -118,7 +120,7 @@ bun run preview
 ### Architecture Overview
 
 **Core Layer** (`core/`)
-* Contains the fundamental synthesizer logic
+* Contains the fundamental synthesiser logic
 * `synth.ts` orchestrates all modules and manages the audio context
 * `oscillator-bank.ts` handles multiple oscillator creation and management
 * `keys.ts` maps keyboard inputs to musical frequencies
@@ -157,4 +159,4 @@ MIT
 
 ## Acknowledgments
 
-Built with the Web Audio API and inspired by classic hardware synthesizers.
+Built with the Web Audio API and inspired by classic hardware synthesisers.
