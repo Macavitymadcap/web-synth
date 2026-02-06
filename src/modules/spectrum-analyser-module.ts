@@ -15,7 +15,6 @@ export class SpectrumAnalyserModule {
 
     this.inputGain.connect(this.analyserNode);
     this.analyserNode.connect(this.outputGain);
-    this.outputGain.connect(destination);
 
     this.canvas = canvas;
     this.startVisualization();

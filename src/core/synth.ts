@@ -1,6 +1,7 @@
 import { keyInfo } from "./keys";
 import { LFOModule } from "../modules/lfo-module";
 import { ChorusModule } from "../modules/chorus-module";
+import { PhaserModule } from "../modules/phaser-module";
 import { DelayModule } from "../modules/delay-module";
 import { MasterModule } from "../modules/master-module";
 import { ReverbModule } from "../modules/reverb-module";
@@ -24,6 +25,7 @@ export class Synth {
   // Modules
   private readonly lfoModule: LFOModule;
   private readonly chorusModule: ChorusModule;
+  private readonly phaserModule: PhaserModule;
   private readonly delayModule: DelayModule;
   private readonly masterModule: MasterModule;
   private readonly reverbModule: ReverbModule;
@@ -35,6 +37,7 @@ export class Synth {
   constructor(
     lfoModule: LFOModule,
     chorusModule: ChorusModule,
+    phaserModule: PhaserModule,
     delayModule: DelayModule,
     masterModule: MasterModule,
     reverbModule: ReverbModule,
@@ -45,6 +48,7 @@ export class Synth {
   ) {
     this.lfoModule = lfoModule;
     this.chorusModule = chorusModule;
+    this.phaserModule = phaserModule;
     this.delayModule = delayModule;
     this.masterModule = masterModule;
     this.reverbModule = reverbModule;
@@ -68,22 +72,35 @@ export class Synth {
       this.lfoModule.initialize(this.audioCtx);
 
       // Initialize effects chain (back to front)
-      const reverbNodes = this.reverbModule.initialize(this.audioCtx, this.masterGain);
-      const compressorNodes = this.compressorModule.initialize(this.audioCtx, reverbNodes.output);
-      const waveShaperNodes = this.waveShaperModule.initialize(this.audioCtx, compressorNodes.input);
-      const delayNodes = this.delayModule.initialize(this.audioCtx, waveShaperNodes.input);
-    
-      const chorusNodes = this.chorusModule.initialize(this.audioCtx, delayNodes.input);
+
+      // Voices → effectsInput (which is set to the first effect)
+      const chorusNodes = this.chorusModule.initialize(this.audioCtx, this.masterGain);
+      const phaserNodes = this.phaserModule.initialize(this.audioCtx, this.masterGain);
       this.effectsInput = chorusNodes.input;
 
-      // Insert spectrum analyser before final output
+      // Chain: chorus → phaser → delay → waveshaper → compressor → reverb → analyser → master
+      chorusNodes.output.connect(phaserNodes.input);
+
+      const delayNodes = this.delayModule.initialize(this.audioCtx, this.masterGain);
+      phaserNodes.output.connect(delayNodes.input);
+
+      const waveShaperNodes = this.waveShaperModule.initialize(this.audioCtx, this.masterGain);
+      delayNodes.output.connect(waveShaperNodes.input);
+
+      const compressorNodes = this.compressorModule.initialize(this.audioCtx, this.masterGain);
+      waveShaperNodes.output.connect(compressorNodes.input);
+
+      const reverbNodes = this.reverbModule.initialize(this.audioCtx, this.masterGain);
+      compressorNodes.output.connect(reverbNodes.input);
+
       const spectrumNodes = this.spectrumAnalyserModule.initialize(
         this.audioCtx,
         this.masterGain,
         (document.querySelector('spectrum-analyser') as SpectrumAnalyser)?.getCanvas()
       );
 
-      chorusNodes.output.connect(spectrumNodes.input);
+      reverbNodes.output.connect(spectrumNodes.input);
+      spectrumNodes.output.connect(this.masterGain);
     }
   }
 

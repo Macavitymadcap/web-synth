@@ -8,6 +8,7 @@ import { EnvelopeModule } from "./modules/envelope-module";
 import { FilterModule } from "./modules/filter-module";
 import { LFOModule } from "./modules/lfo-module";
 import { ChorusModule } from "./modules/chorus-module";
+import { PhaserModule } from "./modules/phaser-module";
 import { DelayModule } from "./modules/delay-module";
 import { MasterModule } from "./modules/master-module";
 import { VoiceManager } from "./modules/voice-manager";
@@ -51,6 +52,7 @@ import "./components/organisms/adsr-module";
 import "./components/organisms/filter-module-controls";
 import "./components/organisms/lfo-module-controls";
 import "./components/organisms/chorus-effect";
+import "./components/organisms/phaser-effect";
 import "./components/organisms/reverb-effect";
 import "./components/organisms/compressor-effect";
 import "./components/organisms/delay-effect";
@@ -93,6 +95,13 @@ const chorusRate = (document.getElementById("chorus-rate") as RangeControl).getI
 const chorusDepth = (document.getElementById("chorus-depth") as RangeControl).getInput();
 const chorusMix = (document.getElementById("chorus-mix") as RangeControl).getInput();
 
+// Phaser controls
+const phaserRate = (document.getElementById("phaser-rate") as RangeControl).getInput();
+const phaserDepth = (document.getElementById("phaser-depth") as RangeControl).getInput();
+const phaserStages = (document.getElementById("phaser-stages") as RangeControl).getInput();
+const phaserFeedback = (document.getElementById("phaser-feedback") as RangeControl).getInput();
+const phaserMix = (document.getElementById("phaser-mix") as RangeControl).getInput();
+
 // Delay controls
 const delayTime = (document.getElementById("delay-time") as RangeControl).getInput();
 const delayFeedback = (document.getElementById("delay-feedback") as RangeControl).getInput();
@@ -131,6 +140,13 @@ const filterEnvelope = new EnvelopeModule(filterAttack, filterDecay, filterSusta
 const filterModule = new FilterModule(filterType, filterCutoff, filterResonance, filterEnvAmount, filterEnvelope);
 const lfoModule = new LFOModule(lfoRate, lfoWaveform, lfoToFilter, lfoToPitch);
 const chorusModule = new ChorusModule(chorusRate, chorusDepth, chorusMix);
+const phaserModule = new PhaserModule(
+  phaserRate,
+  phaserDepth,
+  phaserStages,
+  phaserFeedback,
+  phaserMix
+);
 const delayModule = new DelayModule(delayTime, delayFeedback, delayMix);
 const masterModule = new MasterModule(masterVolume);
 const reverbModule = new ReverbModule(reverbDecay, reverbMix);
@@ -154,6 +170,7 @@ const spectrumAnalyserModule = new SpectrumAnalyserModule();
 const synth = new Synth(
   lfoModule,
   chorusModule,
+  phaserModule,
   delayModule,
   masterModule,
   reverbModule,

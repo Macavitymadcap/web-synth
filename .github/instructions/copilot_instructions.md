@@ -610,15 +610,3 @@ bun run preview
 ```
 
 GitHub Actions deploys to GitHub Pages on push to `main`.
-
-## Next Steps for Expansion
-
-Refer to `planning/expansions.md` for ideas on additional modules:
-- **Wave shaper** (distortion/saturation)
-- **Noise generator** (white/pink noise)
-- **Multi-mode filter** (highpass, bandpass, notch)
-- **Compressor** (dynamics control)
-- **Additional LFOs** (more modulation targets)
-- **Visualizers** (spectrum analyzer, oscilloscope)
-
-Each new module should follow the established patterns for consistency and maintainability.

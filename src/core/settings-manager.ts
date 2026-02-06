@@ -15,6 +15,7 @@ import {
   DelaySettings, 
   Preset 
 } from "./settings.model";
+import type { PhaserConfig } from "../modules/phaser-module";
 
 const STORAGE_KEY = "web-synth-settings";
 const USER_PRESETS_KEY = "web-synth-user-presets";
@@ -38,6 +39,7 @@ export class SettingsManager {
       compressor: this.getCompressorSettings(),
       reverb: this.getReverbSettings(),
       delay: this.getDelaySettings(),
+      phaser: this.getPhaserSettings(),
     };
   }
 
@@ -129,6 +131,16 @@ export class SettingsManager {
     };
   }
 
+  private getPhaserSettings(): PhaserConfig {
+    return {
+      rate: Number.parseFloat((document.getElementById("phaser-rate") as HTMLInputElement)?.value ?? "0.7"),
+      depth: Number.parseFloat((document.getElementById("phaser-depth") as HTMLInputElement)?.value ?? "700"),
+      stages: Number.parseInt((document.getElementById("phaser-stages") as HTMLInputElement)?.value ?? "4"),
+      feedback: Number.parseFloat((document.getElementById("phaser-feedback") as HTMLInputElement)?.value ?? "0.3"),
+      mix: Number.parseFloat((document.getElementById("phaser-mix") as HTMLInputElement)?.value ?? "0.5"),
+    };
+  }
+
   applySettings(settings: SynthSettings): void {
     this.applyMasterSettings(settings.master);
     this.applyOscillatorSettings(settings.oscillators);
@@ -141,6 +153,7 @@ export class SettingsManager {
     this.applyReverbSettings(settings.reverb);
     this.applyCompressorSettings(settings.compressor);
     this.applyDelaySettings(settings.delay);
+    this.applyPhaserSettings(settings.phaser);
   }
 
   private applyMasterSettings(settings: MasterSettings): void {
@@ -249,6 +262,14 @@ export class SettingsManager {
     this.setControlValue("delay-time", settings.time);
     this.setControlValue("delay-feedback", settings.feedback);
     this.setControlValue("delay-mix", settings.mix);
+  }
+
+  private applyPhaserSettings(settings: PhaserConfig): void {
+    this.setControlValue("phaser-rate", settings.rate);
+    this.setControlValue("phaser-depth", settings.depth);
+    this.setControlValue("phaser-stages", settings.stages);
+    this.setControlValue("phaser-feedback", settings.feedback);
+    this.setControlValue("phaser-mix", settings.mix);
   }
 
   private setControlValue(id: string, value: number): void {
