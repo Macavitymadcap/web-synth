@@ -1,6 +1,7 @@
 import { EnvelopeModule } from "./envelope-module";
 
 export type FilterConfig = {
+  type: BiquadFilterType;
   cutoff: number;
   resonance: number;
   envelopeAmount: number;
@@ -12,63 +13,53 @@ export type FilterInstance = {
 };
 
 /**
- * FilterModule manages the filter and its envelope for each voice
- * Handles filter cutoff, resonance, and envelope modulation
+ * MultiModeFilterModule manages filter type, cutoff, resonance, and envelope modulation
  */
 export class FilterModule {
+  private readonly typeEl: HTMLSelectElement;
   private readonly cutoffEl: HTMLInputElement;
   private readonly resonanceEl: HTMLInputElement;
   private readonly envelopeAmountEl: HTMLInputElement;
   private readonly filterEnvelope: EnvelopeModule;
 
   constructor(
+    typeEl: HTMLSelectElement,
     cutoffEl: HTMLInputElement,
     resonanceEl: HTMLInputElement,
     envelopeAmountEl: HTMLInputElement,
     filterEnvelope: EnvelopeModule
   ) {
+    this.typeEl = typeEl;
     this.cutoffEl = cutoffEl;
     this.resonanceEl = resonanceEl;
     this.envelopeAmountEl = envelopeAmountEl;
     this.filterEnvelope = filterEnvelope;
   }
 
-  /**
-   * Get the current filter configuration values
-   * @returns Object containing filter parameters
-   */
   getConfig(): FilterConfig {
     return {
+      type: (this.typeEl.value as BiquadFilterType) || "lowpass",
       cutoff: Number.parseFloat(this.cutoffEl.value),
       resonance: Number.parseFloat(this.resonanceEl.value),
       envelopeAmount: Number.parseFloat(this.envelopeAmountEl.value)
     };
   }
 
-  /**
-   * Create a filter instance with envelope modulation for a voice
-   * @param audioCtx - The AudioContext to create nodes in
-   * @param lfoToFilter - Optional LFO gain node to modulate filter cutoff
-   * @returns FilterInstance containing the filter and envelope gain nodes
-   */
   createFilter(
     audioCtx: AudioContext,
     lfoToFilter?: GainNode
   ): FilterInstance {
-    const { cutoff, resonance, envelopeAmount } = this.getConfig();
+    const { type, cutoff, resonance, envelopeAmount } = this.getConfig();
 
-    // Create the filter
     const filter = audioCtx.createBiquadFilter();
-    filter.type = 'lowpass';
+    filter.type = type;
     filter.frequency.value = cutoff;
     filter.Q.value = resonance;
 
-    // Create envelope modulation
     const envelopeGain = audioCtx.createGain();
     envelopeGain.gain.value = envelopeAmount;
     envelopeGain.connect(filter.frequency);
 
-    // Connect LFO to filter if provided
     if (lfoToFilter) {
       lfoToFilter.connect(filter.frequency);
     }
@@ -76,15 +67,8 @@ export class FilterModule {
     return { filter, envelopeGain };
   }
 
-  /**
-   * Apply the filter envelope to modulate the filter cutoff
-   * @param filterInstance - The filter instance to apply envelope to
-   * @param startTime - When to start the envelope
-   */
   applyEnvelope(filterInstance: FilterInstance, startTime: number): void {
     const { envelopeAmount } = this.getConfig();
-    
-    // Apply envelope to the envelope gain (which modulates filter frequency)
     this.filterEnvelope.applyEnvelope(
       filterInstance.envelopeGain.gain,
       startTime,
@@ -93,12 +77,6 @@ export class FilterModule {
     );
   }
 
-  /**
-   * Apply the release stage of the filter envelope
-   * @param filterInstance - The filter instance to apply release to
-   * @param startTime - When to start the release
-   * @returns Duration of the release phase in seconds
-   */
   applyRelease(filterInstance: FilterInstance, startTime: number): number {
     return this.filterEnvelope.applyRelease(
       filterInstance.envelopeGain.gain,
@@ -107,10 +85,6 @@ export class FilterModule {
     );
   }
 
-  /**
-   * Get the filter release time
-   * @returns Release time in seconds
-   */
   getRelease(): number {
     return this.filterEnvelope.getRelease();
   }

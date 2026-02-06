@@ -21,6 +21,7 @@ export interface SynthSettings {
   release: number;
   
   // Filter
+  filterType: string;
   filterCutoff: number;
   filterResonance: number;
   filterEnvAmount: number;
@@ -82,6 +83,7 @@ export class SettingsManager {
       sustain: Number.parseFloat((document.getElementById("sustain") as HTMLInputElement)?.value ?? "0.7"),
       release: Number.parseFloat((document.getElementById("release") as HTMLInputElement)?.value ?? "0.5"),
       
+      filterType: (document.getElementById("filter-type") as HTMLSelectElement)?.value ?? "lowpass",
       filterCutoff: Number.parseFloat((document.getElementById("filter-cutoff") as HTMLInputElement)?.value ?? "2000"),
       filterResonance: Number.parseFloat((document.getElementById("filter-resonance") as HTMLInputElement)?.value ?? "1"),
       filterEnvAmount: Number.parseFloat((document.getElementById("filter-env-amount") as HTMLInputElement)?.value ?? "2000"),
@@ -157,6 +159,12 @@ export class SettingsManager {
     this.setControlValue("release", settings.release);
     
     // Filter
+    const filterType = document.getElementById("filter-type") as HTMLSelectElement;
+    if (filterType) {
+      filterType.value = settings.filterType;
+      filterType.dispatchEvent(new Event("change"));
+    }
+    
     this.setControlValue("filter-cutoff", settings.filterCutoff);
     this.setControlValue("filter-resonance", settings.filterResonance);
     this.setControlValue("filter-env-amount", settings.filterEnvAmount);

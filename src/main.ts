@@ -1,5 +1,9 @@
-import { Synth } from "./core/synth";
+// Core
 import { OscillatorBank } from "./core/oscillator-bank";
+import { SettingsManager } from "./core/settings-manager";
+import { Synth } from "./core/synth";
+
+// Modules
 import { EnvelopeModule } from "./modules/envelope-module";
 import { FilterModule } from "./modules/filter-module";
 import { LFOModule } from "./modules/lfo-module";
@@ -14,26 +18,29 @@ import { createRecordingHandler } from "./handlers/recording-handler";
 import { createOctaveChangeHandler } from "./handlers/octave-handler";
 import { createMidiToggleHandler } from "./handlers/midi-handler-setup";
 import { createOscillatorManager } from "./handlers/oscillator-management";
-import "./components/organisms/piano-keyboard";
-import type { PianoKeyboard } from "./components/organisms/piano-keyboard";
+
+// Components
+import "./components/atoms/filter-type-picker";
 import "./components/atoms/range-control";
 import type { RangeControl } from "./components/atoms/range-control";
-import "./components/molecules/oscillator-control";
 import "./components/atoms/toggle-switch";
 import "./components/atoms/waveform-picker";
 import "./components/atoms/octave-picker";
-import "./components/organisms/module-section";
-import "./components/molecules/adsr-controls";
-import "./components/molecules/controls-group";
-import "./components/molecules/instructions-list";
 import "./components/atoms/subsection-header";
 import "./components/layout/app-header";
 import "./components/layout/help-popover";
+import "./components/molecules/adsr-controls";
+import "./components/molecules/controls-group";
+import "./components/molecules/oscillator-control";
+import "./components/molecules/instructions-list";
 import "./components/organisms/dual-keyboard";
 import "./components/molecules/keyboard-mapping-info";
+import "./components/organisms/module-section";
 import "./components/organisms/oscillator-section";
+import "./components/organisms/piano-keyboard";
+import type { PianoKeyboard } from "./components/organisms/piano-keyboard";
 import "./components/organisms/preset-selector";
-import { SettingsManager } from "./core/settings-manager";
+import type { PresetSelector } from "./components/organisms/preset-selector";
 
 // Keyboard and MIDI controls
 const octaveUpper = document.getElementById("octave-upper") as HTMLSelectElement;
@@ -49,6 +56,7 @@ const sustain = (document.getElementById("sustain") as RangeControl).getInput();
 const release = (document.getElementById("release") as RangeControl).getInput();
 
 // Filter controls
+const filterType = document.getElementById("filter-type") as HTMLSelectElement;
 const filterCutoff = (document.getElementById("filter-cutoff") as RangeControl).getInput();
 const filterResonance = (document.getElementById("filter-resonance") as RangeControl).getInput();
 const filterEnvAmount = (document.getElementById("filter-env-amount") as RangeControl).getInput();
@@ -96,7 +104,7 @@ const addOscBtn = document.getElementById("add-oscillator") as HTMLButtonElement
 const oscillatorBank = new OscillatorBank();
 const ampEnvelope = new EnvelopeModule(attack, decay, sustain, release);
 const filterEnvelope = new EnvelopeModule(filterAttack, filterDecay, filterSustain, filterRelease);
-const filterModule = new FilterModule(filterCutoff, filterResonance, filterEnvAmount, filterEnvelope);
+const filterModule = new FilterModule(filterType, filterCutoff, filterResonance, filterEnvAmount, filterEnvelope);
 const lfoModule = new LFOModule(lfoRate, lfoWaveform, lfoToFilter, lfoToPitch);
 const chorusModule = new ChorusModule(chorusRate, chorusDepth, chorusMix);
 const delayModule = new DelayModule(delayTime, delayFeedback, delayMix);
@@ -125,9 +133,9 @@ const synth = new Synth(
 const settingsManager = new SettingsManager();
 settingsManager.setOscillatorBank(oscillatorBank);
 
-const presetSelector = document.querySelector("preset-selector");
+const presetSelector = document.querySelector("preset-selector") as PresetSelector;
 if (presetSelector) {
-  (presetSelector as any).setSettingsManager(settingsManager);
+  presetSelector.setSettingsManager(settingsManager);
 }
 
 // Initialize handlers
