@@ -1,5 +1,5 @@
-import { SettingsManager } from "../core/settings-manager";
-import { FACTORY_PRESETS } from "../core/factory-presets";
+import { SettingsManager } from "../../core/settings-manager";
+import { FACTORY_PRESETS } from "../../core/factory-presets";
 
 class PresetSelector extends HTMLElement {
   private settingsManager?: SettingsManager;

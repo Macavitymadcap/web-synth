@@ -1,4 +1,4 @@
-import type { PianoKeyboard } from "../components/piano-keyboard";
+import type { PianoKeyboard } from "../components/organisms/piano-keyboard";
 import { buildKeyInfo } from "../core/keys";
 
 export function createOctaveChangeHandler(
