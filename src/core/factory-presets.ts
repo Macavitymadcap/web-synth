@@ -5,535 +5,759 @@ export const FACTORY_PRESETS: Preset[] = [
     name: "Warm Pad",
     description: "Lush atmospheric pad with subtle chorus detune",
     settings: {
-      polyphonic: true,
-      masterVolume: 0.25,
+      master: {
+        polyphonic: true,
+        masterVolume: 0.25,
+      },
       oscillators: [
         { waveform: "sawtooth", detune: 0, level: 0.8 },
         { waveform: "sawtooth", detune: 0, level: 1 },
         { waveform: "sawtooth", detune: 0, level: 0.8 }
       ],
-      attack: 0.8,
-      decay: 0.4,
-      sustain: 0.85,
-      release: 1.2,
-      filterType: "lowpass",
-      filterCutoff: 1200,
-      filterResonance: 0.5,
-      filterEnvAmount: 800,
-      filterAttack: 1,
-      filterDecay: 0.5,
-      filterSustain: 0.7,
-      filterRelease: 1,
-      lfoWaveform: "sine",
-      lfoRate: 0.3,
-      lfoToFilter: 150,
-      lfoToPitch: 0,
-      chorusRate: 0.3,
-      chorusDepth: 20,
-      chorusMix: 0.4,
-      reverbDecay: 3.5,
-      reverbMix: 0.45,
-      delayTime: 0.5,
-      delayFeedback: 0.25,
-      delayMix: 0.15,
-      waveshaperDrive: 0.5,
-      waveshaperBlend: 0.15
-    }
+      envelope: {
+        attack: 0.8,
+        decay: 0.4,
+        sustain: 0.85,
+        release: 1.2,
+      },
+      filter: {
+        type: "lowpass",
+        cutoff: 1200,
+        resonance: 0.5,
+        envAmount: 800,
+        attack: 1,
+        decay: 0.5,
+        sustain: 0.7,
+        release: 1,
+      },
+      lfo: {
+        waveform: "sine",
+        rate: 0.3,
+        toFilter: 150,
+        toPitch: 0,
+      },
+      chorus: {
+        rate: 0.3,
+        depth: 20,
+        mix: 0.4,
+      },
+      reverb: {
+        decay: 3.5,
+        reverbMix: 0.45,
+      },
+      delay: {
+        time: 0.5,
+        feedback: 0.25,
+        mix: 0.15,
+      },
+      waveshaper: {
+        drive: 0.5,
+        blend: 0.15
+      }
+    },
   },
   {
     name: "Sub Bass",
     description: "Deep sine wave bass",
     settings: {
-      polyphonic: false,
-      masterVolume: 0.35,
+      master: {
+        polyphonic: false,
+        masterVolume: 0.35,
+      },
       oscillators: [
         { waveform: "sine", detune: 0, level: 1 },
         { waveform: "triangle", detune: 0, level: 0.3 }
       ],
-      attack: 0.005,
-      decay: 0.15,
-      sustain: 0.8,
-      release: 0.2,
-      filterType: "lowpass",
-      filterCutoff: 300,
-      filterResonance: 0.5,
-      filterEnvAmount: 200,
-      filterAttack: 0.01,
-      filterDecay: 0.2,
-      filterSustain: 0.4,
-      filterRelease: 0.15,
-      lfoWaveform: "sine",
-      lfoRate: 5,
-      lfoToFilter: 0,
-      lfoToPitch: 0,
-      chorusRate: 0.5,
-      chorusDepth: 0,
-      chorusMix: 0,
-      reverbDecay: 0.3,
-      reverbMix: 0.05,
-      delayTime: 0.375,
-      delayFeedback: 0.2,
-      delayMix: 0,
-      waveshaperDrive: 0.2,
-      waveshaperBlend: 0.1
+      envelope: {
+        attack: 0.005,
+        decay: 0.15,
+        sustain: 0.8,
+        release: 0.2,
+      },
+      filter: {
+        type: "lowpass",
+        cutoff: 300,
+        resonance: 0.5,
+        envAmount: 200,
+        attack: 0.01,
+        decay: 0.2,
+        sustain: 0.4,
+        release: 0.15,
+      },
+      lfo: {
+        waveform: "sine",
+        rate: 5,
+        toFilter: 0,
+        toPitch: 0,
+      },
+      chorus: {
+        rate: 0.5,
+        depth: 0,
+        mix: 0,
+      },
+      reverb: {
+        decay: 0.3,
+        reverbMix: 0.05,
+      },
+      delay: {
+        time: 0.375,
+        feedback: 0.2,
+        mix: 0,
+      },
+      waveshaper: {
+        drive: 0.2,
+        blend: 0.1
+      }
     }
   },
   {
     name: "Bright Lead",
     description: "Cutting sawtooth lead with slight vibrato",
     settings: {
-      polyphonic: false,
-      masterVolume: 0.28,
+      master: {
+        polyphonic: false,
+        masterVolume: 0.28,
+      },
       oscillators: [
         { waveform: "sawtooth", detune: 0, level: 1 },
         { waveform: "sawtooth", detune: 0, level: 1 }
       ],
-      attack: 0.01,
-      decay: 0.1,
-      sustain: 0.9,
-      release: 0.25,
-      filterType: "notch",
-      filterCutoff: 4000,
-      filterResonance: 2,
-      filterEnvAmount: 2500,
-      filterAttack: 0.02,
-      filterDecay: 0.15,
-      filterSustain: 0.7,
-      filterRelease: 0.2,
-      lfoWaveform: "sine",
-      lfoRate: 4.5,
-      lfoToFilter: 0,
-      lfoToPitch: 8,
-      chorusRate: 0.5,
-      chorusDepth: 12,
-      chorusMix: 0.25,
-      reverbDecay: 1.2,
-      reverbMix: 0.2,
-      delayTime: 0.375,
-      delayFeedback: 0.3,
-      delayMix: 0.15,
-      waveshaperDrive: 2.5,
-      waveshaperBlend: 0.3
-    }
+      envelope: {
+        attack: 0.01,
+        decay: 0.1,
+        sustain: 0.9,
+        release: 0.25,
+      },
+      filter: {
+        type: "notch",
+        cutoff: 4000,
+        resonance: 2,
+        envAmount: 2500,
+        attack: 0.02,
+        decay: 0.15,
+        sustain: 0.7,
+        release: 0.2,
+      },
+      lfo: {
+        waveform: "sine",
+        rate: 4.5,
+        toFilter: 0,
+        toPitch: 8,
+      },
+      chorus: {
+        rate: 0.5,
+        depth: 12,
+        mix: 0.25,
+      },
+      reverb: {
+        decay: 1.2,
+        reverbMix: 0.2,
+      },
+      delay: {
+        time: 0.375,
+        feedback: 0.3,
+        mix: 0.15,
+      },
+      waveshaper: {
+        drive: 2.5,
+        blend: 0.3
+      }
+    },
   },
   {
     name: "Pluck Bass",
     description: "Percussive bass with fast decay",
     settings: {
-      polyphonic: false,
-      masterVolume: 0.32,
+      master: {
+        polyphonic: false,
+        masterVolume: 0.32,
+      },
       oscillators: [
         { waveform: "sawtooth", detune: 0, level: 1 },
         { waveform: "square", detune: 0, level: 0.4 }
       ],
-      attack: 0.001,
-      decay: 0.3,
-      sustain: 0.15,
-      release: 0.1,
-      filterType: "bandpass",
-      filterCutoff: 800,
-      filterResonance: 3,
-      filterEnvAmount: 3000,
-      filterAttack: 0.001,
-      filterDecay: 0.2,
-      filterSustain: 0.1,
-      filterRelease: 0.1,
-      lfoWaveform: "sine",
-      lfoRate: 5,
-      lfoToFilter: 0,
-      lfoToPitch: 0,
-      chorusRate: 0.5,
-      chorusDepth: 0,
-      chorusMix: 0,
-      reverbDecay: 0.5,
-      reverbMix: 0.1,
-      delayTime: 0.375,
-      delayFeedback: 0.2,
-      delayMix: 0,
-      waveshaperDrive: 1.5,
-      waveshaperBlend: 0.25
+      envelope: {
+        attack: 0.001,
+        decay: 0.3,
+        sustain: 0.15,
+        release: 0.1,
+      },
+      filter: {
+        type: "bandpass",
+        cutoff: 800,
+        resonance: 3,
+        envAmount: 3000,
+        attack: 0.001,
+        decay: 0.2,
+        sustain: 0.1,
+        release: 0.1,
+      },
+      lfo: {
+        waveform: "sine",
+        rate: 5,
+        toFilter: 0,
+        toPitch: 0,
+      },
+      chorus: {
+        rate: 0.5,
+        depth: 0,
+        mix: 0,
+      },
+      reverb: {
+        decay: 0.5,
+        reverbMix: 0.1,
+      },
+      delay: {
+        time: 0.375,
+        feedback: 0.2,
+        mix: 0,
+      },
+      waveshaper: {
+        drive: 1.5,
+        blend: 0.25
+      }
     }
   },
   {
     name: "Wobble Bass",
     description: "LFO modulated filter for wobble effect",
     settings: {
-      polyphonic: false,
-      masterVolume: 0.3,
+      master: {
+        polyphonic: false,
+        masterVolume: 0.3,
+      },
       oscillators: [
         { waveform: "sawtooth", detune: 0, level: 1 }
       ],
-      attack: 0.005,
-      decay: 0.05,
-      sustain: 1,
-      release: 0.1,
-      filterType: "lowpass",
-      filterCutoff: 400,
-      filterResonance: 12,
-      filterEnvAmount: 0,
-      filterAttack: 0.01,
-      filterDecay: 0.1,
-      filterSustain: 0.5,
-      filterRelease: 0.1,
-      lfoWaveform: "square",
-      lfoRate: 6,
-      lfoToFilter: 1800,
-      lfoToPitch: 0,
-      chorusRate: 0.5,
-      chorusDepth: 0,
-      chorusMix: 0,
-      reverbDecay: 0.3,
-      reverbMix: 0.05,
-      delayTime: 0.375,
-      delayFeedback: 0.2,
-      delayMix: 0,
-      waveshaperDrive: 2.2,
-      waveshaperBlend: 0.35
+      envelope: {
+        attack: 0.005,
+        decay: 0.05,
+        sustain: 1,
+        release: 0.1,
+      },
+      filter: {
+        type: "lowpass",
+        cutoff: 400,
+        resonance: 12,
+        envAmount: 0,
+        attack: 0.01,
+        decay: 0.1,
+        sustain: 0.5,
+        release: 0.1,
+      },
+      lfo: {
+        waveform: "square",
+        rate: 6,
+        toFilter: 1800,
+        toPitch: 0,
+      },
+      chorus: {
+        rate: 0.5,
+        depth: 0,
+        mix: 0,
+      },
+      reverb: {
+        decay: 0.3,
+        reverbMix: 0.05,
+      },
+      delay: {
+        time: 0.375,
+        feedback: 0.2,
+        mix: 0,
+      },
+      waveshaper: {
+        drive: 2.2,
+        blend: 0.35
+      }
     }
   },
   {
     name: "Soft Keys",
     description: "Mellow electric piano-like sound",
     settings: {
-      polyphonic: true,
-      masterVolume: 0.28,
+      master: {
+        polyphonic: true,
+        masterVolume: 0.28,
+      },
       oscillators: [
         { waveform: "sine", detune: 0, level: 1 },
         { waveform: "triangle", detune: 0, level: 0.5 }
       ],
-      attack: 0.008,
-      decay: 0.6,
-      sustain: 0.4,
-      release: 0.5,
-      filterType: "lowshelf",
-      filterCutoff: 3500,
-      filterResonance: 0.8,
-      filterEnvAmount: 500,
-      filterAttack: 0.01,
-      filterDecay: 0.4,
-      filterSustain: 0.6,
-      filterRelease: 0.4,
-      lfoWaveform: "sine",
-      lfoRate: 5,
-      lfoToFilter: 0,
-      lfoToPitch: 0,
-      chorusRate: 0.3,
-      chorusDepth: 18,
-      chorusMix: 0.35,
-      reverbDecay: 1.8,
-      reverbMix: 0.25,
-      delayTime: 0.25,
-      delayFeedback: 0.15,
-      delayMix: 0.1,
-      waveshaperDrive: 0.01,
-      waveshaperBlend: 0.1
-    }
+      envelope: {
+        attack: 0.008,
+        decay: 0.6,
+        sustain: 0.4,
+        release: 0.5,
+      },
+      filter: {
+        type: "lowshelf",
+        cutoff: 3500,
+        resonance: 0.8,
+        envAmount: 500,
+        attack: 0.01,
+        decay: 0.4,
+        sustain: 0.6,
+        release: 0.4,
+      },
+      lfo: {
+        waveform: "sine",
+        rate: 5,
+        toFilter: 0,
+        toPitch: 0,
+      },
+      chorus: {
+        rate: 0.3,
+        depth: 18,
+        mix: 0.35,
+      },
+      reverb: {
+        decay: 1.8,
+        reverbMix: 0.25,
+      },
+      delay: {
+        time: 0.25,
+        feedback: 0.15,
+        mix: 0.1,
+      },
+      waveshaper: {
+        drive: 0.01,
+        blend: 0.1
+      }
+    },
   },
   {
     name: "Drawbar Organ",
     description: "Classic organ with harmonic drawbars",
     settings: {
-      polyphonic: true,
-      masterVolume: 0.27,
+      master: {
+        polyphonic: true,
+        masterVolume: 0.27,
+      },
       oscillators: [
         { waveform: "sine", detune: 0, level: 1 },
         { waveform: "sine", detune: 1200, level: 0.7 },
         { waveform: "sine", detune: 1900, level: 0.5 }
       ],
-      attack: 0.01,
-      decay: 0.05,
-      sustain: 1,
-      release: 0.05,
-      filterType: "allpass",
-      filterCutoff: 8000,
-      filterResonance: 0.5,
-      filterEnvAmount: 0,
-      filterAttack: 0.01,
-      filterDecay: 0.1,
-      filterSustain: 1,
-      filterRelease: 0.05,
-      lfoWaveform: "sine",
-      lfoRate: 6,
-      lfoToFilter: 0,
-      lfoToPitch: 0,
-      chorusRate: 0.5,
-      chorusDepth: 25,
-      chorusMix: 0.5,
-      reverbDecay: 2.5,
-      reverbMix: 0.3,
-      delayTime: 0.375,
-      delayFeedback: 0.2,
-      delayMix: 0,
-      waveshaperDrive: 0,
-      waveshaperBlend: 0
-    }
+      envelope: {
+        attack: 0.01,
+        decay: 0.05,
+        sustain: 1,
+        release: 0.05,
+      },
+      filter: {
+        type: "allpass",
+        cutoff: 8000,
+        resonance: 0.5,
+        envAmount: 0,
+        attack: 0.01,
+        decay: 0.1,
+        sustain: 1,
+        release: 0.05,
+      },
+      lfo: {
+        waveform: "sine",
+        rate: 6,
+        toFilter: 0,
+        toPitch: 0,
+      },
+      chorus: {
+        rate: 0.5,
+        depth: 25,
+        mix: 0.5,
+      },
+      reverb: {
+        decay: 2.5,
+        reverbMix: 0.3,
+      },
+      delay: {
+        time: 0.375,
+        feedback: 0.2,
+        mix: 0,
+      },
+      waveshaper: {
+        drive: 0,
+        blend: 0
+      }
+    },
   },
   {
     name: "String Ensemble",
     description: "Rich layered strings with slow attack",
     settings: {
-      polyphonic: true,
-      masterVolume: 0.26,
+      master: {
+        polyphonic: true,
+        masterVolume: 0.26,
+      },
       oscillators: [
         { waveform: "sawtooth", detune: -4, level: 0.9 },
         { waveform: "sawtooth", detune: 0, level: 1 },
         { waveform: "sawtooth", detune: 4, level: 0.9 }
       ],
-      attack: 1.2,
-      decay: 0.3,
-      sustain: 0.9,
-      release: 1.5,
-      filterType: "lowpass", // Added
-      filterCutoff: 2500,
-      filterResonance: 0.8,
-      filterEnvAmount: 400,
-      filterAttack: 1,
-      filterDecay: 0.4,
-      filterSustain: 0.85,
-      filterRelease: 1.2,
-      lfoWaveform: "sine",
-      lfoRate: 0.5,
-      lfoToFilter: 100,
-      lfoToPitch: 0,
-      chorusRate: 0.3,
-      chorusDepth: 22,
-      chorusMix: 0.5,
-      reverbDecay: 3.5,
-      reverbMix: 0.5,
-      delayTime: 0.5,
-      delayFeedback: 0.25,
-      delayMix: 0.2,
-      waveshaperDrive: 0.3,
-      waveshaperBlend: 0.1
-    }
+      envelope: {
+        attack: 1.2,
+        decay: 0.3,
+        sustain: 0.9,
+        release: 1.5,
+      },
+      filter: {
+        type: "lowpass", // Added
+        cutoff: 2500,
+        resonance: 0.8,
+        envAmount: 400,
+        attack: 1,
+        decay: 0.4,
+        sustain: 0.85,
+        release: 1.2,
+      },
+      lfo: {
+        waveform: "sine",
+        rate: 0.5,
+        toFilter: 100,
+        toPitch: 0,
+      },
+      chorus: {
+        rate: 0.3,
+        depth: 22,
+        mix: 0.5,
+      },
+      reverb: {
+        decay: 3.5,
+        reverbMix: 0.5,
+      },
+      delay: {
+        time: 0.5,
+        feedback: 0.25,
+        mix: 0.2,
+      },
+      waveshaper: {
+        drive: 0.3,
+        blend: 0.1
+      }
+    },
   },
   {
     name: "Synth Brass",
     description: "Bold sawtooth brass with moderate attack",
     settings: {
-      polyphonic: true,
-      masterVolume: 0.29,
+      master: {
+        polyphonic: true,
+        masterVolume: 0.29,
+      },
       oscillators: [
         { waveform: "sawtooth", detune: -2, level: 0.85 },
         { waveform: "sawtooth", detune: 0, level: 1 },
         { waveform: "sawtooth", detune: 2, level: 0.85 }
       ],
-      attack: 0.06,
-      decay: 0.2,
-      sustain: 0.9,
-      release: 0.25,
-      filterType: "bandpass", // Example: bandpass for brass
-      filterCutoff: 2800,
-      filterResonance: 3,
-      filterEnvAmount: 2000,
-      filterAttack: 0.05,
-      filterDecay: 0.25,
-      filterSustain: 0.75,
-      filterRelease: 0.2,
-      lfoWaveform: "sine",
-      lfoRate: 5,
-      lfoToFilter: 0,
-      lfoToPitch: 0,
-      chorusRate: 0.4,
-      chorusDepth: 15,
-      chorusMix: 0.3,
-      reverbDecay: 1.8,
-      reverbMix: 0.25,
-      delayTime: 0.375,
-      delayFeedback: 0.2,
-      delayMix: 0,
-      waveshaperDrive: 1.2,
-      waveshaperBlend: 0.18
+      envelope: {
+        attack: 0.06,
+        decay: 0.2,
+        sustain: 0.9,
+        release: 0.25,
+      },
+      filter: {
+        type: "bandpass", // Example: bandpass for brass
+        cutoff: 2800,
+        resonance: 3,
+        envAmount: 2000,
+        attack: 0.05,
+        decay: 0.25,
+        sustain: 0.75,
+        release: 0.2,
+      },
+      lfo: {
+        waveform: "sine",
+        rate: 5,
+        toFilter: 0,
+        toPitch: 0,
+      },
+      chorus: {
+        rate: 0.4,
+        depth: 15,
+        mix: 0.3,
+      },
+      reverb: {
+        decay: 1.8,
+        reverbMix: 0.25,
+      },
+      delay: {
+        time: 0.375,
+        feedback: 0.2,
+        mix: 0,
+      },
+      waveshaper: {
+        drive: 1.2,
+        blend: 0.18
+      }
     }
   },
   {
     name: "Simple Flute",
     description: "Pure sine wave with gentle vibrato",
     settings: {
-      polyphonic: false,
-      masterVolume: 0.3,
+      master: {
+        polyphonic: false,
+        masterVolume: 0.3,
+      },
       oscillators: [
         { waveform: "sine", detune: 0, level: 1 }
       ],
-      attack: 0.12,
-      decay: 0.08,
-      sustain: 0.85,
-      release: 0.35,
-      filterType: "lowshelf", // Example: lowshelf for flute
-      filterCutoff: 3500,
-      filterResonance: 0.5,
-      filterEnvAmount: 300,
-      filterAttack: 0.1,
-      filterDecay: 0.1,
-      filterSustain: 0.8,
-      filterRelease: 0.3,
-      lfoWaveform: "sine",
-      lfoRate: 4.8,
-      lfoToFilter: 0,
-      lfoToPitch: 5,
-      chorusRate: 0.4,
-      chorusDepth: 10,
-      chorusMix: 0.2,
-      reverbDecay: 2.2,
-      reverbMix: 0.35,
-      delayTime: 0.375,
-      delayFeedback: 0.25,
-      delayMix: 0.1,
-      waveshaperDrive: 0,
-      waveshaperBlend: 0
+      envelope: {
+        attack: 0.12,
+        decay: 0.08,
+        sustain: 0.85,
+        release: 0.35,
+      },
+      filter: {
+        type: "lowshelf", // Example: lowshelf for flute
+        cutoff: 3500,
+        resonance: 0.5,
+        envAmount: 300,
+        attack: 0.1,
+        decay: 0.1,
+        sustain: 0.8,
+        release: 0.3,
+      },
+      lfo: {
+        waveform: "sine",
+        rate: 4.8,
+        toFilter: 0,
+        toPitch: 5,
+      },
+      chorus: {
+        rate: 0.4,
+        depth: 10,
+        mix: 0.2,
+      },
+      reverb: {
+        decay: 2.2,
+        reverbMix: 0.35,
+      },
+      delay: {
+        time: 0.375,
+        feedback: 0.25,
+        mix: 0.1,
+      },
+      waveshaper: {
+        drive: 0,
+        blend: 0
+      }
     }
   },
   {
     name: "Arp Pluck",
     description: "Bright plucky sound ideal for arpeggios",
     settings: {
-      polyphonic: true,
-      masterVolume: 0.28,
+      master: {
+        polyphonic: true,
+        masterVolume: 0.28,
+      },
       oscillators: [
         { waveform: "square", detune: -2, level: 1 },
         { waveform: "square", detune: 2, level: 1 }
       ],
-      attack: 0.002,
-      decay: 0.25,
-      sustain: 0.2,
-      release: 0.15,
-      filterType: "highpass", // Example: highpass for bright pluck
-      filterCutoff: 3500,
-      filterResonance: 4,
-      filterEnvAmount: 3500,
-      filterAttack: 0.002,
-      filterDecay: 0.2,
-      filterSustain: 0.2,
-      filterRelease: 0.1,
-      lfoWaveform: "sine",
-      lfoRate: 5,
-      lfoToFilter: 0,
-      lfoToPitch: 0,
-      chorusRate: 0.6,
-      chorusDepth: 15,
-      chorusMix: 0.3,
-      reverbDecay: 1.5,
-      reverbMix: 0.3,
-      delayTime: 0.1875,
-      delayFeedback: 0.4,
-      delayMix: 0.3,
-      waveshaperDrive: 0.8,
-      waveshaperBlend: 0.2
+      envelope: {
+        attack: 0.002,
+        decay: 0.25,
+        sustain: 0.2,
+        release: 0.15,
+      },
+      filter: {
+        type: "highpass", // Example: highpass for bright pluck
+        cutoff: 3500,
+        resonance: 4,
+        envAmount: 3500,
+        attack: 0.002,
+        decay: 0.2,
+        sustain: 0.2,
+        release: 0.1,
+      },
+      lfo: {
+        waveform: "sine",
+        rate: 5,
+        toFilter: 0,
+        toPitch: 0,
+      },
+      chorus: {
+        rate: 0.6,
+        depth: 15,
+        mix: 0.3,
+      },
+      reverb: {
+        decay: 1.5,
+        reverbMix: 0.3,
+      },
+      delay: {
+        time: 0.1875,
+        feedback: 0.4,
+        mix: 0.3,
+      },
+      waveshaper: {
+        drive: 0.8,
+        blend: 0.2
+      }
     }
   },
   {
     name: "Bell Tone",
     description: "Metallic bell-like sound with harmonic overtones",
     settings: {
-      polyphonic: true,
-      masterVolume: 0.27,
+      master: {
+        polyphonic: true,
+        masterVolume: 0.27,
+      },
       oscillators: [
         { waveform: "sine", detune: 0, level: 1 },
         { waveform: "sine", detune: 1900, level: 0.4 },
         { waveform: "sine", detune: 3100, level: 0.25 }
       ],
-      attack: 0.001,
-      decay: 1.2,
-      sustain: 0.3,
-      release: 0.8,
-      filterType: "notch", // Example: notch for bell
-      filterCutoff: 8000,
-      filterResonance: 0.5,
-      filterEnvAmount: 0,
-      filterAttack: 0.001,
-      filterDecay: 0.8,
-      filterSustain: 0.5,
-      filterRelease: 0.6,
-      lfoWaveform: "sine",
-      lfoRate: 5,
-      lfoToFilter: 0,
-      lfoToPitch: 0,
-      chorusRate: 0.5,
-      chorusDepth: 12,
-      chorusMix: 0.25,
-      reverbDecay: 3,
-      reverbMix: 0.4,
-      delayTime: 0.25,
-      delayFeedback: 0.35,
-      delayMix: 0.25,
-      waveshaperDrive: 0.2,
-      waveshaperBlend: 0.1
+      envelope: {
+        attack: 0.001,
+        decay: 1.2,
+        sustain: 0.3,
+        release: 0.8,
+      },
+      filter: {
+        type: "notch",
+        cutoff: 8000,
+        resonance: 0.5,
+        envAmount: 0,
+        attack: 0.001,
+        decay: 0.8,
+        sustain: 0.5,
+        release: 0.6,
+      },
+      lfo: {
+        waveform: "sine",
+        rate: 5,
+        toFilter: 0,
+        toPitch: 0,
+      },
+      chorus: {
+        rate: 0.5,
+        depth: 12,
+        mix: 0.25,
+      },
+      reverb: {
+        decay: 3,
+        reverbMix: 0.4,
+      },
+      delay: {
+        time: 0.25,
+        feedback: 0.35,
+        mix: 0.25,
+      },
+      waveshaper: {
+        drive: 0.2,
+        blend: 0.1
+      }
     }
   },
   {
     name: "Gritty Lead",
     description: "Aggressive distorted lead with lots of edge",
     settings: {
-      polyphonic: false,
-      masterVolume: 0.22,
+      master: {
+        polyphonic: false,
+        masterVolume: 0.22,
+      },
       oscillators: [
         { waveform: "sawtooth", detune: 0, level: 1 },
         { waveform: "square", detune: 0, level: 0.5 }
       ],
-      attack: 0.01,
-      decay: 0.08,
-      sustain: 0.7,
-      release: 0.18,
-      filterType: "peaking", // Example: peaking for gritty lead
-      filterCutoff: 3200,
-      filterResonance: 1.5,
-      filterEnvAmount: 1200,
-      filterAttack: 0.01,
-      filterDecay: 0.1,
-      filterSustain: 0.6,
-      filterRelease: 0.12,
-      lfoWaveform: "sine",
-      lfoRate: 5,
-      lfoToFilter: 0,
-      lfoToPitch: 0,
-      chorusRate: 0.3,
-      chorusDepth: 10,
-      chorusMix: 0.18,
-      reverbDecay: 0.7,
-      reverbMix: 0.18,
-      delayTime: 0.18,
-      delayFeedback: 0.22,
-      delayMix: 0.12,
-      waveshaperDrive: 6,
-      waveshaperBlend: 0.7
+      envelope: {
+        attack: 0.01,
+        decay: 0.08,
+        sustain: 0.7,
+        release: 0.18,
+      },
+      filter: {
+        type: "peaking", // Example: peaking for gritty lead
+        cutoff: 3200,
+        resonance: 1.5,
+        envAmount: 1200,
+        attack: 0.01,
+        decay: 0.1,
+        sustain: 0.6,
+        release: 0.12,
+      },
+      lfo: {
+        waveform: "sine",
+        rate: 5,
+        toFilter: 0,
+        toPitch: 0,
+      },
+      chorus: {
+        rate: 0.3,
+        depth: 10,
+        mix: 0.18,
+      },
+      reverb: {
+        decay: 0.7,
+        reverbMix: 0.18,
+      },
+      delay: {
+        time: 0.18,
+        feedback: 0.22,
+        mix: 0.12,
+      },
+      waveshaper: {
+        drive: 6,
+        blend: 0.7
+      },
     }
   },
   {
     name: "Lo-Fi Crunch",
     description: "Dirty, crushed sound for lo-fi and retro vibes",
     settings: {
-      polyphonic: true,
-      masterVolume: 0.18,
+      master: {
+        polyphonic: true,
+        masterVolume: 0.18,
+      },
       oscillators: [
         { waveform: "square", detune: 0, level: 1 },
         { waveform: "triangle", detune: 0, level: 0.4 }
       ],
-      attack: 0.005,
-      decay: 0.12,
-      sustain: 0.3,
-      release: 0.18,
-      filterType: "lowpass", // Added
-      filterCutoff: 1800,
-      filterResonance: 2.2,
-      filterEnvAmount: 800,
-      filterAttack: 0.01,
-      filterDecay: 0.1,
-      filterSustain: 0.2,
-      filterRelease: 0.1,
-      lfoWaveform: "triangle",
-      lfoRate: 2.5,
-      lfoToFilter: 0,
-      lfoToPitch: 0,
-      chorusRate: 0.2,
-      chorusDepth: 6,
-      chorusMix: 0.1,
-      reverbDecay: 0.5,
-      reverbMix: 0.08,
-      delayTime: 0.12,
-      delayFeedback: 0.18,
-      delayMix: 0.08,
-      waveshaperDrive: 8,
-      waveshaperBlend: 0.6
+      envelope: {
+        attack: 0.005,
+        decay: 0.12,
+        sustain: 0.3,
+        release: 0.18,
+      },
+      filter: {
+        type: "lowpass", // Added
+        cutoff: 1800,
+        resonance: 2.2,
+        envAmount: 800,
+        attack: 0.01,
+        decay: 0.1,
+        sustain: 0.2,
+        release: 0.1,
+      },
+      lfo: {
+        waveform: "triangle",
+        rate: 2.5,
+        toFilter: 0,
+        toPitch: 0,
+      },
+      chorus: {
+        rate: 0.2,
+        depth: 6,
+        mix: 0.1,
+      },
+      reverb: {
+        decay: 0.5,
+        reverbMix: 0.08,
+      },
+      delay: {
+        time: 0.12,
+        feedback: 0.18,
+        mix: 0.08,
+      },
+      waveshaper: {
+        drive: 8,
+        blend: 0.6
+      }
     }
   }
 ];
