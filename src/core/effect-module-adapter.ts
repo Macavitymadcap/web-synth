@@ -6,12 +6,12 @@ import type { BaseEffectModule, EffectNodes } from '../modules/base-effect-modul
  */
 export class EffectModuleAdapter<TModule, TConfig> implements BaseEffectModule {
   constructor(
-    private module: TModule,
-    private getConfigFn: (module: TModule) => TConfig,
-    private initializeFn: (module: TModule, audioCtx: AudioContext, destination: AudioNode) => EffectNodes,
-    private getInputFn: (module: TModule) => GainNode | null,
-    private getOutputFn: (module: TModule) => GainNode | null,
-    private isInitializedFn: (module: TModule) => boolean
+    private readonly module: TModule,
+    private readonly getConfigFn: (module: TModule) => TConfig,
+    private readonly initializeFn: (module: TModule, audioCtx: AudioContext, destination: AudioNode) => EffectNodes,
+    private readonly getInputFn: (module: TModule) => GainNode | null,
+    private readonly getOutputFn: (module: TModule) => GainNode | null,
+    private readonly isInitializedFn: (module: TModule) => boolean
   ) {}
 
   initialize(audioCtx: AudioContext, destination: AudioNode): EffectNodes {
