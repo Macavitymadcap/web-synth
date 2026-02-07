@@ -32,6 +32,17 @@ export class SpectrumAnalyserModule {
 
     const bufferLength = this.analyserNode.frequencyBinCount;
     const dataArray = new Uint8Array(bufferLength);
+    const sampleRate = this.analyserNode.context.sampleRate;
+
+    // Piano frequency range: A0 (27.5 Hz) to C8 (4186 Hz)
+    const minFreq = 20; // Start slightly lower for visual padding
+    const maxFreq = 5000; // End slightly higher to capture harmonics
+
+    // Calculate bin indices for our frequency range
+    const nyquist = sampleRate / 2;
+    const minBin = Math.floor((minFreq / nyquist) * bufferLength);
+    const maxBin = Math.ceil((maxFreq / nyquist) * bufferLength);
+    const usefulBins = maxBin - minBin;
 
     const draw = () => {
       this.analyserNode!.getByteFrequencyData(dataArray);
@@ -40,12 +51,18 @@ export class SpectrumAnalyserModule {
 
       const width = this.canvas!.width;
       const height = this.canvas!.height;
-      const barWidth = width / bufferLength;
+      
+      // Use only the relevant frequency bins
+      const barWidth = width / usefulBins;
 
-      for (let i = 0; i < bufferLength; i++) {
-        const value = dataArray[i];
+      for (let i = 0; i < usefulBins; i++) {
+        const binIndex = minBin + i;
+        const value = dataArray[binIndex];
         const barHeight = (value / 255) * height;
-        ctx.fillStyle = `hsl(${i / bufferLength * 270 + 180}, 100%, 60%)`;
+        
+        // Color based on frequency (low=red, mid=yellow/green, high=cyan/blue)
+        const hue = (i / usefulBins) * 180 + 180; // 180° (cyan) to 360° (red)
+        ctx.fillStyle = `hsl(${hue}, 100%, 60%)`;
         ctx.fillRect(i * barWidth, height - barHeight, barWidth, barHeight);
       }
 
