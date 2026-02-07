@@ -151,13 +151,13 @@ const masterModule = new MasterModule(masterVolume);
 
 // Effects
 const chorusModule = new ChorusModule(chorusRate, chorusDepth, chorusMix);
-const phaserAdapter = createStandardEffectAdapter(new PhaserModule(
+const phaserModule = new PhaserModule(
   phaserRate,
   phaserDepth,
   phaserStages,
   phaserFeedback,
   phaserMix
-));
+);
 const delayAdapter = createStandardEffectAdapter(new DelayModule(delayTime, delayFeedback, delayMix));
 const reverbModule = new ReverbModule(reverbDecay, reverbMix);
 const reverbAdapter = createStandardEffectAdapter(reverbModule);
@@ -180,7 +180,7 @@ effectsManager.register(chorusModule, {
   category: 'modulation'
 });
 
-effectsManager.register(phaserAdapter, {
+effectsManager.register(phaserModule, {
   id: 'phaser',
   name: 'Phaser',
   order: 90,

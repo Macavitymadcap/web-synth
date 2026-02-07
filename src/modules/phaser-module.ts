@@ -1,3 +1,5 @@
+import type { BaseEffectModule, EffectNodes } from './base-effect-module';
+
 export type PhaserConfig = {
   rate: number;      // LFO rate (Hz)
   depth: number;     // LFO depth (Hz)
@@ -6,15 +8,10 @@ export type PhaserConfig = {
   mix: number;       // Dry/wet mix (0-1)
 };
 
-export type PhaserNodes = {
-  input: GainNode;
-  output: GainNode;
-};
-
 /**
  * PhaserModule: Classic multi-stage phaser effect with LFO modulation
  */
-export class PhaserModule {
+export class PhaserModule implements BaseEffectModule {
   private readonly rateEl: HTMLInputElement;
   private readonly depthEl: HTMLInputElement;
   private readonly stagesEl: HTMLInputElement;
@@ -55,7 +52,7 @@ export class PhaserModule {
     };
   }
 
-  initialize(audioCtx: BaseAudioContext, destination: AudioNode): PhaserNodes {
+  initialize(audioCtx: AudioContext, destination: AudioNode): EffectNodes {
     const { rate, depth, stages, feedback, mix } = this.getConfig();
 
     // Clean up previous nodes if re-initializing
@@ -94,7 +91,9 @@ export class PhaserModule {
 
     this.dryGain.connect(this.outputGain);
     this.wetGain.connect(this.outputGain);
-    
+
+    // Output to next effect
+    this.outputGain.connect(destination);
 
     // LFO for modulation
     this.lfo = audioCtx.createOscillator();
@@ -145,7 +144,7 @@ export class PhaserModule {
     this.stagesEl.addEventListener('input', () => {
       // Re-initialize to update stage count
       if (this.inputGain && this.outputGain) {
-        const ctx = this.inputGain.context;
+        const ctx = this.inputGain.context as AudioContext;
         const dest = this.outputGain;
         this.initialize(ctx, dest);
       }
