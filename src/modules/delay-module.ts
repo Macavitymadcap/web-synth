@@ -1,19 +1,16 @@
+import type { BaseEffectModule, EffectNodes } from './base-effect-module';
+
 export type DelayConfig = {
   time: number;
   feedback: number;
   mix: number;
 };
 
-export type DelayNodes = {
-  input: GainNode;
-  output: GainNode;
-};
-
 /**
- * DelayModule manages a delay effect with feedback
- * Handles delay time, feedback amount, and dry/wet mix
+ * DelayModule manages a delay effect with feedback and dry/wet mix.
+ * Implements BaseEffectModule for EffectsManager compatibility.
  */
-export class DelayModule {
+export class DelayModule implements BaseEffectModule {
   private readonly timeEl: HTMLInputElement;
   private readonly feedbackEl: HTMLInputElement;
   private readonly mixEl: HTMLInputElement;
@@ -33,14 +30,9 @@ export class DelayModule {
     this.timeEl = timeEl;
     this.feedbackEl = feedbackEl;
     this.mixEl = mixEl;
-
     this.setupParameterListeners();
   }
 
-  /**
-   * Get the current delay configuration values
-   * @returns Object containing delay parameters
-   */
   getConfig(): DelayConfig {
     return {
       time: Number.parseFloat(this.timeEl.value),
@@ -49,35 +41,26 @@ export class DelayModule {
     };
   }
 
-  /**
-   * Initialize the delay effect and its routing
-   * @param audioCtx - The AudioContext to create nodes in
-   * @param destination - The destination node (typically master gain)
-   * @returns Object containing input and output gain nodes for the delay
-   */
-  initialize(audioCtx: AudioContext, destination: AudioNode): DelayNodes {
+  initialize(audioCtx: AudioContext, destination: AudioNode): EffectNodes {
+    this.disconnect();
+
     const { time, feedback, mix } = this.getConfig();
 
-    // Create input and output nodes
     this.inputGain = audioCtx.createGain();
     this.outputGain = audioCtx.createGain();
 
-    // Create delay line
     this.delayNode = audioCtx.createDelay(2); // Max 2 seconds
     this.delayNode.delayTime.value = time;
 
-    // Create feedback path
     this.feedbackGain = audioCtx.createGain();
     this.feedbackGain.gain.value = feedback;
 
-    // Create dry/wet mix
     this.wetGain = audioCtx.createGain();
     this.wetGain.gain.value = mix;
 
     this.dryGain = audioCtx.createGain();
     this.dryGain.gain.value = 1 - mix;
 
-    // Wire up delay effect
     // Input splits to dry and delay paths
     this.inputGain.connect(this.dryGain);
     this.inputGain.connect(this.delayNode);
@@ -93,8 +76,8 @@ export class DelayModule {
     this.dryGain.connect(this.outputGain);
     this.wetGain.connect(this.outputGain);
 
-    // Connect to destination
-    
+    // Output to next effect
+    this.outputGain.connect(destination);
 
     return {
       input: this.inputGain,
@@ -102,34 +85,18 @@ export class DelayModule {
     };
   }
 
-  /**
-   * Get the input node for the delay effect
-   * @returns Input gain node, or null if not initialized
-   */
   getInput(): GainNode | null {
     return this.inputGain;
   }
 
-  /**
-   * Get the output node for the delay effect
-   * @returns Output gain node, or null if not initialized
-   */
   getOutput(): GainNode | null {
     return this.outputGain;
   }
 
-  /**
-   * Check if the delay has been initialized
-   * @returns True if initialized, false otherwise
-   */
   isInitialized(): boolean {
-    return this.delayNode !== null;
+    return this.inputGain !== null && this.delayNode !== null;
   }
 
-  /**
-   * Setup event listeners for real-time parameter changes
-   * @private
-   */
   private setupParameterListeners(): void {
     this.timeEl.addEventListener('input', () => {
       if (this.delayNode) {
@@ -150,5 +117,20 @@ export class DelayModule {
         this.dryGain.gain.value = 1 - mix;
       }
     });
+  }
+
+  private disconnect(): void {
+    if (this.inputGain) this.inputGain.disconnect();
+    if (this.outputGain) this.outputGain.disconnect();
+    if (this.delayNode) this.delayNode.disconnect();
+    if (this.feedbackGain) this.feedbackGain.disconnect();
+    if (this.wetGain) this.wetGain.disconnect();
+    if (this.dryGain) this.dryGain.disconnect();
+    this.inputGain = null;
+    this.outputGain = null;
+    this.delayNode = null;
+    this.feedbackGain = null;
+    this.wetGain = null;
+    this.dryGain = null;
   }
 }

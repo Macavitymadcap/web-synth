@@ -158,7 +158,7 @@ const phaserModule = new PhaserModule(
   phaserFeedback,
   phaserMix
 );
-const delayAdapter = createStandardEffectAdapter(new DelayModule(delayTime, delayFeedback, delayMix));
+const delayModule = new DelayModule(delayTime, delayFeedback, delayMix);
 const reverbModule = new ReverbModule(reverbDecay, reverbMix);
 const reverbAdapter = createStandardEffectAdapter(reverbModule);
 const compressorAdapter = createStandardEffectAdapter(new CompressorModule(
@@ -187,7 +187,7 @@ effectsManager.register(phaserModule, {
   category: 'modulation'
 });
 
-effectsManager.register(delayAdapter, {
+effectsManager.register(delayModule, {
   id: 'delay',
   name: 'Delay',
   order: 80,

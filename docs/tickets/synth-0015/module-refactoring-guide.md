@@ -73,6 +73,9 @@ If the module was previously wrapped with `createStandardEffectAdapter`, remove 
 - **Business logic:** Configuration, parameter updates, initialization state.
 - **Mock Web Audio API:** Do not test actual audio output; mock nodes and methods as needed.
 
+> **Note:**  
+> If your effect module uses additional Web Audio API node types (e.g., `createBiquadFilter`, `createDynamicsCompressor`, etc.), be sure to add corresponding mock implementations to `createMockAudioCtx` in your test fixtures. This ensures your tests will not fail due to missing mock methods.
+
 ### **Test File Template**
 
 Create a test file in modules:
@@ -119,6 +122,7 @@ describe('MyEffectModule', () => {
 
 - **Do:** Test config parsing, parameter listeners, node initialization, and state transitions.
 - **Do not:** Attempt to verify actual audio output or signal flow—this requires manual/integration testing in the browser.
+- **Do:** Update your mock audio context with any additional node types required by your module.
 
 ---
 
@@ -136,6 +140,7 @@ describe('MyEffectModule', () => {
 - [ ] Refactor to implement `BaseEffectModule` directly.
 - [ ] Remove adapter usage in main.ts.
 - [ ] Add/Update unit tests for business logic.
+- [ ] Update test fixtures to mock any new Web Audio node types used.
 - [ ] Verify registration and ordering in `EffectsManager`.
 - [ ] Manually test audio behavior in the browser.
 

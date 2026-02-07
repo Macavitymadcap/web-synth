@@ -26,6 +26,15 @@ export function createMockAudioCtx() {
       disconnect: jest.fn(),
       start: jest.fn(),
       stop: jest.fn()
-    }))
+    })),
+    createBiquadFilter: jest.fn(() => ({
+      type: 'allpass',
+      frequency: { value: 0 },
+      Q: { value: 0 },
+      gain: { value: 0 },
+      connect: jest.fn(),
+      disconnect: jest.fn()
+    })),
+
   } as any as AudioContext;
 }
