@@ -1,7 +1,7 @@
 export class WaveshaperEffect extends HTMLElement {
   connectedCallback() {
     this.innerHTML = `
-      <module-section id="waveshaper-effect" title="Distortion">
+      <module-section id="distortion-effect" title="Distortion">
         <div slot="instructions">
           <p>Adds harmonic distortion for warmth or grit. Adjust drive for intensity and blend for wet/dry mix.</p>
           <instruction-list>
@@ -11,8 +11,8 @@ export class WaveshaperEffect extends HTMLElement {
         </div>
         <div slot="content">
           <controls-group>
-            <range-control label="Drive" id="waveshaper-drive" min="0" max="10" step="0.1" value="2"></range-control>
-            <range-control label="Blend" id="waveshaper-blend" min="0" max="1" step="0.01" value="0.5"
+            <range-control label="Drive" id="distortion-drive" min="0" max="10" step="0.1" value="2"></range-control>
+            <range-control label="Blend" id="distortion-blend" min="0" max="1" step="0.01" value="0.5"
               formatter="%"></range-control>
           </controls-group>
         </div>
@@ -20,4 +20,4 @@ export class WaveshaperEffect extends HTMLElement {
     `;
   }
 }
-customElements.define('waveshaper-effect', WaveshaperEffect);
+customElements.define('distortion-effect', WaveshaperEffect);

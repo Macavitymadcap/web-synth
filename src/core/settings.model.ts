@@ -85,7 +85,7 @@ export interface SynthSettings {
   chorus: ChorusSettings;
   reverb: ReverbSettings;
   compressor: CompressorSettings;
-  waveshaper: WaveShaperSettings;
+  distortion: WaveShaperSettings;
   delay: DelaySettings;
   phaser: PhaserSettings;
 }

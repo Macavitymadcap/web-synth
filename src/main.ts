@@ -13,7 +13,7 @@ import { DelayModule } from "./modules/delay-module";
 import { MasterModule } from "./modules/master-module";
 import { VoiceManager } from "./core/voice-manager";
 import { ReverbModule } from "./modules/reverb-module";
-import { WaveShaperModule } from "./modules/wave-shaper-module";
+import { DistortionModule } from "./modules/distortion-module";
 import { createKeyboardHandlers } from "./handlers/keyboard-handlers";
 import { createRecordingHandler } from "./handlers/recording-handler";
 import { createOctaveChangeHandler } from "./handlers/octave-handler";
@@ -59,7 +59,7 @@ import "./components/organisms/phaser-effect";
 import "./components/organisms/reverb-effect";
 import "./components/organisms/compressor-effect";
 import "./components/organisms/delay-effect";
-import "./components/organisms/waveshaper-effect";
+import "./components/organisms/distortion-effect";
 import "./components/organisms/spectrum-analyser";
 import type { SpectrumAnalyser } from "./components/organisms/spectrum-analyser";
 import { createSpectrumAnalyserAdapter } from "./core/analyser-effect-adapter";
@@ -122,9 +122,9 @@ const compressorAttack = (document.getElementById("compressor-attack") as RangeC
 const compressorRelease = (document.getElementById("compressor-release") as RangeControl).getInput();
 const compressorKnee = (document.getElementById("compressor-knee") as RangeControl).getInput();
 
-// Waveshaper controls
-const waveshaperDrive = (document.getElementById("waveshaper-drive") as RangeControl).getInput();
-const waveshaperBlend = (document.getElementById("waveshaper-blend") as RangeControl).getInput();
+// Distortion controls
+const distortionDrive = (document.getElementById("distortion-drive") as RangeControl).getInput();
+const distortionBlend = (document.getElementById("distortion-blend") as RangeControl).getInput();
 
 // Master controls
 const poly = document.getElementById("poly") as HTMLInputElement;
@@ -161,6 +161,7 @@ const phaserModule = new PhaserModule(
 const delayModule = new DelayModule(delayTime, delayFeedback, delayMix);
 const reverbModule = new ReverbModule(reverbDecay, reverbMix);
 const reverbAdapter = createStandardEffectAdapter(reverbModule);
+const distortionModule = new DistortionModule(distortionDrive, distortionBlend);
 const compressorAdapter = createStandardEffectAdapter(new CompressorModule(
   compressorThreshold,
   compressorRatio,
@@ -168,7 +169,6 @@ const compressorAdapter = createStandardEffectAdapter(new CompressorModule(
   compressorRelease,
   compressorKnee
 ));
-const waveShaperAdapter = createStandardEffectAdapter(new WaveShaperModule(waveshaperDrive, waveshaperBlend));
 const spectrumAnalyserAdapter = createSpectrumAnalyserAdapter(new SpectrumAnalyserModule(), spectrumCanvas);
 
 // Effects Manager
@@ -194,8 +194,8 @@ effectsManager.register(delayModule, {
   category: 'time-based'
 });
 
-effectsManager.register(waveShaperAdapter, {
-  id: 'waveshaper',
+effectsManager.register(distortionModule, {
+  id: 'distortion',
   name: 'Distortion',
   order: 70,
   category: 'distortion'
