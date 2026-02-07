@@ -1,5 +1,30 @@
 # Roadmap 
 
+## Checklist
+
+### Sprint 1 (Week 1-2): Foundation
+- [ ] Create EffectsManager
+- [ ] Extract UIConfigService
+- [ ] Add Noise Generator (validates new architecture)
+- [ ] Write tests for noise generator
+
+### Sprint 2 (Week 3-4): Feature Velocity
+- [ ] Add Tremolo
+- [ ] Add Second LFO  
+- [ ] Add Flanger
+- [ ] Component audit cleanup
+
+### Sprint 3 (Week 5-6): Professional Polish
+- [ ] Add Oscilloscope
+- [ ] Add Parametric EQ
+- [ ] Create documentation site
+- [ ] Preset categories/search
+
+### Sprint 4 (Week 7+): Advanced Features
+- [ ] Arpeggiator
+- [ ] Step Sequencer
+- [ ] Advanced routing/modulation matrix
+
 ## Phase 1: Critical Refactoring (1-2 weeks)
 
 **Priority: High** - These changes will make everything else easier and prevent compounding technical debt.
@@ -133,58 +158,3 @@ Enhance your existing system:
 - Search/filter
 - Share presets via URL
 - Import from clipboard
-
-## Concrete Roadmap
-
-### Sprint 1 (Week 1-2): Foundation
-- [ ] Create EffectsManager
-- [ ] Extract UIConfigService
-- [ ] Add Noise Generator (validates new architecture)
-- [ ] Write tests for noise generator
-
-### Sprint 2 (Week 3-4): Feature Velocity
-- [ ] Add Tremolo
-- [ ] Add Second LFO  
-- [ ] Add Flanger
-- [ ] Component audit cleanup
-
-### Sprint 3 (Week 5-6): Professional Polish
-- [ ] Add Oscilloscope
-- [ ] Add Parametric EQ
-- [ ] Create documentation site
-- [ ] Preset categories/search
-
-### Sprint 4 (Week 7+): Advanced Features
-- [ ] Arpeggiator
-- [ ] Step Sequencer
-- [ ] Advanced routing/modulation matrix
-
-## Why This Order?
-
-1. **Refactoring first** prevents you from having to refactor 15 modules instead of 10
-2. **Quick wins** maintain momentum and user engagement  
-3. **Testing early** catches issues before complexity grows
-4. **Documentation** helps onboard contributors and your future self
-
-## Migration Strategy
-
-You don't need to refactor everything at once:
-
-1. Create EffectsManager alongside existing code
-2. Migrate one effect at a time (start with new Noise Generator)
-3. Old effects continue working during migration
-4. Settings manager adapts to both patterns
-
-This lets you ship features while improving architecture incrementally.
-
-## Biggest Bang for Buck
-
-If you only do **3 things**, do these:
-
-1. **EffectsManager** - Unlocks easy feature additions
-2. **Noise Generator** - Validates new architecture, adds user value
-3. **Tests for new modules** - Prevents regression as complexity grows
-
-Your codebase is actually in good shape—you have clear separation, good naming, and solid patterns. These changes will help it scale to 20+ modules without becoming unmaintainable.
-
-Would you like me to implement any specific part of this roadmap to get you started?
