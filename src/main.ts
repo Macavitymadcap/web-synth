@@ -21,6 +21,9 @@ import { createMidiToggleHandler } from "./handlers/midi-handler-setup";
 import { createOscillatorManager } from "./handlers/oscillator-management";
 import { SpectrumAnalyserModule } from "./modules/spectrum-analyser-module";
 
+import { EffectsManager } from "./core/effects-manager";
+import { createStandardEffectAdapter } from "./core/effect-module-adapter";
+
 // Components
 import "./components/atoms/filter-type-picker";
 import "./components/atoms/range-control";
@@ -59,6 +62,7 @@ import "./components/organisms/delay-effect";
 import "./components/organisms/waveshaper-effect";
 import "./components/organisms/spectrum-analyser";
 import type { SpectrumAnalyser } from "./components/organisms/spectrum-analyser";
+import { createSpectrumAnalyserAdapter } from "./core/analyser-effect-adapter";
 
 
 // Keyboard and MIDI controls
@@ -133,31 +137,92 @@ const recordBtn = document.getElementById("record") as HTMLButtonElement;
 const oscillatorList = document.getElementById("oscillator-list") as HTMLElement;
 const addOscBtn = document.getElementById("add-oscillator") as HTMLButtonElement;
 
+// Analyser controls
+const spectrumAnalyserEl = document.querySelector('spectrum-analyser') as SpectrumAnalyser;
+const spectrumCanvas = spectrumAnalyserEl?.getCanvas();
+
 // Initialize modules
 const oscillatorBank = new OscillatorBank();
 const ampEnvelope = new EnvelopeModule(attack, decay, sustain, release);
 const filterEnvelope = new EnvelopeModule(filterAttack, filterDecay, filterSustain, filterRelease);
 const filterModule = new FilterModule(filterType, filterCutoff, filterResonance, filterEnvAmount, filterEnvelope);
 const lfoModule = new LFOModule(lfoRate, lfoWaveform, lfoToFilter, lfoToPitch);
-const chorusModule = new ChorusModule(chorusRate, chorusDepth, chorusMix);
-const phaserModule = new PhaserModule(
+const masterModule = new MasterModule(masterVolume);
+
+// Effects
+const chorusAdapter = createStandardEffectAdapter(new ChorusModule(chorusRate, chorusDepth, chorusMix));
+const phaserAdapter = createStandardEffectAdapter(new PhaserModule(
   phaserRate,
   phaserDepth,
   phaserStages,
   phaserFeedback,
   phaserMix
-);
-const delayModule = new DelayModule(delayTime, delayFeedback, delayMix);
-const masterModule = new MasterModule(masterVolume);
+));
+const delayAdapter = createStandardEffectAdapter(new DelayModule(delayTime, delayFeedback, delayMix));
 const reverbModule = new ReverbModule(reverbDecay, reverbMix);
-const compressorModule = new CompressorModule(
+const reverbAdapter = createStandardEffectAdapter(reverbModule);
+const compressorAdapter = createStandardEffectAdapter(new CompressorModule(
   compressorThreshold,
   compressorRatio,
   compressorAttack,
   compressorRelease,
   compressorKnee
-);
-const waveShaperModule = new WaveShaperModule(waveshaperDrive, waveshaperBlend);
+));
+const waveShaperAdapter = createStandardEffectAdapter(new WaveShaperModule(waveshaperDrive, waveshaperBlend));
+const spectrumAnalyserAdapter = createSpectrumAnalyserAdapter(new SpectrumAnalyserModule(), spectrumCanvas);
+
+// Effects Manager
+const effectsManager = new EffectsManager();
+effectsManager.register(chorusAdapter, {
+  id: 'chorus',
+  name: 'Chorus',
+  order: 100, // First in chain
+  category: 'modulation'
+});
+
+effectsManager.register(phaserAdapter, {
+  id: 'phaser',
+  name: 'Phaser',
+  order: 90,
+  category: 'modulation'
+});
+
+effectsManager.register(delayAdapter, {
+  id: 'delay',
+  name: 'Delay',
+  order: 80,
+  category: 'time-based'
+});
+
+effectsManager.register(waveShaperAdapter, {
+  id: 'waveshaper',
+  name: 'Distortion',
+  order: 70,
+  category: 'distortion'
+});
+
+effectsManager.register(compressorAdapter, {
+  id: 'compressor',
+  name: 'Compressor',
+  order: 60,
+  category: 'dynamics'
+});
+
+effectsManager.register(reverbAdapter, {
+  id: 'reverb',
+  name: 'Reverb',
+  order: 50, // Last effect before analyser
+  category: 'time-based'
+});
+
+effectsManager.register(spectrumAnalyserAdapter, {
+  id: 'analyser',
+  name: 'Spectrum Analyser',
+  order: 40,
+  category: 'utility'
+});
+
+
 const voiceManager = new VoiceManager(
   poly,
   oscillatorBank,
@@ -165,19 +230,12 @@ const voiceManager = new VoiceManager(
   filterModule,
   lfoModule
 );
-const spectrumAnalyserModule = new SpectrumAnalyserModule();
 
 const synth = new Synth(
+  effectsManager,
   lfoModule,
-  chorusModule,
-  phaserModule,
-  delayModule,
   masterModule,
-  reverbModule,
   voiceManager,
-  waveShaperModule,
-  compressorModule,
-  spectrumAnalyserModule
 );
 
 // Initialize settings manager and connect it to oscillator bank
@@ -243,6 +301,3 @@ document.addEventListener('decay-changed', () => {
   }
 });
 
-// After DOMContentLoaded or in window.onload:
-const spectrumAnalyserEl = document.querySelector('spectrum-analyser') as SpectrumAnalyser;
-const spectrumAnalyserCanvas = spectrumAnalyserEl?.getCanvas();
