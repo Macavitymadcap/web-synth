@@ -1,7 +1,7 @@
 export class PhaserEffect extends HTMLElement {
   connectedCallback() {
     this.innerHTML = `
-      <module-section id="phaser-effect" title="Phaser Effect">
+      <module-section id="phaser-effect" title="Phaser">
         <div slot="instructions">
           <instructions-list>
             <instruction-item label="Rate">LFO speed for sweeping the notches.</instruction-item>
