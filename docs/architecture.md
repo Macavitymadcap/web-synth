@@ -60,7 +60,9 @@ src/
 │   ├── synth.ts        # Main orchestrator
 │   ├── oscillator-bank.ts
 │   ├── keys.ts         # Keyboard mapping
-│   └── settings-manager.ts
+│   ├── settings-manager.ts
+│   ├── settings.model.ts
+│   └── factory-presets.ts
 ├── handlers/           # Event handling logic
 │   ├── keyboard-handlers.ts
 │   ├── recording-handler.ts
@@ -70,8 +72,12 @@ src/
 │   ├── filter-module.ts
 │   ├── lfo-module.ts
 │   ├── chorus-module.ts
+│   ├── phaser-module.ts
 │   ├── delay-module.ts
 │   ├── reverb-module.ts
+│   ├── compressor-module.ts
+│   ├── wave-shaper-module.ts
+│   ├── spectrum-analyser-module.ts
 │   └── voice-manager.ts
 ├── main.ts             # Application entry point
 └── styles.css          # Global styles (minimal)
@@ -79,20 +85,52 @@ src/
 
 ## Audio Signal Flow
 
+
+```mermaid
+graph LR
+    A[User Input] --> B[Synth.playFrequency]
+    B --> C[VoiceManager]
+    
+    C --> D[Voice Creation]
+    D --> E[OscillatorBank]
+    D --> F[FilterModule]
+    D --> G[Amplitude Envelope]
+    
+    E --> H[Effects Chain Input]
+    F --> H
+    G --> H
+    
+    H --> I[Chorus]
+    I --> J[Phaser]
+    J --> K[Delay]
+    K --> L[WaveShaper]
+    L --> M[Compressor]
+    M --> N[Reverb]
+    N --> O[Spectrum Analyser]
+    O --> P[Master Volume]
+    P --> Q[AudioContext.destination]
+    
+    style A fill:#00ffff,stroke:#00ffff,color:#000
+    style Q fill:#ff00ff,stroke:#ff00ff,color:#000
+    style H fill:#ffff00,stroke:#ffff00,color:#000
 ```
-Voice Creation Flow:
-1. User Input → Synth.playFrequency()
-2. VoiceManager creates voice with:
-   - OscillatorBank (multiple oscillators)
-   - FilterModule (filter + envelope)
+
+**Voice Creation Flow:**
+1. User Input → `Synth.playFrequency()`
+2. `VoiceManager` creates voice with:
+   - `OscillatorBank` (multiple oscillators)
+   - `FilterModule` (filter + envelope)
    - Amplitude envelope
 3. Voice → Effects Chain:
-   - Chorus (3 modulated delay lines)
-   - Delay (with feedback)
-   - Reverb (convolver)
-   - Master (volume control)
-4. Master → AudioContext.destination
-```
+   - **Chorus** - 3 modulated delay lines
+   - **Phaser** - All-pass filter modulation
+   - **Delay** - With feedback control
+   - **WaveShaper** - Distortion/saturation
+   - **Compressor** - Dynamic range control
+   - **Reverb** - Convolver-based reverb
+   - **Spectrum Analyser** - Real-time visualization
+   - **Master** - Volume control
+4. Master → `AudioContext.destination`
 
 ## Adding New Modules
 
@@ -226,27 +264,58 @@ const [name]Nodes = this.[name]Module.initialize(
 );
 ```
 
-5. ** Add to web page** in `index.html`**
+5. **Add to web page** in `index.html`
 ```html
 <div class="modules-grid">
+    <!-- Modules are displayed in masonry layout -->
+    <!-- Order doesn't affect visual layout on desktop (3 columns) -->
     <master-controls></master-controls>
     <visual-keyboard></visual-keyboard>
     <presets-controls></presets-controls>
+    <spectrum-analyser></spectrum-analyser>
     <oscillator-controls></oscillator-controls>
     <adsr-module></adsr-module>
     <filter-module></filter-module>
     <lfo-module></lfo-module>
     <chorus-effect></chorus-effect>
+    <phaser-effect></phaser-effect>
     <reverb-effect></reverb-effect>
     <compressor-effect></compressor-effect>
     <delay-effect></delay-effect>
     <waveshaper-effect></waveshaper-effect>
-    <new-effect></new-effect> // inserted here
+    <new-effect></new-effect> <!-- inserted here -->
   </div>
 ```
 
+Note: The masonry grid auto-arranges modules, so insertion order doesn't determine visual position on multi-column layouts.
 
-5. **Update SettingsManager** to persist settings.
+6. **Update SettingsManager** to persist settings.
+
+## Existing Effect Modules
+
+- **Chorus** - Thickens sound with multiple modulated delay lines
+- **Phaser** - Sweeping notch filter with LFO modulation
+- **Delay** - Echo effect with feedback control
+- **Waveshaper** - Harmonic distortion for warmth or grit
+- **Compressor** - Dynamic range control
+- **Reverb** - Convolution-based room simulation
+- **Spectrum Analyser** - Visual frequency analysis display
+
+### Spectrum Analyser Module
+
+```typescript
+// Create module
+const spectrumAnalyserModule = new SpectrumAnalyserModule();
+
+// In synth.ts initialization
+const spectrumNodes = this.spectrumAnalyserModule.initialize(
+  this.audioCtx,
+  this.masterGain,
+  canvas // HTMLCanvasElement from DOM
+);
+```
+
+Handles real-time frequency visualization with automatic animation loop.
 
 ## Adding New Components
 
@@ -282,7 +351,7 @@ Components are organized by complexity using Atomic Design principles:
 **Create a Layout component when:**
 - It defines page structure or navigation
 - It's used once or rarely in the app
-- Example: `app-header`, `help-popover`
+- Example: `app-header`, `help-popover`, `dual-keyboard`
 
 ### Component Template
 
@@ -353,6 +422,11 @@ import './components/molecules/adsr-controls';
 import './components/organisms/preset-selector';
 import type { PresetSelector } from './components/organisms/preset-selector';
 
+// Additional Organisms
+import './components/organisms/spectrum-analyser';
+import './components/organisms/phaser-effect';
+import './components/organisms/waveshaper-effect';
+
 // Layout
 import './components/layout/app-header';
 ```
@@ -395,6 +469,21 @@ import type { [Name] } from './components/[category]/[name]';
 const component = document.querySelector('[name]') as [Name];
 component.setValue('new value');
 ```
+
+### Dual Keyboard Pattern
+
+The visual keyboard uses a molecule that contains two piano keyboards:
+
+```typescript
+<dual-keyboard 
+  upper-octave="5" 
+  lower-octave="4" 
+  upper-keys="qwertyu,23567" 
+  lower-keys="zxcvbnm,sdghj">
+</dual-keyboard>
+```
+
+Manages octave selection and key mapping for two simultaneous keyboard ranges.
 
 ### Component Communication Patterns
 
@@ -474,6 +563,16 @@ export type Voice = {
 };
 ```
 
+## Settings Model
+
+All settings are typed using interfaces in `src/core/settings.model.ts`:
+- `SynthSettings` - Root settings object
+- `MasterSettings`, `EnvelopeSettings`, `FilterSettings`, etc.
+- `FilterType` - Union type for filter types ("lowpass" | "highpass" | "bandpass" | "notch" | "allpass" | "lowshelf" | "highshelf" | "peaking")
+- `Preset` - Factory and user preset structure
+
+This ensures type safety across settings management, import/export, and presets.
+
 ## Settings Management
 
 The `SettingsManager` handles all configuration:
@@ -497,10 +596,26 @@ interface SynthSettings {
 
 ### Adding Settings Support
 
-1. **Add fields to `SynthSettings` interface**
+1. **Add fields to `SynthSettings` interface in `src/core/settings.model.ts`**
 2. **Update `getCurrentSettings()` to read values**
 3. **Update `applySettings()` to set values**
 4. **Settings auto-save on any `change` or `input` event**
+
+## Factory Presets
+
+Presets are defined in `src/core/factory-presets.ts` with complete settings:
+
+```typescript
+export const FACTORY_PRESETS: Preset[] = [
+  {
+    name: "Warm Pad",
+    description: "Lush atmospheric pad",
+    settings: { /* complete SynthSettings */ }
+  }
+];
+```
+
+Currently includes 14 factory presets covering pads, basses, leads, keys, organs, strings, brass, and specialty sounds.
 
 ## Web Audio API Patterns
 
