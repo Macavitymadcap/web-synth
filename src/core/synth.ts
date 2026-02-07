@@ -1,15 +1,8 @@
 import { keyInfo } from "./keys";
 import { LFOModule } from "../modules/lfo-module";
-import { ChorusModule } from "../modules/chorus-module";
-import { PhaserModule } from "../modules/phaser-module";
-import { DelayModule } from "../modules/delay-module";
 import { MasterModule } from "../modules/master-module";
-import { ReverbModule } from "../modules/reverb-module";
 import { VoiceManager } from "../modules/voice-manager";
-import { WaveShaperModule } from "../modules/wave-shaper-module";
-import { CompressorModule } from "../modules/compressor-module";
-import { SpectrumAnalyserModule } from "../modules/spectrum-analyser-module";
-import { SpectrumAnalyser } from "../components/organisms/spectrum-analyser";
+import { EffectsManager } from "./effects-manager";
 
 /**
  * Synth class orchestrates all synthesiser modules
@@ -23,39 +16,21 @@ export class Synth {
   effectsInput!: GainNode;
 
   // Modules
+  private readonly effectManager: EffectsManager;
   private readonly lfoModule: LFOModule;
-  private readonly chorusModule: ChorusModule;
-  private readonly phaserModule: PhaserModule;
-  private readonly delayModule: DelayModule;
   private readonly masterModule: MasterModule;
-  private readonly reverbModule: ReverbModule;
   private readonly voiceManager: VoiceManager;
-  private readonly waveShaperModule: WaveShaperModule;
-  private readonly compressorModule: CompressorModule;
-  private readonly spectrumAnalyserModule: SpectrumAnalyserModule;
 
   constructor(
+    effectsManager: EffectsManager,
     lfoModule: LFOModule,
-    chorusModule: ChorusModule,
-    phaserModule: PhaserModule,
-    delayModule: DelayModule,
     masterModule: MasterModule,
-    reverbModule: ReverbModule,
     voiceManager: VoiceManager,
-    waveShaperModule: WaveShaperModule,
-    compressorModule: CompressorModule,
-    spectrumAnalyserModule: SpectrumAnalyserModule
   ) {
+    this.effectManager = effectsManager;
     this.lfoModule = lfoModule;
-    this.chorusModule = chorusModule;
-    this.phaserModule = phaserModule;
-    this.delayModule = delayModule;
     this.masterModule = masterModule;
-    this.reverbModule = reverbModule;
     this.voiceManager = voiceManager;
-    this.waveShaperModule = waveShaperModule;
-    this.compressorModule = compressorModule;
-    this.spectrumAnalyserModule = spectrumAnalyserModule;
   }
 
   /**
@@ -71,37 +46,11 @@ export class Synth {
       // Initialize LFO
       this.lfoModule.initialize(this.audioCtx);
 
-      // Initialize effects chain (back to front)
-      // Build chain: chorus → phaser → delay → waveshaper → compressor → reverb → analyser → master
-
-      // Start from the end and work backwards
-      const spectrumNodes = this.spectrumAnalyserModule.initialize(
+      // Initialize effects 
+      this.effectsInput = this.effectManager.initialize(
         this.audioCtx,
-        this.masterGain,
-        (document.querySelector('spectrum-analyser') as SpectrumAnalyser)?.getCanvas()
+        this.masterGain
       );
-      spectrumNodes.output.connect(this.masterGain);
-
-      const reverbNodes = this.reverbModule.initialize(this.audioCtx, spectrumNodes.input);
-      reverbNodes.output.connect(spectrumNodes.input);
-
-      const compressorNodes = this.compressorModule.initialize(this.audioCtx, reverbNodes.input);
-      compressorNodes.output.connect(reverbNodes.input);
-
-      const waveShaperNodes = this.waveShaperModule.initialize(this.audioCtx, compressorNodes.input);
-      waveShaperNodes.output.connect(compressorNodes.input);
-
-      const delayNodes = this.delayModule.initialize(this.audioCtx, waveShaperNodes.input);
-      delayNodes.output.connect(waveShaperNodes.input);
-
-      const phaserNodes = this.phaserModule.initialize(this.audioCtx, delayNodes.input);
-      phaserNodes.output.connect(delayNodes.input);
-
-      const chorusNodes = this.chorusModule.initialize(this.audioCtx, phaserNodes.input);
-      chorusNodes.output.connect(phaserNodes.input);
-
-      // Voices connect to the start of the effects chain
-      this.effectsInput = chorusNodes.input;
     }
   }
 
