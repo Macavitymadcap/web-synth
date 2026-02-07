@@ -9,41 +9,8 @@
 
 import { describe, it, expect, beforeEach } from 'bun:test';
 import { EffectsManager } from '../src/core/effects-manager';
-import type { BaseEffectModule, EffectNodes } from '../src/modules/base-effect-module';
+import { MockEffectModule } from './fixtures/mock-effect-module';
 
-// Minimal mock that satisfies the interface
-class MockEffectModule implements BaseEffectModule {
-  public initializeCalled = false;
-  public initializeCallCount = 0;
-  
-  constructor(public name: string = 'mock') {}
-  
-  initialize(audioCtx: any, destination: any): EffectNodes {
-    this.initializeCalled = true;
-    this.initializeCallCount++;
-    // Return mock objects that satisfy the interface
-    return {
-      input: { connect: () => {} } as any,
-      output: { connect: () => {} } as any
-    };
-  }
-  
-  getInput(): any {
-    return this.initializeCalled ? {} : null;
-  }
-  
-  getOutput(): any {
-    return this.initializeCalled ? {} : null;
-  }
-  
-  isInitialized(): boolean {
-    return this.initializeCalled;
-  }
-  
-  getConfig(): any {
-    return { name: this.name };
-  }
-}
 
 describe('EffectsManager - Business Logic', () => {
   let manager: EffectsManager;
