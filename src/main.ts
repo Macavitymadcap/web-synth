@@ -11,7 +11,7 @@ import { ChorusModule } from "./modules/chorus-module";
 import { PhaserModule } from "./modules/phaser-module";
 import { DelayModule } from "./modules/delay-module";
 import { MasterModule } from "./modules/master-module";
-import { VoiceManager } from "./modules/voice-manager";
+import { VoiceManager } from "./core/voice-manager";
 import { ReverbModule } from "./modules/reverb-module";
 import { WaveShaperModule } from "./modules/wave-shaper-module";
 import { createKeyboardHandlers } from "./handlers/keyboard-handlers";
@@ -150,7 +150,7 @@ const lfoModule = new LFOModule(lfoRate, lfoWaveform, lfoToFilter, lfoToPitch);
 const masterModule = new MasterModule(masterVolume);
 
 // Effects
-const chorusAdapter = createStandardEffectAdapter(new ChorusModule(chorusRate, chorusDepth, chorusMix));
+const chorusModule = new ChorusModule(chorusRate, chorusDepth, chorusMix);
 const phaserAdapter = createStandardEffectAdapter(new PhaserModule(
   phaserRate,
   phaserDepth,
@@ -173,7 +173,7 @@ const spectrumAnalyserAdapter = createSpectrumAnalyserAdapter(new SpectrumAnalys
 
 // Effects Manager
 const effectsManager = new EffectsManager();
-effectsManager.register(chorusAdapter, {
+effectsManager.register(chorusModule, {
   id: 'chorus',
   name: 'Chorus',
   order: 100, // First in chain
