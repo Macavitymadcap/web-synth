@@ -115,13 +115,6 @@ const delayMix = (document.getElementById("delay-mix") as RangeControl).getInput
 const reverbDecay = (document.getElementById("reverb-decay") as RangeControl).getInput();
 const reverbMix = (document.getElementById("reverb-mix") as RangeControl).getInput();
 
-// Compressor controls
-const compressorThreshold = (document.getElementById("compressor-threshold") as RangeControl).getInput();
-const compressorRatio = (document.getElementById("compressor-ratio") as RangeControl).getInput();
-const compressorAttack = (document.getElementById("compressor-attack") as RangeControl).getInput();
-const compressorRelease = (document.getElementById("compressor-release") as RangeControl).getInput();
-const compressorKnee = (document.getElementById("compressor-knee") as RangeControl).getInput();
-
 // Distortion controls
 const distortionDrive = (document.getElementById("distortion-drive") as RangeControl).getInput();
 const distortionBlend = (document.getElementById("distortion-blend") as RangeControl).getInput();
@@ -160,13 +153,7 @@ const phaserModule = new PhaserModule(
 );
 const delayModule = new DelayModule(delayTime, delayFeedback, delayMix);
 const distortionModule = new DistortionModule(distortionDrive, distortionBlend);
-const compressorModule = new CompressorModule(
-  compressorThreshold,
-  compressorRatio,
-  compressorAttack,
-  compressorRelease,
-  compressorKnee
-);
+const compressorModule = new CompressorModule();
 const reverbModule = new ReverbModule(reverbDecay, reverbMix);
 const spectrumAnalyserModule = new SpectrumAnalyserModule(spectrumCanvas);
 

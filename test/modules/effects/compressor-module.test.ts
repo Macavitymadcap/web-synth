@@ -1,32 +1,50 @@
 import { describe, it, expect, beforeEach, jest } from 'bun:test';
 import { CompressorModule } from '../../../src/modules/effects/compressor-module';
-import { createMockInput } from '../../fixtures/mock-input';
 import { createMockAudioCtx } from '../../fixtures/mock-audio-context';
+import { UIConfigService } from '../../../src/services/ui-config-service';
 
 describe('CompressorModule', () => {
-  let thresholdEl: HTMLInputElement;
-  let ratioEl: HTMLInputElement;
-  let attackEl: HTMLInputElement;
-  let releaseEl: HTMLInputElement;
-  let kneeEl: HTMLInputElement;
   let compressor: CompressorModule;
 
   beforeEach(() => {
-    thresholdEl = createMockInput('-18');
-    ratioEl = createMockInput('4');
-    attackEl = createMockInput('0.003');
-    releaseEl = createMockInput('0.25');
-    kneeEl = createMockInput('30');
-    compressor = new CompressorModule(
-      thresholdEl,
-      ratioEl,
-      attackEl,
-      releaseEl,
-      kneeEl
-    );
+    // Clear DOM before each test
+    document.body.innerHTML = '';
+    
+    // Set up mock DOM elements that CompressorModule expects
+    const elementIds = [
+      'compressor-threshold',
+      'compressor-ratio',
+      'compressor-attack',
+      'compressor-release',
+      'compressor-knee'
+    ];
+
+    elementIds.forEach(id => {
+      const input = document.createElement('input');
+      input.id = id;
+      input.type = 'number';
+      input.value = '0';
+      document.body.appendChild(input);
+    });
+
+    // Set default config values
+    document.getElementById('compressor-threshold')!.setAttribute('value', '-18');
+    document.getElementById('compressor-ratio')!.setAttribute('value', '4');
+    document.getElementById('compressor-attack')!.setAttribute('value', '0.003');
+    document.getElementById('compressor-release')!.setAttribute('value', '0.25');
+    document.getElementById('compressor-knee')!.setAttribute('value', '30');
+
+    compressor = new CompressorModule();
   });
 
   it('returns correct config', () => {
+    // Update input values to match expected config
+    (document.getElementById('compressor-threshold') as HTMLInputElement).value = '-18';
+    (document.getElementById('compressor-ratio') as HTMLInputElement).value = '4';
+    (document.getElementById('compressor-attack') as HTMLInputElement).value = '0.003';
+    (document.getElementById('compressor-release') as HTMLInputElement).value = '0.25';
+    (document.getElementById('compressor-knee') as HTMLInputElement).value = '30';
+
     expect(compressor.getConfig()).toEqual({
       threshold: -18,
       ratio: 4,
@@ -55,31 +73,62 @@ describe('CompressorModule', () => {
   });
 
   it('updates compressor parameters on input change', () => {
-    // Use the mock context so we can access the compressor node
     const ctx = createMockAudioCtx();
     const dest = { connect: jest.fn() } as any;
     compressor.initialize(ctx, dest);
 
-    // Get the actual compressor node used
+    // Get the actual compressor node from the mock context
     const compressorNode = (ctx as any).__mockCompressorNode;
 
-    (thresholdEl as any).value = '-10';
-    (ratioEl as any).value = '8';
-    (attackEl as any).value = '0.01';
-    (releaseEl as any).value = '0.5';
-    (kneeEl as any).value = '20';
+    // Simulate user changing input values
+    const thresholdInput = document.getElementById('compressor-threshold') as HTMLInputElement;
+    const ratioInput = document.getElementById('compressor-ratio') as HTMLInputElement;
+    const attackInput = document.getElementById('compressor-attack') as HTMLInputElement;
+    const releaseInput = document.getElementById('compressor-release') as HTMLInputElement;
+    const kneeInput = document.getElementById('compressor-knee') as HTMLInputElement;
 
-    // Simulate input events
-    ((thresholdEl.addEventListener as unknown) as jest.Mock).mock.calls[0][1]();
-    ((ratioEl.addEventListener as unknown) as jest.Mock).mock.calls[0][1]();
-    ((attackEl.addEventListener as unknown) as jest.Mock).mock.calls[0][1]();
-    ((releaseEl.addEventListener as unknown) as jest.Mock).mock.calls[0][1]();
-    ((kneeEl.addEventListener as unknown) as jest.Mock).mock.calls[0][1]();
+    thresholdInput.value = '-10';
+    thresholdInput.dispatchEvent(new Event('input'));
 
+    ratioInput.value = '8';
+    ratioInput.dispatchEvent(new Event('input'));
+
+    attackInput.value = '0.01';
+    attackInput.dispatchEvent(new Event('input'));
+
+    releaseInput.value = '0.5';
+    releaseInput.dispatchEvent(new Event('input'));
+
+    kneeInput.value = '20';
+    kneeInput.dispatchEvent(new Event('input'));
+
+    // Verify the compressor node's AudioParams were updated
     expect(compressorNode.threshold.value).toBe(-10);
     expect(compressorNode.ratio.value).toBe(8);
     expect(compressorNode.attack.value).toBe(0.01);
     expect(compressorNode.release.value).toBe(0.5);
     expect(compressorNode.knee.value).toBe(20);
+  });
+
+  it('handles missing elements gracefully during initialization', () => {
+    // Remove one element to test error handling
+    document.getElementById('compressor-threshold')?.remove();
+
+    expect(() => compressor.getConfig()).toThrow('Input element with id "compressor-threshold" not found');
+  });
+
+  it('getInput and getOutput return null before initialization', () => {
+    expect(compressor.getInput()).toBeNull();
+    expect(compressor.getOutput()).toBeNull();
+    expect(compressor.isInitialized()).toBe(false);
+  });
+
+  it('getInput and getOutput return nodes after initialization', () => {
+    const ctx = createMockAudioCtx();
+    const dest = { connect: jest.fn() } as any;
+    compressor.initialize(ctx, dest);
+
+    expect(compressor.getInput()).not.toBeNull();
+    expect(compressor.getOutput()).not.toBeNull();
   });
 });
