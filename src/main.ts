@@ -14,6 +14,7 @@ import { EffectsManager } from "./core/effects-manager";
 // Effects
 import { ChorusModule } from "./modules/effects/chorus-module";
 import { PhaserModule } from "./modules/effects/phaser-module";
+import { TremoloModule } from "./modules/effects/tremolo-module";
 import { DelayModule } from "./modules/effects/delay-module";
 import { ReverbModule } from "./modules/effects/reverb-module";
 import { DistortionModule } from "./modules/effects/distortion-module";
@@ -34,12 +35,15 @@ import "./components/atoms/toggle-switch";
 import "./components/atoms/waveform-picker";
 import "./components/atoms/octave-picker";
 import "./components/atoms/subsection-header";
+
 import "./components/layout/app-header";
 import "./components/layout/help-popover";
+
 import "./components/molecules/adsr-controls";
 import "./components/molecules/controls-group";
-import "./components/organisms/oscillator-control";
 import "./components/molecules/instructions-list";
+
+import "./components/organisms/oscillator-control";
 import "./components/organisms/dual-keyboard";
 import "./components/molecules/keyboard-mapping-info";
 import "./components/organisms/module-section";
@@ -55,8 +59,10 @@ import "./components/organisms/visual-keyboard";
 import "./components/organisms/adsr-module";
 import "./components/organisms/filter-module-controls";
 import "./components/organisms/lfo-module-controls";
+
 import "./components/organisms/chorus-effect";
 import "./components/organisms/phaser-effect";
+import "./components/organisms/tremolo-effect";
 import "./components/organisms/reverb-effect";
 import "./components/organisms/compressor-effect";
 import "./components/organisms/delay-effect";
@@ -97,6 +103,7 @@ const noiseModule = new NoiseModule();
 const compressorModule = new CompressorModule();
 const chorusModule = new ChorusModule();
 const phaserModule = new PhaserModule();
+const tremoloModule = new TremoloModule();
 const delayModule = new DelayModule();
 const distortionModule = new DistortionModule();
 const reverbModule = new ReverbModule();
@@ -122,6 +129,13 @@ effectsManager.register(phaserModule, {
   id: 'phaser',
   name: 'Phaser',
   order: 80,
+  category: 'modulation'
+});
+
+effectsManager.register(tremoloModule, {
+  id: 'tremolo',
+  name: 'Tremolo',
+  order: 75,
   category: 'modulation'
 });
 

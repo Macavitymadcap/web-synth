@@ -1,19 +1,20 @@
 import type { OscillatorBank } from "./oscillator-bank";
 import type { OscillatorSection } from "../components/organisms/oscillator-section";
 import type { RangeControl } from "../components/atoms/range-control";
-import { 
-  SynthSettings, 
-  MasterSettings, 
-  EnvelopeSettings, 
-  FilterSettings, 
-  FilterType, 
-  LFOSettings, 
-  ChorusSettings, 
-  WaveShaperSettings, 
-  ReverbSettings, 
-  CompressorSettings, 
-  DelaySettings, 
-  Preset 
+import {
+  SynthSettings,
+  MasterSettings,
+  EnvelopeSettings,
+  FilterSettings,
+  FilterType,
+  LFOSettings,
+  ChorusSettings,
+  WaveShaperSettings,
+  ReverbSettings,
+  CompressorSettings,
+  DelaySettings,
+  Preset,
+  TremoloSettings
 } from "./settings.model";
 import type { PhaserConfig } from "../modules/effects/phaser-module";
 import type { NoiseConfig } from "../modules/noise-module";
@@ -41,7 +42,8 @@ export class SettingsManager {
       reverb: this.getReverbSettings(),
       delay: this.getDelaySettings(),
       phaser: this.getPhaserSettings(),
-      noise: this.getNoiseSettings(), // Add this
+      noise: this.getNoiseSettings(),
+      tremolo: this.getTremoloSettings(),
     };
   }
 
@@ -143,6 +145,13 @@ export class SettingsManager {
     };
   }
 
+  private getTremoloSettings(): TremoloSettings {
+    return {
+      rate: Number.parseFloat((document.getElementById("tremolo-rate") as HTMLInputElement)?.value ?? "5"),
+      depth: Number.parseFloat((document.getElementById("tremolo-depth") as HTMLInputElement)?.value ?? "0.5"),
+    };
+  }
+
   // Add this method
   private getNoiseSettings(): NoiseConfig {
     return {
@@ -165,7 +174,8 @@ export class SettingsManager {
     this.applyCompressorSettings(settings.compressor);
     this.applyDelaySettings(settings.delay);
     this.applyPhaserSettings(settings.phaser);
-    
+    this.applyTremoloSettings(settings.tremolo);
+
     // Add this line
     if (settings.noise) {
       this.applyNoiseSettings(settings.noise);
@@ -286,6 +296,11 @@ export class SettingsManager {
     this.setControlValue("phaser-stages", settings.stages);
     this.setControlValue("phaser-feedback", settings.feedback);
     this.setControlValue("phaser-mix", settings.mix);
+  }
+
+  private applyTremoloSettings(settings: TremoloSettings): void {
+    this.setControlValue("tremolo-rate", settings.rate);
+    this.setControlValue("tremolo-depth", settings.depth);
   }
 
   // Add this method
