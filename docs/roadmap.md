@@ -5,8 +5,8 @@
 ### Sprint 1 (Week 1-2): Foundation
 - [x] Create EffectsManager
 - [x] Extract UIConfigService
-- [ ] Add Noise Generator (validates new architecture)
-- [ ] Write tests for noise generator
+- [x] Add Noise Generator (validates new architecture)
+- [x] Write tests for noise generator
 
 ### Sprint 2 (Week 3-4): Feature Velocity
 - [ ] Add Tremolo

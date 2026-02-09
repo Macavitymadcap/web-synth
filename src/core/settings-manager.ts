@@ -16,6 +16,7 @@ import {
   Preset 
 } from "./settings.model";
 import type { PhaserConfig } from "../modules/effects/phaser-module";
+import type { NoiseConfig } from "../modules/noise-module";
 
 const STORAGE_KEY = "web-synth-settings";
 const USER_PRESETS_KEY = "web-synth-user-presets";
@@ -40,6 +41,7 @@ export class SettingsManager {
       reverb: this.getReverbSettings(),
       delay: this.getDelaySettings(),
       phaser: this.getPhaserSettings(),
+      noise: this.getNoiseSettings(), // Add this
     };
   }
 
@@ -141,6 +143,15 @@ export class SettingsManager {
     };
   }
 
+  // Add this method
+  private getNoiseSettings(): NoiseConfig {
+    return {
+      type: ((document.getElementById("noise-type") as HTMLSelectElement)?.value ?? "white") as "white" | "pink" | "brown",
+      level: Number.parseFloat((document.getElementById("noise-level") as HTMLInputElement)?.value ?? "0.3"),
+      enabled: (document.getElementById("noise-enabled") as HTMLInputElement)?.checked ?? false,
+    };
+  }
+
   applySettings(settings: SynthSettings): void {
     this.applyMasterSettings(settings.master);
     this.applyOscillatorSettings(settings.oscillators);
@@ -154,6 +165,11 @@ export class SettingsManager {
     this.applyCompressorSettings(settings.compressor);
     this.applyDelaySettings(settings.delay);
     this.applyPhaserSettings(settings.phaser);
+    
+    // Add this line
+    if (settings.noise) {
+      this.applyNoiseSettings(settings.noise);
+    }
   }
 
   private applyMasterSettings(settings: MasterSettings): void {
@@ -270,6 +286,26 @@ export class SettingsManager {
     this.setControlValue("phaser-stages", settings.stages);
     this.setControlValue("phaser-feedback", settings.feedback);
     this.setControlValue("phaser-mix", settings.mix);
+  }
+
+  // Add this method
+  private applyNoiseSettings(settings: NoiseConfig): void {
+    // Set noise type
+    const noiseType = document.getElementById("noise-type") as HTMLSelectElement;
+    if (noiseType) {
+      noiseType.value = settings.type;
+      noiseType.dispatchEvent(new Event("change"));
+    }
+
+    // Set noise level
+    this.setControlValue("noise-level", settings.level);
+
+    // Set noise enabled
+    const noiseEnabled = document.getElementById("noise-enabled") as HTMLInputElement;
+    if (noiseEnabled) {
+      noiseEnabled.checked = settings.enabled;
+      noiseEnabled.dispatchEvent(new Event("change"));
+    }
   }
 
   private setControlValue(id: string, value: number): void {
