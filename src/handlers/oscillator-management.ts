@@ -1,5 +1,5 @@
 import type { OscillatorBank } from "../core/oscillator-bank";
-import type { OscillatorControl } from "../components/molecules/oscillator-control";
+import type { OscillatorControl } from "../components/organisms/oscillator-control";
 
 export function createOscillatorManager(
   oscillatorBank: OscillatorBank,
