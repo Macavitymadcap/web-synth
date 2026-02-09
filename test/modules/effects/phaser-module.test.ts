@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, jest } from 'bun:test';
 import { PhaserModule } from '../../src/modules/phaser-module';
-import { createMockInput } from '../fixtures/mock-input';
-import { createMockAudioCtx } from '../fixtures/mock-audio-context';
+import { createMockInput } from '../../fixtures/mock-input';
+import { createMockAudioCtx } from '../../fixtures/mock-audio-context';
 
 describe('PhaserModule', () => {
   let rateEl: HTMLInputElement;

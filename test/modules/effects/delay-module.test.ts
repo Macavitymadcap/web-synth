@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, jest } from 'bun:test';
 import { DelayModule } from '../../src/modules/delay-module';
-import { createMockInput } from '../fixtures/mock-input';
-import { createMockAudioCtx } from '../fixtures/mock-audio-context';
+import { createMockInput } from '../../fixtures/mock-input';
+import { createMockAudioCtx } from '../../fixtures/mock-audio-context';
 
 describe('DelayModule', () => {
   let timeEl: HTMLInputElement;

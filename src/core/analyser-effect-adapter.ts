@@ -1,4 +1,4 @@
-import type { BaseEffectModule, EffectNodes } from '../modules/base-effect-module';
+import type { BaseEffectModule, EffectNodes } from '../modules/effects/base-effect-module';
 
 /**
  * Adapter specifically for SpectrumAnalyserModule

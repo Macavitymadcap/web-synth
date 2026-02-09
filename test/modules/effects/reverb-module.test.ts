@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, jest } from 'bun:test';
 import { ReverbModule } from '../../src/modules/reverb-module';
-import { createMockInput } from '../fixtures/mock-input';
-import { createMockAudioCtx } from '../fixtures/mock-audio-context';
+import { createMockInput } from '../../fixtures/mock-input';
+import { createMockAudioCtx } from '../../fixtures/mock-audio-context';
 
 describe('ReverbModule', () => {
   let decayEl: HTMLInputElement;

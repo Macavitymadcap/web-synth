@@ -2,7 +2,7 @@ import type {
   BaseEffectModule, 
   EffectMetadata, 
   EffectRegistration,
-} from '../modules/base-effect-module';
+} from '../modules/effects/base-effect-module';
 
 /**
  * EffectsManager orchestrates the effects chain
