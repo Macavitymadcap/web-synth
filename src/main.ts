@@ -106,10 +106,6 @@ const phaserStages = (document.getElementById("phaser-stages") as RangeControl).
 const phaserFeedback = (document.getElementById("phaser-feedback") as RangeControl).getInput();
 const phaserMix = (document.getElementById("phaser-mix") as RangeControl).getInput();
 
-// Reverb controls
-const reverbDecay = (document.getElementById("reverb-decay") as RangeControl).getInput();
-const reverbMix = (document.getElementById("reverb-mix") as RangeControl).getInput();
-
 // Master controls
 const poly = document.getElementById("poly") as HTMLInputElement;
 const masterVolume = (document.getElementById("master-volume") as RangeControl).getInput();
@@ -145,7 +141,7 @@ const phaserModule = new PhaserModule(
 const delayModule = new DelayModule();
 const distortionModule = new DistortionModule();
 const compressorModule = new CompressorModule();
-const reverbModule = new ReverbModule(reverbDecay, reverbMix);
+const reverbModule = new ReverbModule();
 const spectrumAnalyserModule = new SpectrumAnalyserModule(spectrumCanvas);
 
 // Effects Manager

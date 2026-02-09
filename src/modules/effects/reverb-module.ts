@@ -1,4 +1,5 @@
 import type { BaseEffectModule, EffectNodes } from './base-effect-module';
+import { UIConfigService } from '../../services/ui-config-service';
 
 export type ReverbConfig = {
   decay: number;
@@ -6,8 +7,11 @@ export type ReverbConfig = {
 };
 
 export class ReverbModule implements BaseEffectModule {
-  private readonly decayEl: HTMLInputElement;
-  private readonly mixEl: HTMLInputElement;
+  // Element IDs managed via UIConfigService
+  private readonly elementIds = {
+    decay: 'reverb-decay',
+    mix: 'reverb-mix'
+  };
 
   private convolver: ConvolverNode | null = null;
   private wetGain: GainNode | null = null;
@@ -15,20 +19,15 @@ export class ReverbModule implements BaseEffectModule {
   private inputGain: GainNode | null = null;
   private outputGain: GainNode | null = null;
 
-  constructor(
-    decayEl: HTMLInputElement,
-    mixEl: HTMLInputElement
-  ) {
-    this.decayEl = decayEl;
-    this.mixEl = mixEl;
+  constructor() {
     this.setupParameterListeners();
   }
 
   getConfig(): ReverbConfig {
-    return {
-      decay: Number.parseFloat(this.decayEl.value),
-      mix: Number.parseFloat(this.mixEl.value)
-    };
+    return UIConfigService.getConfig({
+      decay: this.elementIds.decay,
+      mix: this.elementIds.mix
+    });
   }
 
   initialize(audioCtx: AudioContext, destination: AudioNode): EffectNodes {
@@ -66,7 +65,7 @@ export class ReverbModule implements BaseEffectModule {
 
   private generateImpulseResponse(audioCtx: AudioContext, decay: number): AudioBuffer {
     const sampleRate = audioCtx.sampleRate;
-    const length = sampleRate * decay;
+    const length = Math.max(1, Math.floor(sampleRate * decay));
     const impulse = audioCtx.createBuffer(2, length, sampleRate);
 
     for (let channel = 0; channel < 2; channel++) {
@@ -81,7 +80,7 @@ export class ReverbModule implements BaseEffectModule {
 
   private updateDecay(audioCtx: AudioContext): void {
     if (this.convolver) {
-      const decay = Number.parseFloat(this.decayEl.value);
+      const decay = Number.parseFloat(UIConfigService.getInput(this.elementIds.decay).value);
       this.convolver.buffer = this.generateImpulseResponse(audioCtx, decay);
     }
   }
@@ -99,16 +98,18 @@ export class ReverbModule implements BaseEffectModule {
   }
 
   private setupParameterListeners(): void {
-    this.decayEl.addEventListener('input', () => {
-      this.decayEl.dispatchEvent(new CustomEvent('decay-changed', {
+    // Dispatch a custom event when decay changes; main.ts listens and calls updateWithContext
+    UIConfigService.onInput(this.elementIds.decay, (element, value) => {
+      element.dispatchEvent(new CustomEvent('decay-changed', {
         bubbles: true,
-        detail: { decay: Number.parseFloat(this.decayEl.value) }
+        detail: { decay: Number.parseFloat(value) }
       }));
     });
 
-    this.mixEl.addEventListener('input', () => {
+    // Mix updates wet/dry gains
+    UIConfigService.onInput(this.elementIds.mix, (_el, value) => {
       if (this.wetGain && this.dryGain) {
-        const mix = Number.parseFloat(this.mixEl.value);
+        const mix = Number.parseFloat(value);
         this.wetGain.gain.value = mix;
         this.dryGain.gain.value = 1 - mix;
       }
