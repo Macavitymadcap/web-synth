@@ -107,11 +107,23 @@ const sampleRate = 44100;
 
 export function createMockAudioCtx(overrides: Partial<AudioContext> = {}) {
   const compressorNode = createCompressorNode();
-  
-  return {
-    createGain: jest.fn(() => createGainNode()),
+
+  // Track created nodes for test assertions
+  const gainNodes: any[] = [];
+  let lastDelayNode: any | null = null;
+
+  const ctx: any = {
+    createGain: jest.fn(() => {
+      const node = createGainNode();
+      gainNodes.push(node);
+      return node;
+    }),
     createDynamicsCompressor: jest.fn(() => compressorNode),
-    createDelay: jest.fn(() => createDelayNode()),
+    createDelay: jest.fn((_maxDelayTime?: number) => {
+      const node = createDelayNode();
+      lastDelayNode = node;
+      return node;
+    }),
     createOscillator: jest.fn(() => createOscillator()),
     createBiquadFilter: jest.fn(() => createBiquadFilter()),
     createConvolver: jest.fn(() => createConvolverNode()),
@@ -119,6 +131,18 @@ export function createMockAudioCtx(overrides: Partial<AudioContext> = {}) {
     createBuffer: jest.fn(createBufferMock),
     sampleRate,
     ...overrides,
-    __mockCompressorNode: compressorNode // for test access
-  } as unknown as AudioContext & { __mockCompressorNode: any };
+
+    // Expose internals for tests
+    __mockCompressorNode: compressorNode,
+    __mockGainNodes: gainNodes,
+    get __mockDelayNode() {
+      return lastDelayNode;
+    }
+  };
+
+  return ctx as AudioContext & {
+    __mockCompressorNode: any;
+    __mockGainNodes: any[];
+    __mockDelayNode: any;
+  };
 }

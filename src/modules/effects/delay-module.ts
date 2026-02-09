@@ -1,4 +1,5 @@
 import type { BaseEffectModule, EffectNodes } from './base-effect-module';
+import { UIConfigService } from '../../services/ui-config-service';
 
 export type DelayConfig = {
   time: number;
@@ -11,9 +12,11 @@ export type DelayConfig = {
  * Implements BaseEffectModule for EffectsManager compatibility.
  */
 export class DelayModule implements BaseEffectModule {
-  private readonly timeEl: HTMLInputElement;
-  private readonly feedbackEl: HTMLInputElement;
-  private readonly mixEl: HTMLInputElement;
+  private readonly elementIds = {
+    time: 'delay-time',
+    feedback: 'delay-feedback',
+    mix: 'delay-mix'
+  };
 
   private delayNode: DelayNode | null = null;
   private feedbackGain: GainNode | null = null;
@@ -22,23 +25,16 @@ export class DelayModule implements BaseEffectModule {
   private inputGain: GainNode | null = null;
   private outputGain: GainNode | null = null;
 
-  constructor(
-    timeEl: HTMLInputElement,
-    feedbackEl: HTMLInputElement,
-    mixEl: HTMLInputElement
-  ) {
-    this.timeEl = timeEl;
-    this.feedbackEl = feedbackEl;
-    this.mixEl = mixEl;
+  constructor() {
     this.setupParameterListeners();
   }
 
   getConfig(): DelayConfig {
-    return {
-      time: Number.parseFloat(this.timeEl.value),
-      feedback: Number.parseFloat(this.feedbackEl.value),
-      mix: Number.parseFloat(this.mixEl.value)
-    };
+    return UIConfigService.getConfig({
+      time: this.elementIds.time,
+      feedback: this.elementIds.feedback,
+      mix: this.elementIds.mix
+    });
   }
 
   initialize(audioCtx: AudioContext, destination: AudioNode): EffectNodes {
@@ -98,21 +94,22 @@ export class DelayModule implements BaseEffectModule {
   }
 
   private setupParameterListeners(): void {
-    this.timeEl.addEventListener('input', () => {
-      if (this.delayNode) {
-        this.delayNode.delayTime.value = Number.parseFloat(this.timeEl.value);
+    // Simple parameters use helper method
+    UIConfigService.bindAudioParams([
+      { 
+        elementId: this.elementIds.time, 
+        audioParam: () => this.delayNode?.delayTime 
+      },
+      { 
+        elementId: this.elementIds.feedback, 
+        audioParam: () => this.feedbackGain?.gain 
       }
-    });
+    ]);
 
-    this.feedbackEl.addEventListener('input', () => {
-      if (this.feedbackGain) {
-        this.feedbackGain.gain.value = Number.parseFloat(this.feedbackEl.value);
-      }
-    });
-
-    this.mixEl.addEventListener('input', () => {
+    // Mix parameter affects two gains - use custom handler
+    UIConfigService.onInput(this.elementIds.mix, (el, value) => {
+      const mix = Number.parseFloat(value);
       if (this.wetGain && this.dryGain) {
-        const mix = Number.parseFloat(this.mixEl.value);
         this.wetGain.gain.value = mix;
         this.dryGain.gain.value = 1 - mix;
       }

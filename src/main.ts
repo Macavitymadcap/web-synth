@@ -106,11 +106,6 @@ const phaserStages = (document.getElementById("phaser-stages") as RangeControl).
 const phaserFeedback = (document.getElementById("phaser-feedback") as RangeControl).getInput();
 const phaserMix = (document.getElementById("phaser-mix") as RangeControl).getInput();
 
-// Delay controls
-const delayTime = (document.getElementById("delay-time") as RangeControl).getInput();
-const delayFeedback = (document.getElementById("delay-feedback") as RangeControl).getInput();
-const delayMix = (document.getElementById("delay-mix") as RangeControl).getInput();
-
 // Reverb controls
 const reverbDecay = (document.getElementById("reverb-decay") as RangeControl).getInput();
 const reverbMix = (document.getElementById("reverb-mix") as RangeControl).getInput();
@@ -151,7 +146,7 @@ const phaserModule = new PhaserModule(
   phaserFeedback,
   phaserMix
 );
-const delayModule = new DelayModule(delayTime, delayFeedback, delayMix);
+const delayModule = new DelayModule();
 const distortionModule = new DistortionModule(distortionDrive, distortionBlend);
 const compressorModule = new CompressorModule();
 const reverbModule = new ReverbModule(reverbDecay, reverbMix);
