@@ -15,7 +15,7 @@ import {
   DelaySettings, 
   Preset 
 } from "./settings.model";
-import type { PhaserConfig } from "../modules/phaser-module";
+import type { PhaserConfig } from "../modules/effects/phaser-module";
 
 const STORAGE_KEY = "web-synth-settings";
 const USER_PRESETS_KEY = "web-synth-user-presets";

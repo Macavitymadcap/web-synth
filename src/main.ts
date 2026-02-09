@@ -39,7 +39,7 @@ import "./components/layout/app-header";
 import "./components/layout/help-popover";
 import "./components/molecules/adsr-controls";
 import "./components/molecules/controls-group";
-import "./components/molecules/oscillator-control";
+import "./components/organisms/oscillator-control";
 import "./components/molecules/instructions-list";
 import "./components/organisms/dual-keyboard";
 import "./components/molecules/keyboard-mapping-info";

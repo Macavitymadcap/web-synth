@@ -1,7 +1,7 @@
 import { OscillatorBank, type OscillatorInstance } from "../core/oscillator-bank";
-import { EnvelopeModule } from "./envelope-module";
-import { FilterModule, type FilterInstance } from "./filter-module";
-import { LFOModule } from "./lfo-module";
+import { EnvelopeModule } from "../modules/envelope-module";
+import { FilterModule, type FilterInstance } from "../modules/filter-module";
+import { LFOModule } from "../modules/lfo-module";
 
 export type Voice = {
   oscillators: OscillatorInstance[];
