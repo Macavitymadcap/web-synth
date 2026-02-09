@@ -72,12 +72,6 @@ const keyboardUpper = document.getElementById("keyboard-upper") as PianoKeyboard
 const keyboardLower = document.getElementById("keyboard-lower") as PianoKeyboard;
 const midiToggle = document.getElementById("midi-enabled") as HTMLInputElement;
 
-// Filter controls
-const filterType = document.getElementById("filter-type") as HTMLSelectElement;
-const filterCutoff = (document.getElementById("filter-cutoff") as RangeControl).getInput();
-const filterResonance = (document.getElementById("filter-resonance") as RangeControl).getInput();
-const filterEnvAmount = (document.getElementById("filter-env-amount") as RangeControl).getInput();
-
 // Master controls
 const poly = document.getElementById("poly") as HTMLInputElement;
 const masterVolume = (document.getElementById("master-volume") as RangeControl).getInput();
@@ -97,7 +91,7 @@ const spectrumCanvas = spectrumAnalyserEl?.getCanvas();
 const oscillatorBank = new OscillatorBank();
 const ampEnvelope = new EnvelopeModule('amp');
 const filterEnvelope = new EnvelopeModule('filter');
-const filterModule = new FilterModule(filterType, filterCutoff, filterResonance, filterEnvAmount, filterEnvelope);
+const filterModule = new FilterModule(filterEnvelope);
 const lfoModule = new LFOModule();
 const masterModule = new MasterModule(masterVolume);
 

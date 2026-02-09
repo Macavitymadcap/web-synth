@@ -15,7 +15,7 @@
 8. ✅ EnvelopeModule (4 params)
 
 ### Phase 3: Complex Modules (7+ params or special cases)
-9. FilterModule (uses EnvelopeModule)
+9. ✅ FilterModule (uses EnvelopeModule)
 10. SpectrumAnalyserModule (canvas element, different pattern)
 
 ### Phase 4: Core Modules (Last)
