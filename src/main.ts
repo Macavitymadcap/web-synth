@@ -88,12 +88,6 @@ const filterDecay = (document.getElementById("filter-decay") as RangeControl).ge
 const filterSustain = (document.getElementById("filter-sustain") as RangeControl).getInput();
 const filterRelease = (document.getElementById("filter-release") as RangeControl).getInput();
 
-// LFO controls
-const lfoRate = (document.getElementById("lfo-rate") as RangeControl).getInput();
-const lfoToFilter = (document.getElementById("lfo-to-filter") as RangeControl).getInput();
-const lfoToPitch = (document.getElementById("lfo-to-pitch") as RangeControl).getInput();
-const lfoWaveform = document.getElementById("lfo-waveform") as HTMLSelectElement;
-
 // Master controls
 const poly = document.getElementById("poly") as HTMLInputElement;
 const masterVolume = (document.getElementById("master-volume") as RangeControl).getInput();
@@ -114,7 +108,7 @@ const oscillatorBank = new OscillatorBank();
 const ampEnvelope = new EnvelopeModule(attack, decay, sustain, release);
 const filterEnvelope = new EnvelopeModule(filterAttack, filterDecay, filterSustain, filterRelease);
 const filterModule = new FilterModule(filterType, filterCutoff, filterResonance, filterEnvAmount, filterEnvelope);
-const lfoModule = new LFOModule(lfoRate, lfoWaveform, lfoToFilter, lfoToPitch);
+const lfoModule = new LFOModule();
 const masterModule = new MasterModule(masterVolume);
 
 // Effects
