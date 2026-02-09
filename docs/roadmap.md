@@ -9,7 +9,7 @@
 - [x] Write tests for noise generator
 
 ### Sprint 2 (Week 3-4): Feature Velocity
-- [ ] Add Tremolo
+- [x] Add Tremolo
 - [ ] Add Second LFO  
 - [ ] Add Flanger
 - [ ] Component audit cleanup
