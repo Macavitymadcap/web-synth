@@ -110,10 +110,6 @@ const phaserMix = (document.getElementById("phaser-mix") as RangeControl).getInp
 const reverbDecay = (document.getElementById("reverb-decay") as RangeControl).getInput();
 const reverbMix = (document.getElementById("reverb-mix") as RangeControl).getInput();
 
-// Distortion controls
-const distortionDrive = (document.getElementById("distortion-drive") as RangeControl).getInput();
-const distortionBlend = (document.getElementById("distortion-blend") as RangeControl).getInput();
-
 // Master controls
 const poly = document.getElementById("poly") as HTMLInputElement;
 const masterVolume = (document.getElementById("master-volume") as RangeControl).getInput();
@@ -147,7 +143,7 @@ const phaserModule = new PhaserModule(
   phaserMix
 );
 const delayModule = new DelayModule();
-const distortionModule = new DistortionModule(distortionDrive, distortionBlend);
+const distortionModule = new DistortionModule();
 const compressorModule = new CompressorModule();
 const reverbModule = new ReverbModule(reverbDecay, reverbMix);
 const spectrumAnalyserModule = new SpectrumAnalyserModule(spectrumCanvas);

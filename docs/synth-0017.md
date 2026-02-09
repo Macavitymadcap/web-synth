@@ -576,7 +576,7 @@ export class MyModule implements BaseEffectModule {
 
 ### Phase 1: Simple Modules (3-5 params)
 1. ✅ CompressorModule (DONE - reference implementation)
-2. DelayModule (3 params)
+2. ✅ DelayModule (3 params)
 3. DistortionModule (2 params)
 4. ReverbModule (2 params)
 

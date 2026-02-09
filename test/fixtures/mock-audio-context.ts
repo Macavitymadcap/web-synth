@@ -80,9 +80,8 @@ function createAnalyserNode(sampleRate: number) {
     maxDecibels: -30,
     context: { sampleRate },
     getByteFrequencyData: jest.fn((array: Uint8Array) => {
-      // Fill with mock data (simulate some frequency content)
       for (let i = 0; i < array.length; i++) {
-        array[i] = Math.floor(Math.random() * 128); // Random values 0-127
+        array[i] = Math.floor(Math.random() * 128);
       }
     }),
     getByteTimeDomainData: jest.fn(),
@@ -90,6 +89,18 @@ function createAnalyserNode(sampleRate: number) {
     getFloatTimeDomainData: jest.fn(),
     connect: jest.fn(),
     disconnect: jest.fn()
+  };
+}
+
+function createWaveShaperNode() {
+  return {
+    curve: null as Float32Array | null,
+    oversample: 'none' as 'none' | '2x' | '4x',
+    connect: jest.fn(),
+    disconnect: jest.fn(),
+    addEventListener: jest.fn(),
+    removeEventListener: jest.fn(),
+    dispatchEvent: jest.fn(),
   };
 }
 
@@ -111,6 +122,7 @@ export function createMockAudioCtx(overrides: Partial<AudioContext> = {}) {
   // Track created nodes for test assertions
   const gainNodes: any[] = [];
   let lastDelayNode: any | null = null;
+  let lastWaveShaper: any | null = null;
 
   const ctx: any = {
     createGain: jest.fn(() => {
@@ -129,6 +141,11 @@ export function createMockAudioCtx(overrides: Partial<AudioContext> = {}) {
     createConvolver: jest.fn(() => createConvolverNode()),
     createAnalyser: jest.fn(() => createAnalyserNode(sampleRate)),
     createBuffer: jest.fn(createBufferMock),
+    createWaveShaper: jest.fn(() => {
+      const node = createWaveShaperNode();
+      lastWaveShaper = node;
+      return node;
+    }),
     sampleRate,
     ...overrides,
 
@@ -137,6 +154,9 @@ export function createMockAudioCtx(overrides: Partial<AudioContext> = {}) {
     __mockGainNodes: gainNodes,
     get __mockDelayNode() {
       return lastDelayNode;
+    },
+    get __mockWaveShaper() {
+      return lastWaveShaper;
     }
   };
 
@@ -144,5 +164,6 @@ export function createMockAudioCtx(overrides: Partial<AudioContext> = {}) {
     __mockCompressorNode: any;
     __mockGainNodes: any[];
     __mockDelayNode: any;
+    __mockWaveShaper: any;
   };
 }
