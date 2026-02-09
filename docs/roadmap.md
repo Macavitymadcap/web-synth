@@ -10,7 +10,7 @@
 
 ### Sprint 2 (Week 3-4): Feature Velocity
 - [x] Add Tremolo
-- [ ] Add Second LFO  
+- [x] Add Second LFO  
 - [ ] Add Flanger
 - [ ] Component audit cleanup
 
