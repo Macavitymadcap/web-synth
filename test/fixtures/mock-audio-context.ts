@@ -42,6 +42,7 @@ function createOscillator() {
   return {
     type: 'sine',
     frequency: { value: 0 },
+    detune: { value: 0 },
     connect: jest.fn(),
     disconnect: jest.fn(),
     start: jest.fn(),
