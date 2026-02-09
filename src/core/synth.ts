@@ -1,7 +1,7 @@
 import { keyInfo } from "./keys";
 import { LFOModule } from "../modules/lfo-module";
 import { MasterModule } from "../modules/master-module";
-import { VoiceManager } from "../modules/voice-manager";
+import { VoiceManager } from "../core/voice-manager";
 import { EffectsManager } from "./effects-manager";
 
 /**

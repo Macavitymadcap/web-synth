@@ -20,7 +20,7 @@ export const FACTORY_PRESETS: Preset[] = [
       chorus: { rate: 0.3, depth: 20, mix: 0.4 },
       reverb: { decay: 3.5, reverbMix: 0.45 },
       delay: { time: 0.5, feedback: 0.25, mix: 0.15 },
-      waveshaper: { drive: 0.5, blend: 0.15 },
+      distortion: { drive: 0.5, blend: 0.15 },
       compressor: {
         threshold: -28, ratio: 3, attack: 0.08, release: 0.4, knee: 18
       },
@@ -45,7 +45,7 @@ export const FACTORY_PRESETS: Preset[] = [
       chorus: { rate: 0.5, depth: 0, mix: 0 },
       reverb: { decay: 0.3, reverbMix: 0.05 },
       delay: { time: 0.375, feedback: 0.2, mix: 0 },
-      waveshaper: { drive: 0.2, blend: 0.1 },
+      distortion: { drive: 0.2, blend: 0.1 },
       compressor: {
         threshold: -18, ratio: 6, attack: 0.01, release: 0.18, knee: 8
       },
@@ -70,7 +70,7 @@ export const FACTORY_PRESETS: Preset[] = [
       chorus: { rate: 0.5, depth: 12, mix: 0.25 },
       reverb: { decay: 1.2, reverbMix: 0.2 },
       delay: { time: 0.375, feedback: 0.3, mix: 0.15 },
-      waveshaper: { drive: 2.5, blend: 0.3 },
+      distortion: { drive: 2.5, blend: 0.3 },
       compressor: {
         threshold: -22, ratio: 4, attack: 0.015, release: 0.22, knee: 12
       },
@@ -95,7 +95,7 @@ export const FACTORY_PRESETS: Preset[] = [
       chorus: { rate: 0.5, depth: 0, mix: 0 },
       reverb: { decay: 0.5, reverbMix: 0.1 },
       delay: { time: 0.375, feedback: 0.2, mix: 0 },
-      waveshaper: { drive: 1.5, blend: 0.25 },
+      distortion: { drive: 1.5, blend: 0.25 },
       compressor: {
         threshold: -16, ratio: 7, attack: 0.01, release: 0.12, knee: 6
       },
@@ -119,7 +119,7 @@ export const FACTORY_PRESETS: Preset[] = [
       chorus: { rate: 0.5, depth: 0, mix: 0 },
       reverb: { decay: 0.3, reverbMix: 0.05 },
       delay: { time: 0.375, feedback: 0.2, mix: 0 },
-      waveshaper: { drive: 2.2, blend: 0.35 },
+      distortion: { drive: 2.2, blend: 0.35 },
       compressor: {
         threshold: -14, ratio: 8, attack: 0.008, release: 0.11, knee: 7
       },
@@ -144,7 +144,7 @@ export const FACTORY_PRESETS: Preset[] = [
       chorus: { rate: 0.3, depth: 18, mix: 0.35 },
       reverb: { decay: 1.8, reverbMix: 0.25 },
       delay: { time: 0.25, feedback: 0.15, mix: 0.1 },
-      waveshaper: { drive: 0.01, blend: 0.1 },
+      distortion: { drive: 0.01, blend: 0.1 },
       compressor: {
         threshold: -26, ratio: 2.5, attack: 0.04, release: 0.3, knee: 14
       },
@@ -170,7 +170,7 @@ export const FACTORY_PRESETS: Preset[] = [
       chorus: { rate: 0.5, depth: 25, mix: 0.5 },
       reverb: { decay: 2.5, reverbMix: 0.3 },
       delay: { time: 0.375, feedback: 0.2, mix: 0 },
-      waveshaper: { drive: 0, blend: 0 },
+      distortion: { drive: 0, blend: 0 },
       compressor: {
         threshold: -30, ratio: 2, attack: 0.05, release: 0.18, knee: 10
       },
@@ -196,7 +196,7 @@ export const FACTORY_PRESETS: Preset[] = [
       chorus: { rate: 0.3, depth: 22, mix: 0.5 },
       reverb: { decay: 3.5, reverbMix: 0.5 },
       delay: { time: 0.5, feedback: 0.25, mix: 0.2 },
-      waveshaper: { drive: 0.3, blend: 0.1 },
+      distortion: { drive: 0.3, blend: 0.1 },
       compressor: {
         threshold: -32, ratio: 2.2, attack: 0.12, release: 0.7, knee: 16
       },
@@ -222,7 +222,7 @@ export const FACTORY_PRESETS: Preset[] = [
       chorus: { rate: 0.4, depth: 15, mix: 0.3 },
       reverb: { decay: 1.8, reverbMix: 0.25 },
       delay: { time: 0.375, feedback: 0.2, mix: 0 },
-      waveshaper: { drive: 1.2, blend: 0.18 },
+      distortion: { drive: 1.2, blend: 0.18 },
       compressor: {
         threshold: -20, ratio: 4.5, attack: 0.02, release: 0.19, knee: 10
       },
@@ -246,7 +246,7 @@ export const FACTORY_PRESETS: Preset[] = [
       chorus: { rate: 0.4, depth: 10, mix: 0.2 },
       reverb: { decay: 2.2, reverbMix: 0.35 },
       delay: { time: 0.375, feedback: 0.25, mix: 0.1 },
-      waveshaper: { drive: 0, blend: 0 },
+      distortion: { drive: 0, blend: 0 },
       compressor: {
         threshold: -34, ratio: 2, attack: 0.09, release: 0.25, knee: 8
       },
@@ -271,7 +271,7 @@ export const FACTORY_PRESETS: Preset[] = [
       chorus: { rate: 0.6, depth: 15, mix: 0.3 },
       reverb: { decay: 1.5, reverbMix: 0.3 },
       delay: { time: 0.1875, feedback: 0.4, mix: 0.3 },
-      waveshaper: { drive: 0.8, blend: 0.2 },
+      distortion: { drive: 0.8, blend: 0.2 },
       compressor: {
         threshold: -24, ratio: 3.5, attack: 0.012, release: 0.13, knee: 9
       },
@@ -297,7 +297,7 @@ export const FACTORY_PRESETS: Preset[] = [
       chorus: { rate: 0.5, depth: 12, mix: 0.25 },
       reverb: { decay: 3, reverbMix: 0.4 },
       delay: { time: 0.25, feedback: 0.35, mix: 0.25 },
-      waveshaper: { drive: 0.2, blend: 0.1 },
+      distortion: { drive: 0.2, blend: 0.1 },
       compressor: {
         threshold: -26, ratio: 2.8, attack: 0.03, release: 0.31, knee: 11
       },
@@ -322,7 +322,7 @@ export const FACTORY_PRESETS: Preset[] = [
       chorus: { rate: 0.3, depth: 10, mix: 0.18 },
       reverb: { decay: 0.7, reverbMix: 0.18 },
       delay: { time: 0.18, feedback: 0.22, mix: 0.12 },
-      waveshaper: { drive: 6, blend: 0.7 },
+      distortion: { drive: 6, blend: 0.7 },
       compressor: {
         threshold: -20, ratio: 5, attack: 0.01, release: 0.15, knee: 10
       },
@@ -347,7 +347,7 @@ export const FACTORY_PRESETS: Preset[] = [
       chorus: { rate: 0.2, depth: 6, mix: 0.1 },
       reverb: { decay: 0.5, reverbMix: 0.08 },
       delay: { time: 0.12, feedback: 0.18, mix: 0.08 },
-      waveshaper: { drive: 8, blend: 0.6 },
+      distortion: { drive: 8, blend: 0.6 },
       compressor: {
         threshold: -12, ratio: 9, attack: 0.006, release: 0.09, knee: 5
       },

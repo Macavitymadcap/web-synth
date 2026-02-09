@@ -1,14 +1,11 @@
-export type WaveShaperConfig = {
+import type { BaseEffectModule, EffectNodes } from './base-effect-module';
+
+export type DistortionConfig = {
   drive: number; // How strong the distortion is
   blend: number; // Wet/dry mix (0-1)
 };
 
-export type WaveShaperNodes = {
-  input: GainNode;
-  output: GainNode;
-};
-
-export class WaveShaperModule {
+export class DistortionModule implements BaseEffectModule {
   private readonly driveEl: HTMLInputElement;
   private readonly blendEl: HTMLInputElement;
 
@@ -24,14 +21,16 @@ export class WaveShaperModule {
     this.setupListeners();
   }
 
-  getConfig(): WaveShaperConfig {
+  getConfig(): DistortionConfig {
     return {
       drive: Number(this.driveEl.value),
       blend: Number(this.blendEl.value)
     };
   }
 
-  initialize(audioCtx: AudioContext, destination: AudioNode): WaveShaperNodes {
+  initialize(audioCtx: AudioContext, destination: AudioNode): EffectNodes {
+    this.disconnect();
+
     const { drive, blend } = this.getConfig();
 
     this.inputNode = audioCtx.createGain();
@@ -87,11 +86,23 @@ export class WaveShaperModule {
     });
   }
 
+  private disconnect() {
+    if (this.inputNode) this.inputNode.disconnect();
+    if (this.outputNode) this.outputNode.disconnect();
+    if (this.shaper) this.shaper.disconnect();
+    if (this.dry) this.dry.disconnect();
+    if (this.wet) this.wet.disconnect();
+    this.inputNode = null;
+    this.outputNode = null;
+    this.shaper = null;
+    this.dry = null;
+    this.wet = null;
+  }
+
   // Custom soft-clipping curve
   private createCurve(drive: number): Float32Array<ArrayBuffer> {
     const samples = 1024;
-    const buffer = new ArrayBuffer(samples * Float32Array.BYTES_PER_ELEMENT);
-    const curve = new Float32Array(buffer);
+    const curve = new Float32Array(samples);
     const amt = Math.max(1, drive * 10);
     for (let i = 0; i < samples; ++i) {
       const x = (i / (samples - 1)) * 2 - 1;

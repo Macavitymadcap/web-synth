@@ -35,7 +35,7 @@ export class SettingsManager {
       filter: this.getFilterSettings(),
       lfo: this.getLFOSettings(),
       chorus: this.getChorusSettings(),
-      waveshaper: this.getWaveShaperSettings(),
+      distortion: this.getWaveShaperSettings(),
       compressor: this.getCompressorSettings(),
       reverb: this.getReverbSettings(),
       delay: this.getDelaySettings(),
@@ -101,8 +101,8 @@ export class SettingsManager {
 
   private getWaveShaperSettings(): WaveShaperSettings {
     return {
-      drive: Number.parseFloat((document.getElementById("waveshaper-drive") as HTMLInputElement)?.value ?? "0"),
-      blend: Number.parseFloat((document.getElementById("waveshaper-blend") as HTMLInputElement)?.value ?? "0"),
+      drive: Number.parseFloat((document.getElementById("distortion-drive") as HTMLInputElement)?.value ?? "0"),
+      blend: Number.parseFloat((document.getElementById("distortion-blend") as HTMLInputElement)?.value ?? "0"),
     };
   }
 
@@ -149,7 +149,7 @@ export class SettingsManager {
     this.applyFilterSettings(settings.filter);
     this.applyLFOSettings(settings.lfo);
     this.applyChorusSettings(settings.chorus);
-    this.applyWaveShaperSettings(settings.waveshaper);
+    this.applyWaveShaperSettings(settings.distortion);
     this.applyReverbSettings(settings.reverb);
     this.applyCompressorSettings(settings.compressor);
     this.applyDelaySettings(settings.delay);
@@ -241,8 +241,8 @@ export class SettingsManager {
   }
 
   private applyWaveShaperSettings(settings: WaveShaperSettings): void {
-    this.setControlValue("waveshaper-drive", settings.drive);
-    this.setControlValue("waveshaper-blend", settings.blend);
+    this.setControlValue("distortion-drive", settings.drive);
+    this.setControlValue("distortion-blend", settings.blend);
   }
 
   private applyReverbSettings(settings: ReverbSettings): void {

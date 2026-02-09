@@ -4,25 +4,28 @@ import { SettingsManager } from "./core/settings-manager";
 import { Synth } from "./core/synth";
 
 // Modules
+import { MasterModule } from "./modules/master-module";
+import { VoiceManager } from "./core/voice-manager";
 import { EnvelopeModule } from "./modules/envelope-module";
 import { FilterModule } from "./modules/filter-module";
 import { LFOModule } from "./modules/lfo-module";
-import { ChorusModule } from "./modules/chorus-module";
-import { PhaserModule } from "./modules/phaser-module";
-import { DelayModule } from "./modules/delay-module";
-import { MasterModule } from "./modules/master-module";
-import { VoiceManager } from "./modules/voice-manager";
-import { ReverbModule } from "./modules/reverb-module";
-import { WaveShaperModule } from "./modules/wave-shaper-module";
+import { EffectsManager } from "./core/effects-manager";
+
+// Effects
+import { ChorusModule } from "./modules/effects/chorus-module";
+import { PhaserModule } from "./modules/effects/phaser-module";
+import { DelayModule } from "./modules/effects/delay-module";
+import { ReverbModule } from "./modules/effects/reverb-module";
+import { DistortionModule } from "./modules/effects/distortion-module";
+import { CompressorModule } from "./modules/effects/compressor-module";
+import { SpectrumAnalyserModule } from "./modules/effects/spectrum-analyser-module";
+
+// Handlers
 import { createKeyboardHandlers } from "./handlers/keyboard-handlers";
 import { createRecordingHandler } from "./handlers/recording-handler";
 import { createOctaveChangeHandler } from "./handlers/octave-handler";
 import { createMidiToggleHandler } from "./handlers/midi-handler-setup";
 import { createOscillatorManager } from "./handlers/oscillator-management";
-import { SpectrumAnalyserModule } from "./modules/spectrum-analyser-module";
-
-import { EffectsManager } from "./core/effects-manager";
-import { createStandardEffectAdapter } from "./core/effect-module-adapter";
 
 // Components
 import "./components/atoms/filter-type-picker";
@@ -46,7 +49,6 @@ import "./components/organisms/piano-keyboard";
 import type { PianoKeyboard } from "./components/organisms/piano-keyboard";
 import "./components/organisms/preset-selector";
 import type { PresetSelector } from "./components/organisms/preset-selector";
-import { CompressorModule } from "./modules/compressor-module";
 import "./components/organisms/master-controls";
 import "./components/organisms/presets-controls";
 import "./components/organisms/oscillator-controls";
@@ -59,11 +61,9 @@ import "./components/organisms/phaser-effect";
 import "./components/organisms/reverb-effect";
 import "./components/organisms/compressor-effect";
 import "./components/organisms/delay-effect";
-import "./components/organisms/waveshaper-effect";
+import "./components/organisms/distortion-effect";
 import "./components/organisms/spectrum-analyser";
 import type { SpectrumAnalyser } from "./components/organisms/spectrum-analyser";
-import { createSpectrumAnalyserAdapter } from "./core/analyser-effect-adapter";
-
 
 // Keyboard and MIDI controls
 const octaveUpper = document.getElementById("octave-upper") as HTMLSelectElement;
@@ -122,9 +122,9 @@ const compressorAttack = (document.getElementById("compressor-attack") as RangeC
 const compressorRelease = (document.getElementById("compressor-release") as RangeControl).getInput();
 const compressorKnee = (document.getElementById("compressor-knee") as RangeControl).getInput();
 
-// Waveshaper controls
-const waveshaperDrive = (document.getElementById("waveshaper-drive") as RangeControl).getInput();
-const waveshaperBlend = (document.getElementById("waveshaper-blend") as RangeControl).getInput();
+// Distortion controls
+const distortionDrive = (document.getElementById("distortion-drive") as RangeControl).getInput();
+const distortionBlend = (document.getElementById("distortion-blend") as RangeControl).getInput();
 
 // Master controls
 const poly = document.getElementById("poly") as HTMLInputElement;
@@ -150,72 +150,71 @@ const lfoModule = new LFOModule(lfoRate, lfoWaveform, lfoToFilter, lfoToPitch);
 const masterModule = new MasterModule(masterVolume);
 
 // Effects
-const chorusAdapter = createStandardEffectAdapter(new ChorusModule(chorusRate, chorusDepth, chorusMix));
-const phaserAdapter = createStandardEffectAdapter(new PhaserModule(
+const chorusModule = new ChorusModule(chorusRate, chorusDepth, chorusMix);
+const phaserModule = new PhaserModule(
   phaserRate,
   phaserDepth,
   phaserStages,
   phaserFeedback,
   phaserMix
-));
-const delayAdapter = createStandardEffectAdapter(new DelayModule(delayTime, delayFeedback, delayMix));
-const reverbModule = new ReverbModule(reverbDecay, reverbMix);
-const reverbAdapter = createStandardEffectAdapter(reverbModule);
-const compressorAdapter = createStandardEffectAdapter(new CompressorModule(
+);
+const delayModule = new DelayModule(delayTime, delayFeedback, delayMix);
+const distortionModule = new DistortionModule(distortionDrive, distortionBlend);
+const compressorModule = new CompressorModule(
   compressorThreshold,
   compressorRatio,
   compressorAttack,
   compressorRelease,
   compressorKnee
-));
-const waveShaperAdapter = createStandardEffectAdapter(new WaveShaperModule(waveshaperDrive, waveshaperBlend));
-const spectrumAnalyserAdapter = createSpectrumAnalyserAdapter(new SpectrumAnalyserModule(), spectrumCanvas);
+);
+const reverbModule = new ReverbModule(reverbDecay, reverbMix);
+const spectrumAnalyserModule = new SpectrumAnalyserModule(spectrumCanvas);
 
 // Effects Manager
 const effectsManager = new EffectsManager();
-effectsManager.register(chorusAdapter, {
+effectsManager.register(chorusModule, {
   id: 'chorus',
   name: 'Chorus',
   order: 100, // First in chain
   category: 'modulation'
 });
 
-effectsManager.register(phaserAdapter, {
+effectsManager.register(phaserModule, {
   id: 'phaser',
   name: 'Phaser',
   order: 90,
   category: 'modulation'
 });
 
-effectsManager.register(delayAdapter, {
+effectsManager.register(delayModule, {
   id: 'delay',
   name: 'Delay',
   order: 80,
   category: 'time-based'
 });
 
-effectsManager.register(waveShaperAdapter, {
-  id: 'waveshaper',
+effectsManager.register(distortionModule, {
+  id: 'distortion',
   name: 'Distortion',
   order: 70,
   category: 'distortion'
 });
 
-effectsManager.register(compressorAdapter, {
+effectsManager.register(compressorModule, {
   id: 'compressor',
   name: 'Compressor',
   order: 60,
   category: 'dynamics'
 });
 
-effectsManager.register(reverbAdapter, {
+effectsManager.register(reverbModule, {
   id: 'reverb',
   name: 'Reverb',
   order: 50, // Last effect before analyser
   category: 'time-based'
 });
 
-effectsManager.register(spectrumAnalyserAdapter, {
+effectsManager.register(spectrumAnalyserModule, {
   id: 'analyser',
   name: 'Spectrum Analyser',
   order: 40,

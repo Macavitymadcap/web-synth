@@ -1,15 +1,6 @@
-/**
- * EffectsManager Tests - Focused on Business Logic
- * 
- * We don't mock Web Audio API extensively because:
- * 1. Mocks don't prove the audio actually works
- * 2. Web Audio integration is tested in browser/manual testing
- * 3. Focus on: registration, ordering, querying - the manager's actual job
- */
-
 import { describe, it, expect, beforeEach } from 'bun:test';
-import { EffectsManager } from '../src/core/effects-manager';
-import { MockEffectModule } from './fixtures/mock-effect-module';
+import { EffectsManager } from '../../src/core/effects-manager';
+import { MockEffectModule } from '../fixtures/mock-effect-module';
 
 
 describe('EffectsManager - Business Logic', () => {

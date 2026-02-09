@@ -1,3 +1,5 @@
+import type { BaseEffectModule, EffectNodes } from './base-effect-module';
+
 export type CompressorConfig = {
   threshold: number;
   ratio: number;
@@ -6,12 +8,7 @@ export type CompressorConfig = {
   knee: number;
 };
 
-export type CompressorNodes = {
-  input: GainNode;
-  output: GainNode;
-};
-
-export class CompressorModule {
+export class CompressorModule implements BaseEffectModule {
   private readonly thresholdEl: HTMLInputElement;
   private readonly ratioEl: HTMLInputElement;
   private readonly attackEl: HTMLInputElement;
@@ -47,7 +44,9 @@ export class CompressorModule {
     };
   }
 
-  initialize(audioCtx: AudioContext, destination: AudioNode): CompressorNodes {
+  initialize(audioCtx: AudioContext, destination: AudioNode): EffectNodes {
+    this.disconnect();
+
     const { threshold, ratio, attack, release, knee } = this.getConfig();
 
     this.inputGain = audioCtx.createGain();
@@ -62,7 +61,7 @@ export class CompressorModule {
 
     this.inputGain.connect(this.compressor);
     this.compressor.connect(this.outputGain);
-    
+    this.outputGain.connect(destination);
 
     return {
       input: this.inputGain,
@@ -73,9 +72,11 @@ export class CompressorModule {
   getInput(): GainNode | null {
     return this.inputGain;
   }
+
   getOutput(): GainNode | null {
     return this.outputGain;
   }
+
   isInitialized(): boolean {
     return this.compressor !== null;
   }
@@ -96,5 +97,14 @@ export class CompressorModule {
     this.kneeEl.addEventListener('input', () => {
       if (this.compressor) this.compressor.knee.value = Number.parseFloat(this.kneeEl.value);
     });
+  }
+
+  private disconnect(): void {
+    if (this.inputGain) this.inputGain.disconnect();
+    if (this.outputGain) this.outputGain.disconnect();
+    if (this.compressor) this.compressor.disconnect();
+    this.inputGain = null;
+    this.outputGain = null;
+    this.compressor = null;
   }
 }
