@@ -1,7 +1,6 @@
 import { describe, it, expect, beforeEach, jest } from 'bun:test';
 import { CompressorModule } from '../../../src/modules/effects/compressor-module';
 import { createMockAudioCtx } from '../../fixtures/mock-audio-context';
-import { UIConfigService } from '../../../src/services/ui-config-service';
 
 describe('CompressorModule', () => {
   let compressor: CompressorModule;
