@@ -735,38 +735,6 @@ Usage in HTML:
 
 ## Signal Flow
 
-```
-Keyboard/MIDI Input
-    ↓
-Note Handler
-    ↓
-Oscillator Bank (Polyphony)
-    ↓
-Envelope (ADSR)
-    ↓
-Filter
-    ↓
-Effects Chain Input ← EffectsManager.getInput()
-    ↓
-[Effect 1: order 100] (e.g., Compressor)
-    ↓
-[Effect 2: order 90]  (e.g., Chorus)
-    ↓
-[Effect 3: order 85]  (e.g., Phaser)
-    ↓
-[Effect 4: order 70]  (e.g., Delay)
-    ↓
-[Effect 5: order 60]  (e.g., Reverb)
-    ↓
-[Effect 6: order 40]  (e.g., Analyser)
-    ↓
-Effects Chain Output
-    ↓
-Master Gain
-    ↓
-AudioContext.destination (Speakers)
-```
-
 ```mermaid
 graph LR
     A[User Input] --> B[Synth.playFrequency]
