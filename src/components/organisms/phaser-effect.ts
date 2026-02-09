@@ -3,13 +3,16 @@ export class PhaserEffect extends HTMLElement {
     this.innerHTML = `
       <module-section id="phaser-effect" title="Phaser">
         <div slot="instructions">
-          <instructions-list>
+        <p>
+          Phaser effect modulates the phase of the audio signal using allpass filters.
+        </p>
+          <instruction-list>
             <instruction-item label="Rate">LFO speed for sweeping the notches.</instruction-item>
             <instruction-item label="Depth">How wide the notches sweep.</instruction-item>
             <instruction-item label="Stages">Number of allpass filter stages (2-8).</instruction-item>
             <instruction-item label="Feedback">Amount of output fed back into input for resonance.</instruction-item>
             <instruction-item label="Mix">Blend between dry and phased signal.</instruction-item>
-          </instructions-list>
+          </instruction-list>
         </div>
         <div slot="content">
           <controls-group>

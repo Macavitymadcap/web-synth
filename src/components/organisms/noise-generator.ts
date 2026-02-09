@@ -3,6 +3,10 @@ export class NoiseGenerator extends HTMLElement {
     this.innerHTML = `
       <module-section id="noise-generator" title="Noise Generator">
         <div slot="instructions">
+          <p>
+            The noise generator produces a noise signal that can be mixed with the oscillators for added texture. 
+            Different noise types emphasize different frequency ranges, and the level control allows you to blend it in subtly or use it as a main sound source.
+          </p>
           <instruction-list>
             <instruction-item label="Type">
               White (full frequency spectrum), Pink (natural 1/f), Brown (low frequency emphasis)
