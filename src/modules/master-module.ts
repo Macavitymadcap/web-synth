@@ -1,3 +1,5 @@
+import { UIConfigService } from "../services/ui-config-service";
+
 export type MasterConfig = {
   volume: number;
 };
@@ -7,14 +9,15 @@ export type MasterConfig = {
  * Handles master volume control and audio context initialization
  */
 export class MasterModule {
-  private readonly volumeEl: HTMLInputElement;
-  
+  // UI element IDs
+  private readonly elementIds = {
+    volume: "master-volume",
+  };
+
   private audioCtx: AudioContext | null = null;
   private masterGain: GainNode | null = null;
 
-  constructor(volumeEl: HTMLInputElement) {
-    this.volumeEl = volumeEl;
-    
+  constructor() {
     this.setupParameterListeners();
   }
 
@@ -23,9 +26,9 @@ export class MasterModule {
    * @returns Object containing master parameters
    */
   getConfig(): MasterConfig {
-    return {
-      volume: Number.parseFloat(this.volumeEl.value)
-    };
+    return UIConfigService.getConfig({
+      volume: this.elementIds.volume,
+    });
   }
 
   /**
@@ -35,15 +38,15 @@ export class MasterModule {
   initialize(): AudioContext {
     if (!this.audioCtx) {
       this.audioCtx = new AudioContext();
-      
+
       // Create master gain
       this.masterGain = this.audioCtx.createGain();
       this.masterGain.gain.value = this.getConfig().volume;
-      
+
       // Connect to output
       this.masterGain.connect(this.audioCtx.destination);
     }
-    
+
     return this.audioCtx;
   }
 
@@ -86,10 +89,9 @@ export class MasterModule {
    * @private
    */
   private setupParameterListeners(): void {
-    this.volumeEl.addEventListener('input', () => {
-      if (this.masterGain) {
-        this.masterGain.gain.value = Number.parseFloat(this.volumeEl.value);
-      }
+    UIConfigService.bindGainParam({
+      elementId: this.elementIds.volume,
+      gainNode: () => this.masterGain,
     });
   }
 }

@@ -30,7 +30,6 @@ import { createOscillatorManager } from "./handlers/oscillator-management";
 // Components
 import "./components/atoms/filter-type-picker";
 import "./components/atoms/range-control";
-import type { RangeControl } from "./components/atoms/range-control";
 import "./components/atoms/toggle-switch";
 import "./components/atoms/waveform-picker";
 import "./components/atoms/octave-picker";
@@ -74,7 +73,6 @@ const midiToggle = document.getElementById("midi-enabled") as HTMLInputElement;
 
 // Master controls
 const poly = document.getElementById("poly") as HTMLInputElement;
-const masterVolume = (document.getElementById("master-volume") as RangeControl).getInput();
 
 // Record controls
 const recordBtn = document.getElementById("record") as HTMLButtonElement;
@@ -93,7 +91,7 @@ const ampEnvelope = new EnvelopeModule('amp');
 const filterEnvelope = new EnvelopeModule('filter');
 const filterModule = new FilterModule(filterEnvelope);
 const lfoModule = new LFOModule();
-const masterModule = new MasterModule(masterVolume);
+const masterModule = new MasterModule();
 
 // Effects
 const compressorModule = new CompressorModule();
