@@ -1,4 +1,4 @@
-import type { BaseEffectModule, EffectNodes } from '../../src/modules/base-effect-module';
+import type { BaseEffectModule, EffectNodes } from '../../src/modules/effects/base-effect-module';
 
 // Minimal mock that satisfies the interface
 export class MockEffectModule implements BaseEffectModule {

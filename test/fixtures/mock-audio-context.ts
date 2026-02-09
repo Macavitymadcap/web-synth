@@ -71,6 +71,28 @@ function createConvolverNode() {
   };
 }
 
+function createAnalyserNode(sampleRate: number) {
+  return {
+    fftSize: 2048,
+    frequencyBinCount: 1024,
+    smoothingTimeConstant: 0.8,
+    minDecibels: -100,
+    maxDecibels: -30,
+    context: { sampleRate },
+    getByteFrequencyData: jest.fn((array: Uint8Array) => {
+      // Fill with mock data (simulate some frequency content)
+      for (let i = 0; i < array.length; i++) {
+        array[i] = Math.floor(Math.random() * 128); // Random values 0-127
+      }
+    }),
+    getByteTimeDomainData: jest.fn(),
+    getFloatFrequencyData: jest.fn(),
+    getFloatTimeDomainData: jest.fn(),
+    connect: jest.fn(),
+    disconnect: jest.fn()
+  };
+}
+
 function createBufferMock(numChannels: number, length: number, sampleRate: number) {
   const channels = Array.from({ length: numChannels }, () => new Float32Array(length));
   return {
@@ -93,6 +115,7 @@ export function createMockAudioCtx(overrides: Partial<AudioContext> = {}) {
     createOscillator: jest.fn(() => createOscillator()),
     createBiquadFilter: jest.fn(() => createBiquadFilter()),
     createConvolver: jest.fn(() => createConvolverNode()),
+    createAnalyser: jest.fn(() => createAnalyserNode(sampleRate)),
     createBuffer: jest.fn(createBufferMock),
     sampleRate,
     ...overrides,

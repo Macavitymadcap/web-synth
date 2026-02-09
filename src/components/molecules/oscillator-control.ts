@@ -1,4 +1,4 @@
-import type { RangeControl } from './atoms/range-control';
+import type { RangeControl } from '../atoms/range-control';
 
 export class OscillatorControl extends HTMLElement {
   private waveSelect!: HTMLSelectElement;

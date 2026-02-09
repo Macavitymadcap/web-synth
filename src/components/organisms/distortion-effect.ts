@@ -1,4 +1,4 @@
-export class WaveshaperEffect extends HTMLElement {
+export class DistortionEffect extends HTMLElement {
   connectedCallback() {
     this.innerHTML = `
       <module-section id="distortion-effect" title="Distortion">
@@ -20,4 +20,4 @@ export class WaveshaperEffect extends HTMLElement {
     `;
   }
 }
-customElements.define('distortion-effect', WaveshaperEffect);
+customElements.define('distortion-effect', DistortionEffect);

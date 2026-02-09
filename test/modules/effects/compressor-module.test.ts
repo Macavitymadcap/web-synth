@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, jest } from 'bun:test';
-import { CompressorModule } from '../../src/modules/compressor-module';
+import { CompressorModule } from '../../../src/modules/effects/compressor-module';
 import { createMockInput } from '../../fixtures/mock-input';
 import { createMockAudioCtx } from '../../fixtures/mock-audio-context';
 

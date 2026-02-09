@@ -19,7 +19,6 @@ import { ReverbModule } from "./modules/effects/reverb-module";
 import { DistortionModule } from "./modules/effects/distortion-module";
 import { CompressorModule } from "./modules/effects/compressor-module";
 import { SpectrumAnalyserModule } from "./modules/effects/spectrum-analyser-module";
-import { createSpectrumAnalyserAdapter } from "./core/analyser-effect-adapter";
 
 // Handlers
 import { createKeyboardHandlers } from "./handlers/keyboard-handlers";
@@ -169,7 +168,7 @@ const compressorModule = new CompressorModule(
   compressorKnee
 );
 const reverbModule = new ReverbModule(reverbDecay, reverbMix);
-const spectrumAnalyserAdapter = createSpectrumAnalyserAdapter(new SpectrumAnalyserModule(), spectrumCanvas);
+const spectrumAnalyserModule = new SpectrumAnalyserModule(spectrumCanvas);
 
 // Effects Manager
 const effectsManager = new EffectsManager();
@@ -215,7 +214,7 @@ effectsManager.register(reverbModule, {
   category: 'time-based'
 });
 
-effectsManager.register(spectrumAnalyserAdapter, {
+effectsManager.register(spectrumAnalyserModule, {
   id: 'analyser',
   name: 'Spectrum Analyser',
   order: 40,

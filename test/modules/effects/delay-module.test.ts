@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, jest } from 'bun:test';
-import { DelayModule } from '../../src/modules/delay-module';
+import { DelayModule } from '../../../src/modules/effects/delay-module';
 import { createMockInput } from '../../fixtures/mock-input';
 import { createMockAudioCtx } from '../../fixtures/mock-audio-context';
 

@@ -4,7 +4,6 @@ export class FilterTypePicker extends HTMLElement {
   connectedCallback() {
     const id = this.getAttribute('id') || '';
     const label = this.getAttribute('label') || 'Filter Type';
-    const value = this.getAttribute('value') || 'lowpass';
     
     this.innerHTML = `
       <style>

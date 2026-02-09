@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, jest } from 'bun:test';
-import { ReverbModule } from '../../src/modules/reverb-module';
+import { ReverbModule } from '../../../src/modules/effects/reverb-module';
 import { createMockInput } from '../../fixtures/mock-input';
 import { createMockAudioCtx } from '../../fixtures/mock-audio-context';
 
