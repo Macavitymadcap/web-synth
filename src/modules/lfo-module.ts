@@ -14,15 +14,15 @@ export type LFORouting = {
 
 /**
  * LFOModule manages a Low-Frequency Oscillator for modulation
- * Handles LFO rate, waveform, and routing to filter and pitch
+ * Supports multiple instances via dynamic ID parameter
  */
 export class LFOModule {
-  // UI element IDs (no constructor params)
-  private readonly elementIds = {
-    rate: 'lfo-rate',
-    waveform: 'lfo-waveform',
-    toFilter: 'lfo-to-filter',
-    toPitch: 'lfo-to-pitch',
+  private readonly id: string;
+  private readonly elementIds: {
+    rate: string;
+    waveform: string;
+    toFilter: string;
+    toPitch: string;
   };
 
   private lfo: OscillatorNode | null = null;
@@ -30,14 +30,20 @@ export class LFOModule {
   private lfoToFilter: GainNode | null = null;
   private lfoToPitch: GainNode | null = null;
 
-  constructor() {
+  /**
+   * @param id - LFO instance ID (e.g., '1', '2', '3')
+   */
+  constructor(id: string) {
+    this.id = id;
+    this.elementIds = {
+      rate: `lfo-${id}-rate`,
+      waveform: `lfo-${id}-waveform`,
+      toFilter: `lfo-${id}-to-filter`,
+      toPitch: `lfo-${id}-to-pitch`,
+    };
     this.setupParameterListeners();
   }
 
-  /**
-   * Get the current LFO configuration values
-   * @returns Object containing LFO parameters
-   */
   getConfig(): LFOConfig {
     const config = UIConfigService.getConfig({
       rate: this.elementIds.rate,
@@ -52,11 +58,6 @@ export class LFOModule {
     return config as LFOConfig;
   }
 
-  /**
-   * Initialize the LFO and its routing nodes
-   * @param audioCtx - The AudioContext to create nodes in
-   * @returns Object containing the routing gain nodes for filter and pitch modulation
-   */
   initialize(audioCtx: AudioContext): LFORouting {
     const { rate, waveform, toFilter, toPitch } = this.getConfig();
 
@@ -90,43 +91,29 @@ export class LFOModule {
     };
   }
 
-  /**
-   * Get the filter modulation gain node
-   * @returns GainNode for filter modulation, or null if not initialized
-   */
   getFilterModulation(): GainNode | null {
     return this.lfoToFilter;
   }
 
-  /**
-   * Get the pitch modulation gain node
-   * @returns GainNode for pitch modulation, or null if not initialized
-   */
   getPitchModulation(): GainNode | null {
     return this.lfoToPitch;
   }
 
-  /**
-   * Check if the LFO has been initialized
-   * @returns True if initialized, false otherwise
-   */
   isInitialized(): boolean {
     return this.lfo !== null;
   }
 
-  /**
-   * Setup event listeners for real-time parameter changes
-   * @private
-   */
+  getId(): string {
+    return this.id;
+  }
+
   private setupParameterListeners(): void {
-    // Bind simple AudioParams
     UIConfigService.bindAudioParams([
       { elementId: this.elementIds.rate, audioParam: () => this.lfo?.frequency },
       { elementId: this.elementIds.toFilter, audioParam: () => this.lfoToFilter?.gain },
       { elementId: this.elementIds.toPitch, audioParam: () => this.lfoToPitch?.gain },
     ]);
 
-    // Waveform select handler
     UIConfigService.onSelect(this.elementIds.waveform, (_el, value) => {
       if (this.lfo) {
         this.lfo.type = value as OscillatorType;
@@ -134,4 +121,3 @@ export class LFOModule {
     });
   }
 }
-// ...existing code...

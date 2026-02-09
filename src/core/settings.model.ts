@@ -83,13 +83,12 @@ export type ReverbSettings = {
   reverbMix: number;
 };
 
-
 export interface SynthSettings {
   master: MasterSettings;
   oscillators: OscillatorSettings[];
   envelope: EnvelopeSettings;
   filter: FilterSettings;
-  lfo: LFOSettings;
+  lfos: LFOSettings[];
   noise: NoiseConfig;
 
   compressor: CompressorSettings;

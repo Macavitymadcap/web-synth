@@ -11,24 +11,22 @@ import { EffectsManager } from "./effects-manager";
 export class Synth {
   audioCtx: AudioContext | null = null;
   masterGain!: GainNode;
-
-  // Effects routing
   effectsInput!: GainNode;
 
   // Modules
   private readonly effectManager: EffectsManager;
-  private readonly lfoModule: LFOModule;
+  private lfoModules: LFOModule[];  // Make mutable
   private readonly masterModule: MasterModule;
-  private readonly voiceManager: VoiceManager;
+  private voiceManager: VoiceManager;  // Make mutable
 
   constructor(
     effectsManager: EffectsManager,
-    lfoModule: LFOModule,
+    lfoModules: LFOModule[],
     masterModule: MasterModule,
     voiceManager: VoiceManager,
   ) {
     this.effectManager = effectsManager;
-    this.lfoModule = lfoModule;
+    this.lfoModules = lfoModules;
     this.masterModule = masterModule;
     this.voiceManager = voiceManager;
   }
@@ -43,8 +41,8 @@ export class Synth {
       this.audioCtx = this.masterModule.initialize();
       this.masterGain = this.masterModule.getMasterGain()!;
 
-      // Initialize LFO
-      this.lfoModule.initialize(this.audioCtx);
+      // Initialize all LFOs
+      this.lfoModules.forEach(lfo => lfo.initialize(this.audioCtx!));
 
       // Initialize effects 
       this.effectsInput = this.effectManager.initialize(
@@ -106,6 +104,19 @@ export class Synth {
   stopAllVoices() {
     if (!this.audioCtx) return;
     this.voiceManager.stopAllVoices(this.audioCtx.currentTime);
+  }
+
+  /**
+   * Update LFO modules and reinitialize if audio context exists
+   */
+  updateLFOs(newLFOs: LFOModule[], newVoiceManager: VoiceManager): void {
+    this.lfoModules = newLFOs;
+    this.voiceManager = newVoiceManager;
+    
+    // Re-initialize LFOs if audio context exists
+    if (this.audioCtx) {
+      this.lfoModules.forEach(lfo => lfo.initialize(this.audioCtx!));
+    }
   }
 }
 

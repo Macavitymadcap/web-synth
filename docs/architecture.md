@@ -23,11 +23,11 @@ This architecture provides:
 
 ### 1. **Modular Audio Processing**
 Audio functionality is encapsulated in self-contained modules in `src/modules/`. Each module:
-- Implements `BaseEffectModule` interface
+- Implements `BaseEffectModule` interface (for effects) or module-specific interfaces
 - Manages its own Web Audio nodes
 - Exposes configuration via `getConfig()` reading from UIConfigService
 - Binds parameter updates via UIConfigService helpers in constructor
-- Returns `{ input, output }` nodes for audio routing
+- Returns `{ input, output }` nodes for audio routing (effects)
 - Handles cleanup on re-initialization
 
 ### 2. **Native Web Components**
@@ -44,14 +44,22 @@ The `EffectsManager` orchestrates the effects chain:
 - Manages audio routing between effects
 - Provides querying and status APIs
 
-### 4. **Event-Driven Parameter Updates**
+### 4. **Dynamic LFO Bank Management**
+The `LFOSection` component and `createLFOManager` handler provide dynamic LFO management:
+- Add/remove LFOs at runtime via UI
+- Each LFO has unique ID for parameter binding
+- LFO modules array mutated in-place and synced with voice manager
+- Component dispatches `lfos-changed` event on modifications
+- Voice manager recreated with updated LFO array for modulation routing
+
+### 5. **Event-Driven Parameter Updates**
 Parameter changes flow through DOM events via UIConfigService:
 - UI components dispatch `input`/`change` events
 - Modules bind to these events using UIConfigService helpers
 - Audio nodes update in real-time
 - No manual coupling between UI and audio logic
 
-### 5. **Centralized UI Access via UIConfigService**
+### 6. **Centralized UI Access via UIConfigService**
 `UIConfigService` is the single source of truth for UI interaction:
 - **Safe element access**: `exists()`, `tryGet*()` methods prevent errors
 - **Declarative config**: `getConfig({ id | { id, transform, select } })`
@@ -76,27 +84,30 @@ src/
 │   ├── effects/
 │   │   ├── base-effect-module.ts   # Effect interface
 │   │   ├── chorus-module.ts        # Chorus (UIConfigService)
-│   │   ├── compressor-module.ts    # Compressor (UIConfigService)
-│   │   ├── delay-module.ts         # Delay (UIConfigService)
-│   │   ├── distortion-module.ts    # Distortion (UIConfigService)
-│   │   ├── phaser-module.ts        # Phaser (UIConfigService)
-│   │   ├── reverb-module.ts        # Reverb (UIConfigService)
-│   │   └── spectrum-analyser-module.ts # Analyser (UIConfigService)
+...
+│   │   └── tremolo-module.ts       # Analyser (UIConfigService)
 │   ├── envelope-module.ts          # ADSR envelope (UIConfigService)
 │   ├── filter-module.ts            # Filter (UIConfigService)
-│   ├── lfo-module.ts               # LFO (UIConfigService)
-│   └── master-module.ts            # Master volume (UIConfigService)
+│   ├── lfo-module.ts               # LFO (UIConfigService, dynamic ID)
+│   ├── master-module.ts            # Master volume (UIConfigService)
+│   └── noise-module.ts             # Noise generator (UIConfigService)
 ├── services/
 │   └── ui-config-service.ts        # Centralized UI access/binding
 ├── components/
 │   ├── atoms/                      # Basic UI elements
 │   ├── molecules/                  # Composite controls
 │   └── organisms/                  # Complex components
+│       ├── lfo-bank/               # LFO components
+|       ├── oscillator-bank/        # Oscillator components
+|       ├── visual-keyboard/        # Piano components
+|       ├── adsr-module.ts          # ADSR controls module
+│       └── ...
 ├── handlers/
 │   ├── keyboard-handlers.ts        # Computer keyboard input
 │   ├── midi-handler-setup.ts       # MIDI device integration
 │   ├── octave-handler.ts           # Octave switching
 │   ├── oscillator-management.ts    # Dynamic oscillator UI
+│   ├── lfo-management.ts           # Dynamic LFO bank management
 │   └── recording-handler.ts        # Audio recording
 └── main.ts                         # Application entry point
 
@@ -245,154 +256,70 @@ const voiceManager = new VoiceManager(
   oscillatorBank,
   ampEnvelope,
   filterModule,
-  lfoModule
+  lfoModules,  // Array of LFOModule instances
+  noiseModule
 );
 
 // Reads polyphonic mode from UI
 const config = voiceManager.getConfig(); // { polyphonic: true }
 
-// Creates voices with LFO routing, envelopes, and filters
+// Creates voices with multiple LFO routing, envelopes, and filters
 voiceManager.createVoice(audioCtx, 'A4', 440, 0.8, destination);
 
 // Manages voice lifecycle with proper release scheduling
 voiceManager.stopVoice('A4', audioCtx.currentTime);
 ```
 
----
+### LFO Bank Management
 
-## Existing Modules (UIConfigService Pattern)
+The LFO bank supports dynamic addition/removal of LFO modules:
 
-All modules follow the zero-parameter constructor pattern with UIConfigService.
-
-### Chorus Module
 ```typescript
-const chorusModule = new ChorusModule();
-effectsManager.register(chorusModule, {
-  id: 'chorus',
-  name: 'Chorus',
-  order: 90,
-  category: 'modulation'
+// Initialize LFO manager
+const lfoSection = document.querySelector("lfo-section") as LFOSection;
+let lfoModules: LFOModule[] = [];
+
+const lfoManager = createLFOManager(
+  lfoSection,
+  lfoModules,
+  () => {} // Empty callback initially
+);
+
+// Populates lfoModules array
+lfoManager.initialize();
+
+// Create voice manager with LFO array
+let voiceManager = new VoiceManager(
+  oscillatorBank,
+  ampEnvelope,
+  filterModule,
+  lfoModules,
+  noiseModule
+);
+
+// Listen for LFO changes
+lfoSection.addEventListener('lfos-changed', () => {
+  // Array was mutated in place by lfoManager
+  const newVoiceManager = new VoiceManager(
+    oscillatorBank,
+    ampEnvelope,
+    filterModule,
+    lfoModules,  // Updated array
+    noiseModule
+  );
+  
+  // Update synth with new voice manager and LFO array
+  synth.updateLFOs(lfoModules, newVoiceManager);
 });
 ```
 
-**Config:** `rate` (Hz), `depth` (ms), `mix` (0-1)
-
-### Compressor Module
-```typescript
-const compressorModule = new CompressorModule();
-effectsManager.register(compressorModule, {
-  id: 'compressor',
-  name: 'Compressor',
-  order: 100,
-  category: 'dynamics'
-});
-```
-
-**Config:** `threshold` (dB), `ratio`, `attack` (s), `release` (s), `knee` (dB)
-
-### Delay Module
-```typescript
-const delayModule = new DelayModule();
-effectsManager.register(delayModule, {
-  id: 'delay',
-  name: 'Delay',
-  order: 70,
-  category: 'time-based'
-});
-```
-
-**Config:** `time` (s), `feedback` (0-1), `mix` (0-1)
-
-### Distortion Module
-```typescript
-const distortionModule = new DistortionModule();
-effectsManager.register(distortionModule, {
-  id: 'distortion',
-  name: 'Distortion',
-  order: 60,
-  category: 'distortion'
-});
-```
-
-**Config:** `drive` (0-100+), `blend` (0-1)
-
-### Phaser Module
-```typescript
-const phaserModule = new PhaserModule();
-effectsManager.register(phaserModule, {
-  id: 'phaser',
-  name: 'Phaser',
-  order: 80,
-  category: 'modulation'
-});
-```
-
-**Config:** `rate` (Hz), `depth` (Hz), `stages` (2-12), `feedback` (0-1), `mix` (0-1)
-
-### Reverb Module
-```typescript
-const reverbModule = new ReverbModule();
-effectsManager.register(reverbModule, {
-  id: 'reverb',
-  name: 'Reverb',
-  order: 50,
-  category: 'time-based'
-});
-```
-
-**Config:** `decay` (s), `mix` (0-1)  
-**Special:** Call `reverbModule.updateWithContext(audioCtx)` when decay changes (handled in main.ts)
-
-### Spectrum Analyser Module
-```typescript
-const canvas = (document.querySelector('spectrum-analyser') as SpectrumAnalyser)?.getCanvas();
-const spectrumAnalyserModule = new SpectrumAnalyserModule(canvas);
-effectsManager.register(spectrumAnalyserModule, {
-  id: 'analyser',
-  name: 'Spectrum Analyser',
-  order: 40,
-  category: 'utility'
-});
-```
-
-**Config (optional UI controls):** `fftSize`, `smoothingTimeConstant`, `minFreq`, `maxFreq`  
-**Special:** Canvas passed to constructor; visualizes automatically on each frame
-
-### EnvelopeModule
-```typescript
-const ampEnvelope = new EnvelopeModule('amp');
-const filterEnvelope = new EnvelopeModule('filter');
-```
-
-**Config:** `attack`, `decay`, `sustain`, `release` (reads from `attack`/`filter-attack` etc.)
-
-### FilterModule
-```typescript
-const filterModule = new FilterModule(filterEnvelope);
-```
-
-**Config:** `type`, `frequency`, `q`, `envelopeAmount` (uses UIConfigService)
-
-### LFOModule
-```typescript
-const lfoModule = new LFOModule();
-```
-
-**Config:** `rate`, `filterDepth`, `pitchDepth` (uses UIConfigService)
-
-### MasterModule
-```typescript
-const masterModule = new MasterModule();
-```
-
-**Config:** `volume` (uses UIConfigService with `bindGainParam`)
-
-### OscillatorBank
-```typescript
-const oscillatorBank = new OscillatorBank();
-```
-
-**Config:** Reads `osc-{id}-waveform`, `osc-{id}-detune`, `osc-{id}-level` for each oscillator (uses UIConfigService)
+**Key Points:**
+- `LFOSection` component manages UI for multiple LFOs
+- `createLFOManager` syncs LFO modules with component state
+- LFO modules array is mutated in-place during changes
+- Voice manager recreated to update modulation routing
+- Each LFO has unique ID (e.g., `'1'`, `'2'`, `'3'`)
+- Element IDs follow pattern: `lfo-{id}-{param}` (e.g., `lfo-1-rate`)
 
 ---
 
@@ -532,6 +459,126 @@ const chainInput = effectsManager.initialize(audioCtx, masterGain);
 
 ---
 
+## Adding Dynamic Module Banks (LFO Pattern)
+
+For modules that need multiple instances (like the LFO bank):
+
+### Step 1: Create Module with ID Parameter
+
+```typescript
+// filepath: src/modules/my-module.ts
+export class MyModule {
+  private readonly id: string;
+  private readonly elementIds: {
+    param1: string;
+    param2: string;
+  };
+
+  constructor(id: string) {
+    this.id = id;
+    this.elementIds = {
+      param1: `my-module-${id}-param1`,
+      param2: `my-module-${id}-param2`
+    };
+    this.setupParameterListeners();
+  }
+
+  getConfig(): MyModuleConfig {
+    return UIConfigService.getConfig({
+      param1: this.elementIds.param1,
+      param2: this.elementIds.param2
+    });
+  }
+
+  // ... rest of module implementation
+}
+```
+
+### Step 2: Create Section Component
+
+```typescript
+// filepath: src/components/organisms/my-module-section.ts
+export class MyModuleSection extends HTMLElement {
+  private modules: MyModuleConfig[] = [];
+
+  addModule() {
+    const id = this.modules.length + 1;
+    this.modules.push({ id, /* default config */ });
+    this.render();
+    this.dispatchEvent(new CustomEvent('modules-changed'));
+  }
+
+  removeModule(id: number) {
+    this.modules = this.modules.filter(m => m.id !== id);
+    this.render();
+    this.dispatchEvent(new CustomEvent('modules-changed'));
+  }
+
+  getModules() {
+    return this.modules;
+  }
+}
+```
+
+### Step 3: Create Manager Handler
+
+```typescript
+// filepath: src/handlers/my-module-management.ts
+export function createMyModuleManager(
+  section: MyModuleSection,
+  modules: MyModule[],
+  onModulesChange: (modules: MyModule[]) => void
+) {
+  const moduleMap = new Map<number, MyModule>();
+
+  function syncModules() {
+    const configs = section.getModules();
+    moduleMap.clear();
+    
+    configs.forEach((_, index) => {
+      const id = (index + 1).toString();
+      moduleMap.set(index + 1, new MyModule(id));
+    });
+    
+    modules.length = 0;
+    modules.push(...Array.from(moduleMap.values()));
+    onModulesChange(modules);
+  }
+
+  function initialize() {
+    syncModules();
+    section.addEventListener('modules-changed', () => {
+      syncModules();
+    });
+  }
+
+  return { initialize, getModules: () => modules };
+}
+```
+
+### Step 4: Wire Up in main.ts
+
+```typescript
+const section = document.querySelector("my-module-section") as MyModuleSection;
+let modules: MyModule[] = [];
+
+const manager = createMyModuleManager(
+  section,
+  modules,
+  () => {} // Callback after synth exists
+);
+
+manager.initialize();
+
+// After modules array populated and synth created
+section.addEventListener('modules-changed', () => {
+  // Handle module changes (e.g., recreate voice manager)
+  synth.updateModules(modules);
+});
+```
+
+---
+
 ## Testing Strategy
 
 ### Philosophy
@@ -594,6 +641,58 @@ describe('MyEffectModule (UIConfigService)', () => {
     input.dispatchEvent(new Event('input'));
 
     expect(module['effectNode']!.param1.value).toBe(75);
+  });
+});
+```
+
+### Testing Dynamic Modules (LFO Pattern)
+
+```typescript
+describe('LFOModule (Dynamic ID)', () => {
+  beforeEach(() => {
+    document.body.innerHTML = '';
+  });
+
+  function createLFOElements(id: string) {
+    const rate = document.createElement('input');
+    rate.id = `lfo-${id}-rate`;
+    rate.value = '5';
+    document.body.appendChild(rate);
+
+    const toFilter = document.createElement('input');
+    toFilter.id = `lfo-${id}-to-filter`;
+    toFilter.value = '100';
+    document.body.appendChild(toFilter);
+  }
+
+  it('reads config with unique ID', () => {
+    createLFOElements('1');
+    createLFOElements('2');
+
+    const lfo1 = new LFOModule('1');
+    const lfo2 = new LFOModule('2');
+
+    expect(lfo1.getConfig().rate).toBe(5);
+    expect(lfo2.getConfig().rate).toBe(5);
+  });
+
+  it('updates correct instance on input change', () => {
+    createLFOElements('1');
+    createLFOElements('2');
+
+    const ctx = createMockAudioCtx();
+    const lfo1 = new LFOModule('1');
+    const lfo2 = new LFOModule('2');
+    
+    lfo1.initialize(ctx);
+    lfo2.initialize(ctx);
+
+    const rate1 = document.getElementById('lfo-1-rate') as HTMLInputElement;
+    rate1.value = '10';
+    rate1.dispatchEvent(new Event('input'));
+
+    expect(lfo1['lfo']!.frequency.value).toBe(10);
+    expect(lfo2['lfo']!.frequency.value).toBe(5); // Unchanged
   });
 });
 ```
@@ -663,17 +762,6 @@ customElements.define('my-control', MyControl);
 <my-control label="Volume" min="0" max="1" value="0.5"></my-control>
 ```
 
-### Existing Components
-
-- **`<range-control>`**: Labeled slider
-- **`<piano-keyboard>`**: Interactive keyboard
-- **`<oscillator-control>`**: Oscillator UI
-- **`<spectrum-analyser>`**: Spectrum display
-- **`<preset-selector>`**: Preset dropdown
-- **`<adsr-controls>`**: ADSR envelope UI
-- **`<filter-type-picker>`**: Filter type selector
-- **`<waveform-picker>`**: Oscillator waveform selector
-
 ---
 
 ## Signal Flow
@@ -687,31 +775,38 @@ graph LR
     D --> E[OscillatorBank]
     D --> F[FilterModule]
     D --> G[Amplitude Envelope]
+    D --> H[LFO Modules]
+    D --> I[Noise Module]
     
-    E --> H[EffectsManager Input]
-    F --> H
-    G --> H
+    H --> F
+    H --> E
+    I --> F
+    E --> F
+    F --> J[EffectsManager Input]
+    G --> J
     
-    H --> I[Compressor]
-    I --> J[Chorus]
-    J --> K[Phaser]
-    K --> L[Delay]
-    L --> M[Distortion]
-    M --> N[Reverb]
-    N --> O[Spectrum Analyser]
-    O --> P[EffectsManager Output]
-    P --> Q[Master Volume]
-    Q --> R[AudioContext.destination]
+    J --> K[Compressor]
+    K --> L[Chorus]
+    L --> M[Phaser]
+    M --> N[Delay]
+    N --> O[Distortion]
+    O --> P[Reverb]
+    P --> Q[Spectrum Analyser]
+    Q --> R[EffectsManager Output]
+    R --> S[Master Volume]
+    S --> T[AudioContext.destination]
     
     style A fill:#00ffff,stroke:#00ffff,color:#000
-    style R fill:#ff00ff,stroke:#ff00ff,color:#000
-    style H fill:#ffff00,stroke:#ffff00,color:#000
-    style P fill:#ffff00,stroke:#ffff00,color:#000
+    style T fill:#ff00ff,stroke:#ff00ff,color:#000
+    style J fill:#ffff00,stroke:#ffff00,color:#000
+    style R fill:#ffff00,stroke:#ffff00,color:#000
+    style H fill:#00ff00,stroke:#00ff00,color:#000
 ```
 
 **Key points:**
 - Effects initialized in reverse order (build chain backward)
 - Each effect's output connects to next effect's input
+- LFO modules provide modulation to filter and pitch
 - Voices connect to EffectsManager input
 - Analyser is passive (lowest order)
 
@@ -727,6 +822,7 @@ graph LR
 4. **Custom handlers for complex logic**: `onInput()` when updating multiple nodes
 5. **Clean up on re-initialization**: Call `disconnect()` before creating new nodes
 6. **Guard updates**: Check `isInitialized()` in parameter listeners
+7. **Dynamic IDs for multi-instance**: Pass ID parameter for modules supporting multiple instances
 
 ### Parameter Handling
 
@@ -742,12 +838,13 @@ graph LR
 3. **Trigger events**: Use `dispatchEvent(new Event('input'))`
 4. **Assert on config**: Test `getConfig()` with various input values
 5. **Verify node state**: Access private nodes via `module['nodeName']`
+6. **Test multi-instance**: Create elements for multiple IDs, verify isolation
 
 ### Code Organization
 
 1. **elementIds first**: Constant reference object at top
 2. **Nodes next**: Private, nullable audio node properties
-3. **Constructor**: Zero-parameter, calls `setupParameterListeners()`
+3. **Constructor**: Zero-parameter (or ID for dynamic), calls `setupParameterListeners()`
 4. **Public methods**: `getConfig()`, `initialize()`, `getInput/Output()`, `isInitialized()`
 5. **Private helpers**: `setupParameterListeners()`, `disconnect()`
 
@@ -800,22 +897,32 @@ UIConfigService.bindGainParam({
 });
 ```
 
-### Pattern 6: LFO Modulation
+### Pattern 6: Dynamic IDs (Multi-Instance)
 ```typescript
-// Create LFO
-const lfo = audioCtx.createOscillator();
-const lfoGain = audioCtx.createGain();
-
-lfo.frequency.value = config.rate;
-lfoGain.gain.value = config.depth;
-
-// Connect to target parameter
-lfo.connect(lfoGain);
-lfoGain.connect(delayNode.delayTime);
-lfo.start();
+constructor(id: string) {
+  this.id = id;
+  this.elementIds = {
+    rate: `lfo-${id}-rate`,
+    depth: `lfo-${id}-depth`
+  };
+  this.setupParameterListeners();
+}
 ```
 
-### Pattern 7: Feedback Loop
+### Pattern 7: LFO Modulation (Multiple Sources)
+```typescript
+// Combine multiple LFO signals
+const filterMods = lfoModules
+  .map(lfo => lfo.getFilterModulation())
+  .filter((node): node is GainNode => node !== null);
+
+const mixer = audioCtx.createGain();
+mixer.gain.value = 1 / filterMods.length; // Average
+filterMods.forEach(mod => mod.connect(mixer));
+mixer.connect(filterNode.detune);
+```
+
+### Pattern 8: Feedback Loop
 ```typescript
 const feedbackGain = audioCtx.createGain();
 feedbackGain.gain.value = config.feedback;
@@ -826,7 +933,7 @@ effectNode.connect(feedbackGain);
 feedbackGain.connect(effectNode); // Feedback loop
 ```
 
-### Pattern 8: Multi-Stage Filters
+### Pattern 9: Multi-Stage Filters
 ```typescript
 const stages = config.stages;
 this.filters = [];
@@ -851,20 +958,35 @@ Presets are defined in `src/core/factory-presets.ts`:
 ```typescript
 export const FACTORY_PRESETS: Preset[] = [
   {
-    id: 'warm-pad',
-    name: 'Warm Pad',
-    category: 'pad',
-    oscillators: [
-      { type: 'sawtooth', detune: -10, gain: 0.3 },
-      { type: 'sawtooth', detune: 10, gain: 0.3 }
-    ],
-    envelope: { attack: 0.5, decay: 0.3, sustain: 0.7, release: 1.0 },
-    filter: { type: 'lowpass', frequency: 1200, q: 1 },
-    effects: {
-      chorus: { rate: 2.0, depth: 5, mix: 0.3 },
-      reverb: { decay: 2.5, mix: 0.4 }
+    name: "Warm Pad",
+    description: "Lush atmospheric pad with subtle chorus detune",
+    settings: {
+      master: { polyphonic: true, masterVolume: 0.25 },
+      oscillators: [
+        { waveform: "sawtooth", detune: 0, level: 0.8 },
+        { waveform: "sawtooth", detune: 0, level: 1 },
+        { waveform: "sawtooth", detune: 0, level: 0.8 }
+      ],
+      envelope: { attack: 0.8, decay: 0.4, sustain: 0.85, release: 1.2 },
+      filter: {
+        type: "lowpass", cutoff: 1200, resonance: 0.5, envAmount: 800,
+        attack: 1, decay: 0.5, sustain: 0.7, release: 1
+      },
+      lfos: [
+        { waveform: "sine", rate: 0.3, toFilter: 150, toPitch: 0 }
+      ],
+      chorus: { rate: 0.3, depth: 20, mix: 0.4 },
+      tremolo: { rate: 0.4, depth: 0.15 },
+      reverb: { decay: 3.5, reverbMix: 0.45 },
+      delay: { time: 0.5, feedback: 0.25, mix: 0.15 },
+      distortion: { drive: 0.5, blend: 0.15 },
+      compressor: {
+        threshold: -28, ratio: 3, attack: 0.08, release: 0.4, knee: 18
+      },
+      phaser: { rate: 0.7, depth: 700, stages: 4, feedback: 0.3, mix: 0.5 },
+      noise: { enabled: false, type: "white", level: 0.1 }
     }
-  }
+  },
 ];
 ```
 
@@ -872,6 +994,7 @@ Presets can configure:
 - Oscillator types, detuning, and levels
 - ADSR envelope parameters
 - Filter type, frequency, and Q
+- LFO rate and routing depths
 - Effect parameters for all registered effects
 
 ---
@@ -892,6 +1015,7 @@ Presets can configure:
 2. **Check listener setup**: Ensure `setupParameterListeners()` called in constructor
 3. **Check initialization**: Use `isInitialized()` guard in listeners
 4. **Check UIConfigService**: Use `exists()` to verify element presence
+5. **Check dynamic IDs**: For multi-instance modules, verify ID parameter matches element
 
 ### Element Not Found Error
 
@@ -899,6 +1023,7 @@ Presets can configure:
 2. **Check HTML**: Ensure element exists before module instantiation
 3. **Use safe access**: `tryGetInput()` for optional elements
 4. **Check component getInput()**: RangeControl needs `.getInput()` call
+5. **Check dynamic ID construction**: Verify `${prefix}-${id}-${param}` pattern
 
 ### Audio Glitches
 
@@ -906,6 +1031,15 @@ Presets can configure:
 2. **Check feedback loops**: Ensure feedback gain < 1.0
 3. **Check buffer sizes**: Large FFT sizes cause performance issues
 4. **Check parameter ranges**: Extreme values may cause instability
+5. **Check LFO rates**: Very fast LFO rates can cause artifacts
+
+### LFO Bank Issues
+
+1. **Check array mutation**: Ensure `lfoModules.length = 0` before push
+2. **Check voice manager recreation**: Must recreate when LFOs change
+3. **Check element IDs**: Verify `lfo-{id}-{param}` pattern
+4. **Check event dispatch**: Component must dispatch `lfos-changed`
+5. **Check initialization**: Call `lfo.initialize(audioCtx)` after creation
 
 ### Tests Failing
 
@@ -913,6 +1047,7 @@ Presets can configure:
 2. **Trigger events**: Use `dispatchEvent()`, don't set values directly
 3. **Check element IDs**: Must match module's `elementIds`
 4. **Check mocks**: Verify `createMockAudioCtx()` has required factories
+5. **Check dynamic IDs**: Create elements for each ID in multi-instance tests
 
 ---
 
@@ -937,6 +1072,9 @@ Presets can configure:
 - [ ] Sidechain compression
 - [ ] Arpeggiator/sequencer
 - [ ] Recording/export functionality (partial implementation exists)
+- [ ] LFO tempo sync
+- [ ] LFO phase control
+- [ ] Multiple LFO waveforms (sine, triangle, square, saw, random)
 
 ---
 

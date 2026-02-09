@@ -27,6 +27,7 @@ import { createRecordingHandler } from "./handlers/recording-handler";
 import { createOctaveChangeHandler } from "./handlers/octave-handler";
 import { createMidiToggleHandler } from "./handlers/midi-handler-setup";
 import { createOscillatorManager } from "./handlers/oscillator-management";
+import { createLFOManager } from "./handlers/lfo-management";
 
 // Components
 import "./components/atoms/filter-type-picker";
@@ -43,22 +44,22 @@ import "./components/molecules/adsr-controls";
 import "./components/molecules/controls-group";
 import "./components/molecules/instructions-list";
 
-import "./components/organisms/oscillator-control";
-import "./components/organisms/dual-keyboard";
+import "./components/organisms/oscillator-bank/oscillator-control";
+import "./components/organisms/visual-keyboard/dual-keyboard";
 import "./components/molecules/keyboard-mapping-info";
 import "./components/organisms/module-section";
-import "./components/organisms/oscillator-section";
-import "./components/organisms/piano-keyboard";
-import type { PianoKeyboard } from "./components/organisms/piano-keyboard";
+import "./components/organisms/oscillator-bank/oscillator-section";
+import "./components/organisms/visual-keyboard/piano-keyboard";
+import type { PianoKeyboard } from "./components/organisms/visual-keyboard/piano-keyboard";
 import "./components/organisms/preset-selector";
 import type { PresetSelector } from "./components/organisms/preset-selector";
 import "./components/organisms/master-controls";
 import "./components/organisms/presets-controls";
-import "./components/organisms/oscillator-controls";
-import "./components/organisms/visual-keyboard";
+import "./components/organisms/oscillator-bank/oscillator-controls";
+import "./components/organisms/visual-keyboard/visual-keyboard";
 import "./components/organisms/adsr-module";
 import "./components/organisms/filter-module-controls";
-import "./components/organisms/lfo-module-controls";
+import "./components/organisms/lfo-bank/lfo-module-controls";
 
 import "./components/organisms/chorus-effect";
 import "./components/organisms/phaser-effect";
@@ -71,6 +72,10 @@ import "./components/organisms/spectrum-analyser";
 import "./components/organisms/noise-generator";
 import type { SpectrumAnalyser } from "./components/organisms/spectrum-analyser";
 import { NoiseModule } from "./modules/noise-module";
+import "./components/organisms/lfo-bank/lfo-section";
+import "./components/organisms/lfo-bank/lfo-control";
+import "./components/organisms/lfo-bank/lfo-controls";
+import { LFOSection } from "./components/organisms/lfo-bank/lfo-section";
 
 // Keyboard and MIDI controls
 const octaveUpper = document.getElementById("octave-upper") as HTMLSelectElement;
@@ -95,7 +100,6 @@ const oscillatorBank = new OscillatorBank();
 const ampEnvelope = new EnvelopeModule('amp');
 const filterEnvelope = new EnvelopeModule('filter');
 const filterModule = new FilterModule(filterEnvelope);
-const lfoModule = new LFOModule();
 const masterModule = new MasterModule();
 const noiseModule = new NoiseModule();
 
@@ -167,21 +171,50 @@ effectsManager.register(spectrumAnalyserModule, {
   category: 'utility'
 });
 
+// LFO management
+const lfoSection = document.querySelector("lfo-section") as LFOSection;
+let lfoModules: LFOModule[] = [];
 
-const voiceManager = new VoiceManager(
+// ✅ Don't pass callback yet - we'll handle updates after synth is created
+const lfoManager = createLFOManager(
+  lfoSection,
+  lfoModules,
+  () => {} // Empty callback for now
+);
+
+// Initialize LFO manager (populates lfoModules array)
+lfoManager.initialize();
+
+// ✅ Now lfoModules has LFOs, create voice manager
+let voiceManager = new VoiceManager(
   oscillatorBank,
   ampEnvelope,
   filterModule,
-  lfoModule,
-  noiseModule,
+  lfoModules,
+  noiseModule
 );
 
 const synth = new Synth(
   effectsManager,
-  lfoModule,
+  lfoModules,
   masterModule,
-  voiceManager,
+  voiceManager
 );
+
+// ✅ NOW set up the LFO change handler after synth exists
+lfoSection.addEventListener('lfos-changed', () => {
+  // Recreate voice manager with updated LFOs
+  const newVoiceManager = new VoiceManager(
+    oscillatorBank,
+    ampEnvelope,
+    filterModule,
+    lfoModules,  // Array was mutated in place
+    noiseModule
+  );
+  
+  // Update synth
+  synth.updateLFOs(lfoModules, newVoiceManager);
+});
 
 // Initialize settings manager and connect it to oscillator bank
 const settingsManager = new SettingsManager();
