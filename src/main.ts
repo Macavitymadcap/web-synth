@@ -94,11 +94,6 @@ const lfoToFilter = (document.getElementById("lfo-to-filter") as RangeControl).g
 const lfoToPitch = (document.getElementById("lfo-to-pitch") as RangeControl).getInput();
 const lfoWaveform = document.getElementById("lfo-waveform") as HTMLSelectElement;
 
-// Chorus controls
-const chorusRate = (document.getElementById("chorus-rate") as RangeControl).getInput();
-const chorusDepth = (document.getElementById("chorus-depth") as RangeControl).getInput();
-const chorusMix = (document.getElementById("chorus-mix") as RangeControl).getInput();
-
 // Phaser controls
 const phaserRate = (document.getElementById("phaser-rate") as RangeControl).getInput();
 const phaserDepth = (document.getElementById("phaser-depth") as RangeControl).getInput();
@@ -130,7 +125,7 @@ const lfoModule = new LFOModule(lfoRate, lfoWaveform, lfoToFilter, lfoToPitch);
 const masterModule = new MasterModule(masterVolume);
 
 // Effects
-const chorusModule = new ChorusModule(chorusRate, chorusDepth, chorusMix);
+const chorusModule = new ChorusModule();
 const phaserModule = new PhaserModule(
   phaserRate,
   phaserDepth,

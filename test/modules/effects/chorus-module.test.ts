@@ -1,19 +1,29 @@
 import { describe, it, expect, beforeEach, jest } from 'bun:test';
 import { ChorusModule } from '../../../src/modules/effects/chorus-module';
-import { createMockInput } from '../../fixtures/mock-input';
 import { createMockAudioCtx } from '../../fixtures/mock-audio-context';
 
 describe('ChorusModule', () => {
-  let rateEl: HTMLInputElement;
-  let depthEl: HTMLInputElement;
-  let mixEl: HTMLInputElement;
   let chorus: ChorusModule;
 
   beforeEach(() => {
-    rateEl = createMockInput('2.5');
-    depthEl = createMockInput('8');
-    mixEl = createMockInput('0.4');
-    chorus = new ChorusModule(rateEl, depthEl, mixEl);
+    // Clear DOM before each test
+    document.body.innerHTML = '';
+
+    // Create required input elements
+    const elementIds = ['chorus-rate', 'chorus-depth', 'chorus-mix'];
+    elementIds.forEach(id => {
+      const input = document.createElement('input');
+      input.id = id;
+      input.type = 'number';
+      document.body.appendChild(input);
+    });
+
+    // Set default values
+    (document.getElementById('chorus-rate') as HTMLInputElement).value = '2.5';
+    (document.getElementById('chorus-depth') as HTMLInputElement).value = '8';
+    (document.getElementById('chorus-mix') as HTMLInputElement).value = '0.4';
+
+    chorus = new ChorusModule();
   });
 
   it('returns correct config', () => {
@@ -44,13 +54,14 @@ describe('ChorusModule', () => {
     const dest = { connect: jest.fn() } as any;
     chorus.initialize(ctx, dest);
 
-    // Simulate parameter change
-    (rateEl as any).value = '5.0';
-    // Call the event handler directly
-    chorus['lfoNodes'].forEach((lfo, i) => {
-      lfo.frequency.value = 5 * (1 + i * 0.1);
-    });
+    const rateInput = document.getElementById('chorus-rate') as HTMLInputElement;
+    rateInput.value = '5.0';
+    rateInput.dispatchEvent(new Event('input'));
+
     expect(chorus['lfoNodes'][0].frequency.value).toBeCloseTo(5);
+    // Slight spread on other LFOs
+    expect(chorus['lfoNodes'][1].frequency.value).toBeCloseTo(5 * 1.1);
+    expect(chorus['lfoNodes'][2].frequency.value).toBeCloseTo(5 * 1.2);
   });
 
   it('updates LFO gain on depth change', () => {
@@ -58,10 +69,10 @@ describe('ChorusModule', () => {
     const dest = { connect: jest.fn() } as any;
     chorus.initialize(ctx, dest);
 
-    (depthEl as any).value = '12';
-    chorus['lfoGainNodes'].forEach((g) => {
-      g.gain.value = 12 * 0.001;
-    });
+    const depthInput = document.getElementById('chorus-depth') as HTMLInputElement;
+    depthInput.value = '12';
+    depthInput.dispatchEvent(new Event('input'));
+
     expect(chorus['lfoGainNodes'][0].gain.value).toBeCloseTo(0.012);
   });
 
@@ -70,12 +81,11 @@ describe('ChorusModule', () => {
     const dest = { connect: jest.fn() } as any;
     chorus.initialize(ctx, dest);
 
-    (mixEl as any).value = '0.7';
-    if (chorus['wetGain'] && chorus['dryGain']) {
-      chorus['wetGain'].gain.value = 0.7;
-      chorus['dryGain'].gain.value = 0.3;
-      expect(chorus['wetGain'].gain.value).toBeCloseTo(0.7);
-      expect(chorus['dryGain'].gain.value).toBeCloseTo(0.3);
-    }
+    const mixInput = document.getElementById('chorus-mix') as HTMLInputElement;
+    mixInput.value = '0.7';
+    mixInput.dispatchEvent(new Event('input'));
+
+    expect(chorus['wetGain']!.gain.value).toBeCloseTo(0.7);
+    expect(chorus['dryGain']!.gain.value).toBeCloseTo(0.3);
   });
 });
