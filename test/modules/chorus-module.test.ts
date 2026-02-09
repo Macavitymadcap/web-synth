@@ -1,6 +1,7 @@
 import { describe, it, expect, beforeEach, jest } from 'bun:test';
 import { ChorusModule } from '../../src/modules/chorus-module';
-import { createMockInput, createMockAudioCtx } from '../fixtures/mock-input';
+import { createMockInput } from '../fixtures/mock-input';
+import { createMockAudioCtx } from '../fixtures/mock-audio-context';
 
 describe('ChorusModule', () => {
   let rateEl: HTMLInputElement;

@@ -159,16 +159,15 @@ const phaserModule = new PhaserModule(
   phaserMix
 );
 const delayModule = new DelayModule(delayTime, delayFeedback, delayMix);
-const reverbModule = new ReverbModule(reverbDecay, reverbMix);
-const reverbAdapter = createStandardEffectAdapter(reverbModule);
 const distortionModule = new DistortionModule(distortionDrive, distortionBlend);
-const compressorAdapter = createStandardEffectAdapter(new CompressorModule(
+const compressorModule = new CompressorModule(
   compressorThreshold,
   compressorRatio,
   compressorAttack,
   compressorRelease,
   compressorKnee
-));
+);
+const reverbModule = new ReverbModule(reverbDecay, reverbMix);
 const spectrumAnalyserAdapter = createSpectrumAnalyserAdapter(new SpectrumAnalyserModule(), spectrumCanvas);
 
 // Effects Manager
@@ -201,14 +200,14 @@ effectsManager.register(distortionModule, {
   category: 'distortion'
 });
 
-effectsManager.register(compressorAdapter, {
+effectsManager.register(compressorModule, {
   id: 'compressor',
   name: 'Compressor',
   order: 60,
   category: 'dynamics'
 });
 
-effectsManager.register(reverbAdapter, {
+effectsManager.register(reverbModule, {
   id: 'reverb',
   name: 'Reverb',
   order: 50, // Last effect before analyser

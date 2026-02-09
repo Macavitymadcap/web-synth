@@ -1,40 +1,24 @@
-import { jest  } from "bun:test"
+import { jest } from "bun:test"
 
 export function createMockInput(value: string) {
+  const listeners: { [type: string]: Function[] } = {};
+  
+  const addEventListenerMock = jest.fn((type: string, listener: EventListenerOrEventListenerObject) => {
+    if (!listeners[type]) {
+      listeners[type] = [];
+    }
+    listeners[type].push(typeof listener === 'function' ? listener : listener.handleEvent);
+  });
+  
   return {
     value,
-    addEventListener: jest.fn()
+    addEventListener: addEventListenerMock,
+    dispatchEvent(event: Event) {
+      const typeListeners = listeners[event.type] || [];
+      typeListeners.forEach(listener => {
+        listener.call(this, event);
+      });
+      return true;
+    }
   } as any as HTMLInputElement;
-}
-
-export function createMockAudioCtx() {
-  return {
-    createGain: jest.fn(() => ({
-      gain: { value: 1 },
-      connect: jest.fn(),
-      disconnect: jest.fn()
-    })),
-    createDelay: jest.fn(() => ({
-      delayTime: { value: 0 },
-      connect: jest.fn(),
-      disconnect: jest.fn()
-    })),
-    createOscillator: jest.fn(() => ({
-      type: 'sine',
-      frequency: { value: 0 },
-      connect: jest.fn(),
-      disconnect: jest.fn(),
-      start: jest.fn(),
-      stop: jest.fn()
-    })),
-    createBiquadFilter: jest.fn(() => ({
-      type: 'allpass',
-      frequency: { value: 0 },
-      Q: { value: 0 },
-      gain: { value: 0 },
-      connect: jest.fn(),
-      disconnect: jest.fn()
-    })),
-
-  } as any as AudioContext;
 }
