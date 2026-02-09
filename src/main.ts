@@ -71,9 +71,6 @@ const keyboardUpper = document.getElementById("keyboard-upper") as PianoKeyboard
 const keyboardLower = document.getElementById("keyboard-lower") as PianoKeyboard;
 const midiToggle = document.getElementById("midi-enabled") as HTMLInputElement;
 
-// Master controls
-const poly = document.getElementById("poly") as HTMLInputElement;
-
 // Record controls
 const recordBtn = document.getElementById("record") as HTMLButtonElement;
 
@@ -155,7 +152,6 @@ effectsManager.register(spectrumAnalyserModule, {
 
 
 const voiceManager = new VoiceManager(
-  poly,
   oscillatorBank,
   ampEnvelope,
   filterModule,
