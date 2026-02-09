@@ -24,7 +24,8 @@ export const FACTORY_PRESETS: Preset[] = [
       compressor: {
         threshold: -28, ratio: 3, attack: 0.08, release: 0.4, knee: 18
       },
-      phaser: { rate: 0.7, depth: 700, stages: 4, feedback: 0.3, mix: 0.5 }
+      phaser: { rate: 0.7, depth: 700, stages: 4, feedback: 0.3, mix: 0.5 },
+      noise: { enabled: false, type: "white", level: 0.1}
     }
   },
   {
@@ -49,7 +50,8 @@ export const FACTORY_PRESETS: Preset[] = [
       compressor: {
         threshold: -18, ratio: 6, attack: 0.01, release: 0.18, knee: 8
       },
-      phaser: { rate: 0.5, depth: 200, stages: 2, feedback: 0.1, mix: 0 }
+      phaser: { rate: 0.5, depth: 200, stages: 2, feedback: 0.1, mix: 0 },
+      noise: { enabled: false, type: "white", level: 0.1}
     }
   },
   {
@@ -74,7 +76,8 @@ export const FACTORY_PRESETS: Preset[] = [
       compressor: {
         threshold: -22, ratio: 4, attack: 0.015, release: 0.22, knee: 12
       },
-      phaser: { rate: 1.2, depth: 900, stages: 4, feedback: 0.4, mix: 0.35 }
+      phaser: { rate: 1.2, depth: 900, stages: 4, feedback: 0.4, mix: 0.35 },
+      noise: { enabled: false, type: "white", level: 0.1}
     }
   },
   {
@@ -99,7 +102,8 @@ export const FACTORY_PRESETS: Preset[] = [
       compressor: {
         threshold: -16, ratio: 7, attack: 0.01, release: 0.12, knee: 6
       },
-      phaser: { rate: 0.8, depth: 400, stages: 2, feedback: 0.2, mix: 0.15 }
+      phaser: { rate: 0.8, depth: 400, stages: 2, feedback: 0.2, mix: 0.15 },
+      noise: { enabled: false, type: "white", level: 0.1}
     }
   },
   {
@@ -123,7 +127,8 @@ export const FACTORY_PRESETS: Preset[] = [
       compressor: {
         threshold: -14, ratio: 8, attack: 0.008, release: 0.11, knee: 7
       },
-      phaser: { rate: 1.5, depth: 1200, stages: 4, feedback: 0.5, mix: 0.25 }
+      phaser: { rate: 1.5, depth: 1200, stages: 4, feedback: 0.5, mix: 0.25 },
+      noise: { enabled: false, type: "white", level: 0.1}
     }
   },
   {
@@ -148,7 +153,8 @@ export const FACTORY_PRESETS: Preset[] = [
       compressor: {
         threshold: -26, ratio: 2.5, attack: 0.04, release: 0.3, knee: 14
       },
-      phaser: { rate: 0.4, depth: 350, stages: 3, feedback: 0.15, mix: 0.18 }
+      phaser: { rate: 0.4, depth: 350, stages: 3, feedback: 0.15, mix: 0.18 },
+      noise: { enabled: false, type: "white", level: 0.1}
     }
   },
   {
@@ -174,7 +180,8 @@ export const FACTORY_PRESETS: Preset[] = [
       compressor: {
         threshold: -30, ratio: 2, attack: 0.05, release: 0.18, knee: 10
       },
-      phaser: { rate: 0.3, depth: 200, stages: 4, feedback: 0.2, mix: 0.12 }
+      phaser: { rate: 0.3, depth: 200, stages: 4, feedback: 0.2, mix: 0.12 },
+      noise: { enabled: false, type: "white", level: 0.1}
     }
   },
   {
@@ -200,7 +207,8 @@ export const FACTORY_PRESETS: Preset[] = [
       compressor: {
         threshold: -32, ratio: 2.2, attack: 0.12, release: 0.7, knee: 16
       },
-      phaser: { rate: 0.5, depth: 600, stages: 4, feedback: 0.25, mix: 0.22 }
+      phaser: { rate: 0.5, depth: 600, stages: 4, feedback: 0.25, mix: 0.22 },
+      noise: { enabled: true, type: "brown", level: 0.04}
     }
   },
   {
@@ -226,7 +234,8 @@ export const FACTORY_PRESETS: Preset[] = [
       compressor: {
         threshold: -20, ratio: 4.5, attack: 0.02, release: 0.19, knee: 10
       },
-      phaser: { rate: 0.7, depth: 400, stages: 3, feedback: 0.18, mix: 0.13 }
+      phaser: { rate: 0.7, depth: 400, stages: 3, feedback: 0.18, mix: 0.13 },
+      noise: { enabled: true, type: "pink", level: 0.06}
     }
   },
   {
@@ -250,7 +259,8 @@ export const FACTORY_PRESETS: Preset[] = [
       compressor: {
         threshold: -34, ratio: 2, attack: 0.09, release: 0.25, knee: 8
       },
-      phaser: { rate: 0.2, depth: 150, stages: 2, feedback: 0.1, mix: 0.08 }
+      phaser: { rate: 0.2, depth: 150, stages: 2, feedback: 0.1, mix: 0.08 },
+      noise: { enabled: true, type: "pink", level: 0.02}
     }
   },
   {
@@ -275,7 +285,8 @@ export const FACTORY_PRESETS: Preset[] = [
       compressor: {
         threshold: -24, ratio: 3.5, attack: 0.012, release: 0.13, knee: 9
       },
-      phaser: { rate: 1.1, depth: 800, stages: 3, feedback: 0.3, mix: 0.2 }
+      phaser: { rate: 1.1, depth: 800, stages: 3, feedback: 0.3, mix: 0.2 },
+      noise: { enabled: false, type: "white", level: 0.1}
     }
   },
   {
@@ -301,7 +312,8 @@ export const FACTORY_PRESETS: Preset[] = [
       compressor: {
         threshold: -26, ratio: 2.8, attack: 0.03, release: 0.31, knee: 11
       },
-      phaser: { rate: 0.9, depth: 1000, stages: 4, feedback: 0.35, mix: 0.28 }
+      phaser: { rate: 0.9, depth: 1000, stages: 4, feedback: 0.35, mix: 0.28 },
+      noise: { enabled: true, type: "white", level: 0.03}
     }
   },
   {
@@ -326,7 +338,8 @@ export const FACTORY_PRESETS: Preset[] = [
       compressor: {
         threshold: -20, ratio: 5, attack: 0.01, release: 0.15, knee: 10
       },
-      phaser: { rate: 1.7, depth: 1200, stages: 4, feedback: 0.5, mix: 0.3 }
+      phaser: { rate: 1.7, depth: 1200, stages: 4, feedback: 0.5, mix: 0.3 },
+      noise: { enabled: false, type: "white", level: 0.1}
     }
   },
   {
@@ -351,7 +364,33 @@ export const FACTORY_PRESETS: Preset[] = [
       compressor: {
         threshold: -12, ratio: 9, attack: 0.006, release: 0.09, knee: 5
       },
-      phaser: { rate: 0.6, depth: 400, stages: 2, feedback: 0.18, mix: 0.12 }
+      phaser: { rate: 0.6, depth: 400, stages: 2, feedback: 0.18, mix: 0.12 },
+      noise: { enabled: true, type: "pink", level: 0.12}
     }
-  }
+  },
+  {
+    name: "Wind Texture",
+    description: "Ethereal wind sound with sweeping filter",
+    settings: {
+      master: { polyphonic: true, masterVolume: 0.2 },
+      oscillators: [
+        { waveform: "sine", detune: 0, level: 0.15 }
+      ],
+      envelope: { attack: 1.8, decay: 0.4, sustain: 0.85, release: 2.5 },
+      filter: {
+        type: "highpass", cutoff: 2000, resonance: 1.5, envAmount: 1500,
+        attack: 1.5, decay: 0.8, sustain: 0.75, release: 2
+      },
+      lfo: { waveform: "sine", rate: 0.25, toFilter: 1200, toPitch: 0 },
+      chorus: { rate: 0.4, depth: 40, mix: 0.7 },
+      reverb: { decay: 5, reverbMix: 0.75 },
+      delay: { time: 1, feedback: 0.5, mix: 0.4 },
+      distortion: { drive: 0, blend: 0 },
+      compressor: {
+        threshold: -38, ratio: 1.8, attack: 0.3, release: 1.5, knee: 25
+      },
+      phaser: { rate: 0.2, depth: 800, stages: 8, feedback: 0.5, mix: 0.5 },
+      noise: { enabled: true, type: "pink", level: 0.95 }
+    }
+  },
 ];
