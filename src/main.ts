@@ -72,21 +72,11 @@ const keyboardUpper = document.getElementById("keyboard-upper") as PianoKeyboard
 const keyboardLower = document.getElementById("keyboard-lower") as PianoKeyboard;
 const midiToggle = document.getElementById("midi-enabled") as HTMLInputElement;
 
-// ASDR controls
-const attack = (document.getElementById("attack") as RangeControl).getInput();
-const decay = (document.getElementById("decay") as RangeControl).getInput();
-const sustain = (document.getElementById("sustain") as RangeControl).getInput();
-const release = (document.getElementById("release") as RangeControl).getInput();
-
 // Filter controls
 const filterType = document.getElementById("filter-type") as HTMLSelectElement;
 const filterCutoff = (document.getElementById("filter-cutoff") as RangeControl).getInput();
 const filterResonance = (document.getElementById("filter-resonance") as RangeControl).getInput();
 const filterEnvAmount = (document.getElementById("filter-env-amount") as RangeControl).getInput();
-const filterAttack = (document.getElementById("filter-attack") as RangeControl).getInput();
-const filterDecay = (document.getElementById("filter-decay") as RangeControl).getInput();
-const filterSustain = (document.getElementById("filter-sustain") as RangeControl).getInput();
-const filterRelease = (document.getElementById("filter-release") as RangeControl).getInput();
 
 // Master controls
 const poly = document.getElementById("poly") as HTMLInputElement;
@@ -105,8 +95,8 @@ const spectrumCanvas = spectrumAnalyserEl?.getCanvas();
 
 // Initialize modules
 const oscillatorBank = new OscillatorBank();
-const ampEnvelope = new EnvelopeModule(attack, decay, sustain, release);
-const filterEnvelope = new EnvelopeModule(filterAttack, filterDecay, filterSustain, filterRelease);
+const ampEnvelope = new EnvelopeModule('amp');
+const filterEnvelope = new EnvelopeModule('filter');
 const filterModule = new FilterModule(filterType, filterCutoff, filterResonance, filterEnvAmount, filterEnvelope);
 const lfoModule = new LFOModule();
 const masterModule = new MasterModule(masterVolume);

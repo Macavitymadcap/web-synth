@@ -1,5 +1,30 @@
 # UIConfigService Integration Guide
 
+## Migration Order (Recommended)
+
+### Phase 1: Simple Modules (3-5 params)
+1. ✅ CompressorModule (DONE - reference implementation)
+2. ✅ DelayModule (3 params)
+3. ✅ DistortionModule (2 params)
+4. ✅ ReverbModule (2 params)
+
+### Phase 2: Medium Modules (5-7 params)
+5. ✅ ChorusModule (3 params)
+6. ✅ PhaserModule (5 params)
+7. ✅ LFOModule (4 params)
+8. ✅ EnvelopeModule (4 params)
+
+### Phase 3: Complex Modules (7+ params or special cases)
+9. FilterModule (uses EnvelopeModule)
+10. SpectrumAnalyserModule (canvas element, different pattern)
+
+### Phase 4: Core Modules (Last)
+11. MasterModule
+12. OscillatorBank
+13. VoiceManager
+
+---
+
 ## Overview
 
 The `UIConfigService` provides a centralized, testable way for modules to access UI elements and bind them to audio parameters. This eliminates constructor dependency injection and reduces boilerplate code significantly.
@@ -569,31 +594,6 @@ export class MyModule implements BaseEffectModule {
 - [ ] Remove all `getInput()` calls for this module
 - [ ] Remove all constructor parameters
 - [ ] Simplify to: `const module = new MyModule();`
-
----
-
-## Migration Order (Recommended)
-
-### Phase 1: Simple Modules (3-5 params)
-1. ✅ CompressorModule (DONE - reference implementation)
-2. ✅ DelayModule (3 params)
-3. ✅ DistortionModule (2 params)
-4. ✅ ReverbModule (2 params)
-
-### Phase 2: Medium Modules (5-7 params)
-5. ✅ ChorusModule (3 params)
-6. ✅ PhaserModule (5 params)
-7. ✅ LFOModule (4 params)
-8. EnvelopeModule (4 params)
-
-### Phase 3: Complex Modules (7+ params or special cases)
-9. FilterModule (uses EnvelopeModule)
-10. SpectrumAnalyserModule (canvas element, different pattern)
-
-### Phase 4: Core Modules (Last)
-11. MasterModule
-12. OscillatorBank
-13. VoiceManager
 
 ---
 
