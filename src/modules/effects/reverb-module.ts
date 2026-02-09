@@ -1,4 +1,4 @@
-import type { BaseEffectModule, EffectNodes } from './effects/base-effect-module';
+import type { BaseEffectModule, EffectNodes } from './base-effect-module';
 
 export type ReverbConfig = {
   decay: number;
