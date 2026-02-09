@@ -1,3 +1,5 @@
+import type { NoiseConfig } from '../modules/noise-module';
+
 export type OscillatorType = "sine" | "square" | "sawtooth" | "triangle" | "custom";
 
 export type FilterType = "lowpass" | "highpass" | "bandpass" | "notch" | "allpass" | "lowshelf" | "highshelf" | "peaking";
@@ -88,6 +90,7 @@ export interface SynthSettings {
   distortion: WaveShaperSettings;
   delay: DelaySettings;
   phaser: PhaserSettings;
+  noise: NoiseConfig;
 }
 
 export interface Preset {

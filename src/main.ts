@@ -62,7 +62,9 @@ import "./components/organisms/compressor-effect";
 import "./components/organisms/delay-effect";
 import "./components/organisms/distortion-effect";
 import "./components/organisms/spectrum-analyser";
+import "./components/organisms/noise-generator";
 import type { SpectrumAnalyser } from "./components/organisms/spectrum-analyser";
+import { NoiseModule } from "./modules/noise-module";
 
 // Keyboard and MIDI controls
 const octaveUpper = document.getElementById("octave-upper") as HTMLSelectElement;
@@ -89,6 +91,7 @@ const filterEnvelope = new EnvelopeModule('filter');
 const filterModule = new FilterModule(filterEnvelope);
 const lfoModule = new LFOModule();
 const masterModule = new MasterModule();
+const noiseModule = new NoiseModule();
 
 // Effects
 const compressorModule = new CompressorModule();
@@ -155,7 +158,8 @@ const voiceManager = new VoiceManager(
   oscillatorBank,
   ampEnvelope,
   filterModule,
-  lfoModule
+  lfoModule,
+  noiseModule,
 );
 
 const synth = new Synth(

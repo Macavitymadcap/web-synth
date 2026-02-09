@@ -54,6 +54,19 @@ class MockLFOModule {
   getPitchModulation(): GainNode | null { return this.pitchLfo; }
 }
 
+class MockNoiseModule {
+  public createNoiseSource = jest.fn((_ctx: AudioContext) => {
+    // Return null by default (noise disabled)
+    return null;
+  });
+
+  public getConfig = jest.fn(() => ({
+    type: 'white' as const,
+    level: 0.3,
+    enabled: false
+  }));
+}
+
 describe("VoiceManager (UIConfigService)", () => {
   let ctx: AudioContext & any;
   let destination: AudioNode & any;
@@ -61,6 +74,7 @@ describe("VoiceManager (UIConfigService)", () => {
   let ampEnv: MockEnvelopeModule;
   let filterModule: MockFilterModule;
   let lfoModule: MockLFOModule;
+  let noiseModule: MockNoiseModule;
   let vm: VoiceManager;
 
   beforeEach(() => {
@@ -79,12 +93,13 @@ describe("VoiceManager (UIConfigService)", () => {
     ampEnv = new MockEnvelopeModule();
     filterModule = new MockFilterModule();
     lfoModule = new MockLFOModule();
+    noiseModule = new MockNoiseModule();
 
     // Provide LFO nodes
     lfoModule.setFilterLfo(ctx.createGain());
     lfoModule.setPitchLfo(ctx.createGain());
 
-    vm = new VoiceManager(oscBank as any, ampEnv as any, filterModule as any, lfoModule as any);
+    vm = new VoiceManager(oscBank as any, ampEnv as any, filterModule as any, lfoModule as any, noiseModule as any);
   });
 
   it("getConfig reads polyphonic from UI via UIConfigService", () => {
@@ -114,6 +129,9 @@ describe("VoiceManager (UIConfigService)", () => {
 
     // Oscillator started
     expect(oscBank.startOscillators).toHaveBeenCalled();
+
+    // Noise module was called
+    expect(noiseModule.createNoiseSource).toHaveBeenCalled();
   });
 
   it("passes LFO modulation nodes to FilterModule and OscillatorBank", () => {
@@ -134,6 +152,34 @@ describe("VoiceManager (UIConfigService)", () => {
     expect(passedLfoToPitch).toBeInstanceOf(Object);
 
     function voiceFor(k: string) { return vm.getVoice(k)!; }
+  });
+
+  it("integrates noise source when enabled", () => {
+    // Mock enabled noise source
+    const mockNoiseSource = {
+      start: jest.fn(),
+      stop: jest.fn(),
+      connect: jest.fn(),
+      disconnect: jest.fn()
+    } as any;
+    
+    const mockNoiseGain = ctx.createGain();
+    
+    noiseModule.createNoiseSource.mockReturnValue({ source: mockNoiseSource, gain: mockNoiseGain } as any);
+
+    vm.createVoice(ctx, "A4", 440, 0.8, destination);
+
+    const voice = vm.getVoice("A4")!;
+    
+    // Noise source was started
+    expect(mockNoiseSource.start).toHaveBeenCalled();
+    
+    // Noise was connected to filter
+    expect(mockNoiseGain.connect).toHaveBeenCalledWith(voice.filterInstance.filter);
+    
+    // Noise source stored in voice
+    expect(voice.noiseSource).toBe(mockNoiseSource);
+    expect(voice.noiseGain).toBe(mockNoiseGain);
   });
 
   it("monophonic mode stops existing voices when new voice starts", () => {
@@ -176,6 +222,27 @@ describe("VoiceManager (UIConfigService)", () => {
     const stopTime = stopArgs[1];
     expect(stopTime).toBeCloseTo(t + 0.6);
     expect(vm.hasVoice("A4")).toBe(false);
+  });
+
+  it("stopVoice stops noise source if present", () => {
+    // Mock enabled noise source
+    const mockNoiseSource = {
+      start: jest.fn(),
+      stop: jest.fn(),
+      connect: jest.fn(),
+      disconnect: jest.fn()
+    } as any;
+    
+    const mockNoiseGain = ctx.createGain();
+    
+    noiseModule.createNoiseSource.mockReturnValue({ source: mockNoiseSource, gain: mockNoiseGain } as any);
+
+    vm.createVoice(ctx, "A4", 440, 0.7, destination);
+    const t = 2;
+    vm.stopVoice("A4", t);
+
+    // Noise source should be stopped at the same time as oscillators
+    expect(mockNoiseSource.stop).toHaveBeenCalledWith(t + 0.6);
   });
 
   it("stopAllVoices stops and clears all active voices", () => {

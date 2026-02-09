@@ -3,6 +3,7 @@ import { OscillatorBank, type OscillatorInstance } from "../core/oscillator-bank
 import { EnvelopeModule } from "../modules/envelope-module";
 import { FilterModule, type FilterInstance } from "../modules/filter-module";
 import { LFOModule } from "../modules/lfo-module";
+import { NoiseModule } from "../modules/noise-module";
 
 export type Voice = {
   oscillators: OscillatorInstance[];
@@ -10,6 +11,8 @@ export type Voice = {
   filterInstance: FilterInstance;
   note: number;
   key: string;
+  noiseSource?: AudioBufferSourceNode;
+  noiseGain?: GainNode;
 };
 
 export type VoiceManagerConfig = {
@@ -32,17 +35,20 @@ export class VoiceManager {
   private readonly ampEnvelope: EnvelopeModule;
   private readonly filterModule: FilterModule;
   private readonly lfoModule: LFOModule;
+  private readonly noiseModule: NoiseModule;
 
   constructor(
     oscillatorBank: OscillatorBank,
     ampEnvelope: EnvelopeModule,
     filterModule: FilterModule,
-    lfoModule: LFOModule
+    lfoModule: LFOModule,
+    noiseModule: NoiseModule
   ) {
     this.oscillatorBank = oscillatorBank;
     this.ampEnvelope = ampEnvelope;
     this.filterModule = filterModule;
     this.lfoModule = lfoModule;
+    this.noiseModule = noiseModule;
   }
 
   /**
@@ -99,6 +105,14 @@ export class VoiceManager {
       lfoToPitch ?? undefined
     );
 
+    // Add noise if enabled - BEFORE connecting filter to gain
+    const noiseOutput = this.noiseModule.createNoiseSource(audioCtx);
+    if (noiseOutput) {
+      noiseOutput.source.connect(noiseOutput.gain);
+      noiseOutput.gain.connect(filterInstance.filter); // Noise goes through filter
+      noiseOutput.source.start();
+    }
+
     // Connect filter to gain to destination
     filterInstance.filter.connect(gain);
     gain.connect(destination);
@@ -121,7 +135,9 @@ export class VoiceManager {
       gain,
       filterInstance,
       note: 0,
-      key
+      key,
+      noiseSource: noiseOutput?.source,
+      noiseGain: noiseOutput?.gain
     });
   }
 
@@ -149,6 +165,11 @@ export class VoiceManager {
       voice.oscillators,
       currentTime + maxReleaseTime
     );
+
+    // Stop noise source if present
+    if (voice.noiseSource) {
+      voice.noiseSource.stop(currentTime + maxReleaseTime);
+    }
 
     // Remove voice from map
     this.voices.delete(key);
