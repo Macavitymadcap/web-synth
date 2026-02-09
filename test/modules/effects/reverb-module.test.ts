@@ -1,17 +1,28 @@
 import { describe, it, expect, beforeEach, jest } from 'bun:test';
 import { ReverbModule } from '../../../src/modules/effects/reverb-module';
-import { createMockInput } from '../../fixtures/mock-input';
 import { createMockAudioCtx } from '../../fixtures/mock-audio-context';
 
 describe('ReverbModule', () => {
-  let decayEl: HTMLInputElement;
-  let mixEl: HTMLInputElement;
   let reverb: ReverbModule;
 
   beforeEach(() => {
-    decayEl = createMockInput('2.5');
-    mixEl = createMockInput('0.4');
-    reverb = new ReverbModule(decayEl, mixEl);
+    // Clear DOM before each test
+    document.body.innerHTML = '';
+
+    // Create required input elements
+    const elementIds = ['reverb-decay', 'reverb-mix'];
+    elementIds.forEach(id => {
+      const input = document.createElement('input');
+      input.id = id;
+      input.type = 'number';
+      document.body.appendChild(input);
+    });
+
+    // Set default config values
+    (document.getElementById('reverb-decay') as HTMLInputElement).value = '2.5';
+    (document.getElementById('reverb-mix') as HTMLInputElement).value = '0.4';
+
+    reverb = new ReverbModule();
   });
 
   it('returns correct config', () => {
@@ -36,18 +47,18 @@ describe('ReverbModule', () => {
     expect(reverb.isInitialized()).toBe(true);
   });
 
-    it('updates wet/dry gain on mix change', () => {
+  it('updates wet/dry gain on mix change', () => {
     const ctx = createMockAudioCtx();
     const dest = { connect: jest.fn() } as any;
     reverb.initialize(ctx, dest);
-  
-    (mixEl as any).value = '0.7';
-    (mixEl as any).dispatchEvent(new Event('input'));
-  
+
+    const mixInput = document.getElementById('reverb-mix') as HTMLInputElement;
+    mixInput.value = '0.7';
+    mixInput.dispatchEvent(new Event('input'));
+
     expect(reverb['wetGain']!.gain.value).toBeCloseTo(0.7);
     expect(reverb['dryGain']!.gain.value).toBeCloseTo(0.3);
   });
-  
 
   it('updateWithContext regenerates impulse response', () => {
     const ctx = createMockAudioCtx();

@@ -1,4 +1,5 @@
 import type { BaseEffectModule, EffectNodes } from './base-effect-module';
+import { UIConfigService } from '../../services/ui-config-service';
 
 export type PhaserConfig = {
   rate: number;      // LFO rate (Hz)
@@ -12,11 +13,14 @@ export type PhaserConfig = {
  * PhaserModule: Classic multi-stage phaser effect with LFO modulation
  */
 export class PhaserModule implements BaseEffectModule {
-  private readonly rateEl: HTMLInputElement;
-  private readonly depthEl: HTMLInputElement;
-  private readonly stagesEl: HTMLInputElement;
-  private readonly feedbackEl: HTMLInputElement;
-  private readonly mixEl: HTMLInputElement;
+  // ...existing code...
+  private readonly elementIds = {
+    rate: 'phaser-rate',
+    depth: 'phaser-depth',
+    stages: 'phaser-stages',
+    feedback: 'phaser-feedback',
+    mix: 'phaser-mix'
+  };
 
   private inputGain: GainNode | null = null;
   private outputGain: GainNode | null = null;
@@ -27,33 +31,36 @@ export class PhaserModule implements BaseEffectModule {
   private lfo: OscillatorNode | null = null;
   private lfoGain: GainNode | null = null;
 
-  constructor(
-    rateEl: HTMLInputElement,
-    depthEl: HTMLInputElement,
-    stagesEl: HTMLInputElement,
-    feedbackEl: HTMLInputElement,
-    mixEl: HTMLInputElement
-  ) {
-    this.rateEl = rateEl;
-    this.depthEl = depthEl;
-    this.stagesEl = stagesEl;
-    this.feedbackEl = feedbackEl;
-    this.mixEl = mixEl;
+  // Keep last context/destination to allow re-init on stages change
+  private lastAudioCtx: AudioContext | null = null;
+  private lastDestination: AudioNode | null = null;
+
+  constructor() {
     this.setupParameterListeners();
   }
 
   getConfig(): PhaserConfig {
-    return {
-      rate: Number.parseFloat(this.rateEl.value),
-      depth: Number.parseFloat(this.depthEl.value),
-      stages: Math.max(2, Math.min(8, Math.round(Number.parseFloat(this.stagesEl.value) || 4))),
-      feedback: Number.parseFloat(this.feedbackEl.value),
-      mix: Number.parseFloat(this.mixEl.value)
-    };
+    return UIConfigService.getConfig({
+      rate: this.elementIds.rate,
+      depth: this.elementIds.depth,
+      stages: {
+        id: this.elementIds.stages,
+        transform: (v) => {
+          const n = Math.round(Number.parseFloat(v) || 4);
+          return Math.max(2, Math.min(8, n));
+        }
+      },
+      feedback: this.elementIds.feedback,
+      mix: this.elementIds.mix
+    }) as PhaserConfig;
   }
 
   initialize(audioCtx: AudioContext, destination: AudioNode): EffectNodes {
     const { rate, depth, stages, feedback, mix } = this.getConfig();
+
+    // Track for re-initialization
+    this.lastAudioCtx = audioCtx;
+    this.lastDestination = destination;
 
     // Clean up previous nodes if re-initializing
     this.disconnect();
@@ -107,7 +114,7 @@ export class PhaserModule implements BaseEffectModule {
 
     // Modulate allpass filter frequencies
     for (const ap of this.allpassFilters) {
-      this.lfoGain.connect(ap.frequency);
+      this.lfoGain.connect(ap.frequency as any);
     }
 
     this.lfo.start();
@@ -131,32 +138,29 @@ export class PhaserModule implements BaseEffectModule {
   }
 
   private setupParameterListeners(): void {
-    this.rateEl.addEventListener('input', () => {
-      if (this.lfo) {
-        this.lfo.frequency.value = Number.parseFloat(this.rateEl.value);
+    // Bind simple AudioParams
+    UIConfigService.bindAudioParams([
+      { elementId: this.elementIds.rate, audioParam: () => this.lfo?.frequency },
+      { elementId: this.elementIds.depth, audioParam: () => this.lfoGain?.gain }
+    ]);
+
+    // Stages change requires re-init
+    UIConfigService.onInput(this.elementIds.stages, () => {
+      if (this.lastAudioCtx && this.lastDestination) {
+        this.initialize(this.lastAudioCtx, this.lastDestination);
       }
     });
-    this.depthEl.addEventListener('input', () => {
-      if (this.lfoGain) {
-        this.lfoGain.gain.value = Number.parseFloat(this.depthEl.value);
-      }
+
+    // Feedback gain
+    UIConfigService.bindAudioParam({
+      elementId: this.elementIds.feedback,
+      audioParam: () => this.feedbackGain?.gain
     });
-    this.stagesEl.addEventListener('input', () => {
-      // Re-initialize to update stage count
-      if (this.inputGain && this.outputGain) {
-        const ctx = this.inputGain.context as AudioContext;
-        const dest = this.outputGain;
-        this.initialize(ctx, dest);
-      }
-    });
-    this.feedbackEl.addEventListener('input', () => {
-      if (this.feedbackGain) {
-        this.feedbackGain.gain.value = Number.parseFloat(this.feedbackEl.value);
-      }
-    });
-    this.mixEl.addEventListener('input', () => {
+
+    // Mix affects wet/dry gains
+    UIConfigService.onInput(this.elementIds.mix, (_el, value) => {
       if (this.dryGain && this.wetGain) {
-        const mix = Number.parseFloat(this.mixEl.value);
+        const mix = Number.parseFloat(value);
         this.dryGain.gain.value = 1 - mix;
         this.wetGain.gain.value = mix;
       }

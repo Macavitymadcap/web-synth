@@ -30,7 +30,6 @@ import { createOscillatorManager } from "./handlers/oscillator-management";
 // Components
 import "./components/atoms/filter-type-picker";
 import "./components/atoms/range-control";
-import type { RangeControl } from "./components/atoms/range-control";
 import "./components/atoms/toggle-switch";
 import "./components/atoms/waveform-picker";
 import "./components/atoms/octave-picker";
@@ -72,64 +71,6 @@ const keyboardUpper = document.getElementById("keyboard-upper") as PianoKeyboard
 const keyboardLower = document.getElementById("keyboard-lower") as PianoKeyboard;
 const midiToggle = document.getElementById("midi-enabled") as HTMLInputElement;
 
-// ASDR controls
-const attack = (document.getElementById("attack") as RangeControl).getInput();
-const decay = (document.getElementById("decay") as RangeControl).getInput();
-const sustain = (document.getElementById("sustain") as RangeControl).getInput();
-const release = (document.getElementById("release") as RangeControl).getInput();
-
-// Filter controls
-const filterType = document.getElementById("filter-type") as HTMLSelectElement;
-const filterCutoff = (document.getElementById("filter-cutoff") as RangeControl).getInput();
-const filterResonance = (document.getElementById("filter-resonance") as RangeControl).getInput();
-const filterEnvAmount = (document.getElementById("filter-env-amount") as RangeControl).getInput();
-const filterAttack = (document.getElementById("filter-attack") as RangeControl).getInput();
-const filterDecay = (document.getElementById("filter-decay") as RangeControl).getInput();
-const filterSustain = (document.getElementById("filter-sustain") as RangeControl).getInput();
-const filterRelease = (document.getElementById("filter-release") as RangeControl).getInput();
-
-// LFO controls
-const lfoRate = (document.getElementById("lfo-rate") as RangeControl).getInput();
-const lfoToFilter = (document.getElementById("lfo-to-filter") as RangeControl).getInput();
-const lfoToPitch = (document.getElementById("lfo-to-pitch") as RangeControl).getInput();
-const lfoWaveform = document.getElementById("lfo-waveform") as HTMLSelectElement;
-
-// Chorus controls
-const chorusRate = (document.getElementById("chorus-rate") as RangeControl).getInput();
-const chorusDepth = (document.getElementById("chorus-depth") as RangeControl).getInput();
-const chorusMix = (document.getElementById("chorus-mix") as RangeControl).getInput();
-
-// Phaser controls
-const phaserRate = (document.getElementById("phaser-rate") as RangeControl).getInput();
-const phaserDepth = (document.getElementById("phaser-depth") as RangeControl).getInput();
-const phaserStages = (document.getElementById("phaser-stages") as RangeControl).getInput();
-const phaserFeedback = (document.getElementById("phaser-feedback") as RangeControl).getInput();
-const phaserMix = (document.getElementById("phaser-mix") as RangeControl).getInput();
-
-// Delay controls
-const delayTime = (document.getElementById("delay-time") as RangeControl).getInput();
-const delayFeedback = (document.getElementById("delay-feedback") as RangeControl).getInput();
-const delayMix = (document.getElementById("delay-mix") as RangeControl).getInput();
-
-// Reverb controls
-const reverbDecay = (document.getElementById("reverb-decay") as RangeControl).getInput();
-const reverbMix = (document.getElementById("reverb-mix") as RangeControl).getInput();
-
-// Compressor controls
-const compressorThreshold = (document.getElementById("compressor-threshold") as RangeControl).getInput();
-const compressorRatio = (document.getElementById("compressor-ratio") as RangeControl).getInput();
-const compressorAttack = (document.getElementById("compressor-attack") as RangeControl).getInput();
-const compressorRelease = (document.getElementById("compressor-release") as RangeControl).getInput();
-const compressorKnee = (document.getElementById("compressor-knee") as RangeControl).getInput();
-
-// Distortion controls
-const distortionDrive = (document.getElementById("distortion-drive") as RangeControl).getInput();
-const distortionBlend = (document.getElementById("distortion-blend") as RangeControl).getInput();
-
-// Master controls
-const poly = document.getElementById("poly") as HTMLInputElement;
-const masterVolume = (document.getElementById("master-volume") as RangeControl).getInput();
-
 // Record controls
 const recordBtn = document.getElementById("record") as HTMLButtonElement;
 
@@ -143,68 +84,56 @@ const spectrumCanvas = spectrumAnalyserEl?.getCanvas();
 
 // Initialize modules
 const oscillatorBank = new OscillatorBank();
-const ampEnvelope = new EnvelopeModule(attack, decay, sustain, release);
-const filterEnvelope = new EnvelopeModule(filterAttack, filterDecay, filterSustain, filterRelease);
-const filterModule = new FilterModule(filterType, filterCutoff, filterResonance, filterEnvAmount, filterEnvelope);
-const lfoModule = new LFOModule(lfoRate, lfoWaveform, lfoToFilter, lfoToPitch);
-const masterModule = new MasterModule(masterVolume);
+const ampEnvelope = new EnvelopeModule('amp');
+const filterEnvelope = new EnvelopeModule('filter');
+const filterModule = new FilterModule(filterEnvelope);
+const lfoModule = new LFOModule();
+const masterModule = new MasterModule();
 
 // Effects
-const chorusModule = new ChorusModule(chorusRate, chorusDepth, chorusMix);
-const phaserModule = new PhaserModule(
-  phaserRate,
-  phaserDepth,
-  phaserStages,
-  phaserFeedback,
-  phaserMix
-);
-const delayModule = new DelayModule(delayTime, delayFeedback, delayMix);
-const distortionModule = new DistortionModule(distortionDrive, distortionBlend);
-const compressorModule = new CompressorModule(
-  compressorThreshold,
-  compressorRatio,
-  compressorAttack,
-  compressorRelease,
-  compressorKnee
-);
-const reverbModule = new ReverbModule(reverbDecay, reverbMix);
+const compressorModule = new CompressorModule();
+const chorusModule = new ChorusModule();
+const phaserModule = new PhaserModule();
+const delayModule = new DelayModule();
+const distortionModule = new DistortionModule();
+const reverbModule = new ReverbModule();
 const spectrumAnalyserModule = new SpectrumAnalyserModule(spectrumCanvas);
 
 // Effects Manager
 const effectsManager = new EffectsManager();
+effectsManager.register(compressorModule, {
+  id: 'compressor',
+  name: 'Compressor',
+  order: 100, // Should be first in chain to tame dynamics before other effects
+  category: 'dynamics'
+});
+
 effectsManager.register(chorusModule, {
   id: 'chorus',
   name: 'Chorus',
-  order: 100, // First in chain
+  order: 90,
   category: 'modulation'
 });
 
 effectsManager.register(phaserModule, {
   id: 'phaser',
   name: 'Phaser',
-  order: 90,
+  order: 80,
   category: 'modulation'
 });
 
 effectsManager.register(delayModule, {
   id: 'delay',
   name: 'Delay',
-  order: 80,
+  order: 70,
   category: 'time-based'
 });
 
 effectsManager.register(distortionModule, {
   id: 'distortion',
   name: 'Distortion',
-  order: 70,
-  category: 'distortion'
-});
-
-effectsManager.register(compressorModule, {
-  id: 'compressor',
-  name: 'Compressor',
   order: 60,
-  category: 'dynamics'
+  category: 'distortion'
 });
 
 effectsManager.register(reverbModule, {
@@ -223,7 +152,6 @@ effectsManager.register(spectrumAnalyserModule, {
 
 
 const voiceManager = new VoiceManager(
-  poly,
   oscillatorBank,
   ampEnvelope,
   filterModule,

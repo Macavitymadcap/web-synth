@@ -3,8 +3,8 @@
 ## Checklist
 
 ### Sprint 1 (Week 1-2): Foundation
-- [✓] Create EffectsManager
-- [ ] Extract UIConfigService
+- [x] Create EffectsManager
+- [x] Extract UIConfigService
 - [ ] Add Noise Generator (validates new architecture)
 - [ ] Write tests for noise generator
 

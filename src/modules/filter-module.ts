@@ -1,4 +1,5 @@
 import { EnvelopeModule } from "./envelope-module";
+import { UIConfigService } from "../services/ui-config-service";
 
 export type FilterConfig = {
   type: BiquadFilterType;
@@ -16,39 +17,40 @@ export type FilterInstance = {
  * MultiModeFilterModule manages filter type, cutoff, resonance, and envelope modulation
  */
 export class FilterModule {
-  private readonly typeEl: HTMLSelectElement;
-  private readonly cutoffEl: HTMLInputElement;
-  private readonly resonanceEl: HTMLInputElement;
-  private readonly envelopeAmountEl: HTMLInputElement;
   private readonly filterEnvelope: EnvelopeModule;
 
-  constructor(
-    typeEl: HTMLSelectElement,
-    cutoffEl: HTMLInputElement,
-    resonanceEl: HTMLInputElement,
-    envelopeAmountEl: HTMLInputElement,
-    filterEnvelope: EnvelopeModule
-  ) {
-    this.typeEl = typeEl;
-    this.cutoffEl = cutoffEl;
-    this.resonanceEl = resonanceEl;
-    this.envelopeAmountEl = envelopeAmountEl;
+  private readonly elementIds = {
+    type: "filter-type",
+    cutoff: "filter-cutoff",
+    resonance: "filter-resonance",
+    envelopeAmount: "filter-env-amount",
+  };
+
+  constructor(filterEnvelope: EnvelopeModule) {
     this.filterEnvelope = filterEnvelope;
   }
 
   getConfig(): FilterConfig {
+    const cfg = UIConfigService.getConfig({
+      type: {
+        id: this.elementIds.type,
+        select: true,
+        transform: (v) => v as BiquadFilterType,
+      },
+      cutoff: this.elementIds.cutoff,
+      resonance: this.elementIds.resonance,
+      envelopeAmount: this.elementIds.envelopeAmount,
+    });
+
     return {
-      type: (this.typeEl.value as BiquadFilterType) || "lowpass",
-      cutoff: Number.parseFloat(this.cutoffEl.value),
-      resonance: Number.parseFloat(this.resonanceEl.value),
-      envelopeAmount: Number.parseFloat(this.envelopeAmountEl.value)
+      type: (cfg.type as BiquadFilterType) || "lowpass",
+      cutoff: cfg.cutoff,
+      resonance: cfg.resonance,
+      envelopeAmount: cfg.envelopeAmount,
     };
   }
 
-  createFilter(
-    audioCtx: AudioContext,
-    lfoToFilter?: GainNode
-  ): FilterInstance {
+  createFilter(audioCtx: AudioContext, lfoToFilter?: GainNode): FilterInstance {
     const { type, cutoff, resonance, envelopeAmount } = this.getConfig();
 
     const filter = audioCtx.createBiquadFilter();

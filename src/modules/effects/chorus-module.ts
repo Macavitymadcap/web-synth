@@ -1,58 +1,47 @@
 import type { BaseEffectModule, EffectNodes } from './base-effect-module';
+import { UIConfigService } from '../../services/ui-config-service';
 
 export type ChorusConfig = {
   rate: number;
-  depth: number;
+  depth: number; // ms
   mix: number;
 };
 
 export class ChorusModule implements BaseEffectModule {
-  private readonly rateEl: HTMLInputElement;
-  private readonly depthEl: HTMLInputElement;
-  private readonly mixEl: HTMLInputElement;
+  private readonly elementIds = {
+    rate: 'chorus-rate',
+    depth: 'chorus-depth',
+    mix: 'chorus-mix'
+  };
+
+  private inputGain: GainNode | null = null;
+  private outputGain: GainNode | null = null;
+  private wetGain: GainNode | null = null;
+  private dryGain: GainNode | null = null;
 
   private delayNodes: DelayNode[] = [];
   private lfoNodes: OscillatorNode[] = [];
   private lfoGainNodes: GainNode[] = [];
-  
-  private wetGain: GainNode | null = null;
-  private dryGain: GainNode | null = null;
-  private inputGain: GainNode | null = null;
-  private outputGain: GainNode | null = null;
-  private chorusMerger: GainNode | null = null;
 
-  private readonly NUM_VOICES = 3;
-  private readonly BASE_DELAY = 0.02;
-
-  constructor(
-    rateEl: HTMLInputElement,
-    depthEl: HTMLInputElement,
-    mixEl: HTMLInputElement
-  ) {
-    this.rateEl = rateEl;
-    this.depthEl = depthEl;
-    this.mixEl = mixEl;
+  constructor() {
     this.setupParameterListeners();
   }
 
   getConfig(): ChorusConfig {
-    return {
-      rate: Number.parseFloat(this.rateEl.value),
-      depth: Number.parseFloat(this.depthEl.value),
-      mix: Number.parseFloat(this.mixEl.value)
-    };
+    return UIConfigService.getConfig({
+      rate: this.elementIds.rate,
+      depth: this.elementIds.depth,
+      mix: this.elementIds.mix
+    });
   }
 
   initialize(audioCtx: AudioContext, destination: AudioNode): EffectNodes {
-    // Clean up previous nodes if re-initializing
-    this.disconnectNodes();
+    this.disconnect();
 
     const { rate, depth, mix } = this.getConfig();
 
     this.inputGain = audioCtx.createGain();
     this.outputGain = audioCtx.createGain();
-    this.chorusMerger = audioCtx.createGain();
-    this.chorusMerger.gain.value = 1 / this.NUM_VOICES;
 
     this.wetGain = audioCtx.createGain();
     this.wetGain.gain.value = mix;
@@ -60,45 +49,42 @@ export class ChorusModule implements BaseEffectModule {
     this.dryGain = audioCtx.createGain();
     this.dryGain.gain.value = 1 - mix;
 
-    this.delayNodes = [];
-    this.lfoNodes = [];
-    this.lfoGainNodes = [];
+    // Dry path
+    this.inputGain.connect(this.dryGain);
 
-    for (let i = 0; i < this.NUM_VOICES; i++) {
-      const delay = audioCtx.createDelay(0.1);
-      delay.delayTime.value = this.BASE_DELAY + (i * 0.005);
+    // Create 3 modulated delay lines
+    const voices = 3;
+    for (let i = 0; i < voices; i++) {
+      const delay = audioCtx.createDelay(0.05);
+      // Optional base delay (gives chorusing even at depth=0)
+      delay.delayTime.value = 0.015;
 
       const lfo = audioCtx.createOscillator();
-      lfo.type = 'sine';
       lfo.frequency.value = rate * (1 + i * 0.1);
 
       const lfoGain = audioCtx.createGain();
+      // depth is ms; convert to seconds for delayTime modulation
       lfoGain.gain.value = depth * 0.001;
 
+      // Modulation: LFO -> Gain -> DelayTime
       lfo.connect(lfoGain);
       lfoGain.connect(delay.delayTime);
-
-      this.inputGain.connect(delay);
-      delay.connect(this.chorusMerger);
-
       lfo.start();
+
+      // Signal: input -> delay -> wet
+      this.inputGain.connect(delay);
+      delay.connect(this.wetGain);
 
       this.delayNodes.push(delay);
       this.lfoNodes.push(lfo);
       this.lfoGainNodes.push(lfoGain);
     }
 
-    // Dry path
-    this.inputGain.connect(this.dryGain);
-
-    // Wet path
-    this.chorusMerger.connect(this.wetGain);
-
     // Mix to output
     this.dryGain.connect(this.outputGain);
     this.wetGain.connect(this.outputGain);
 
-    // Output to next effect
+    // Next in chain
     this.outputGain.connect(destination);
 
     return {
@@ -116,49 +102,56 @@ export class ChorusModule implements BaseEffectModule {
   }
 
   isInitialized(): boolean {
-    return this.inputGain !== null && this.lfoNodes.length > 0;
+    return this.inputGain !== null && this.outputGain !== null;
   }
 
   private setupParameterListeners(): void {
-    this.rateEl.addEventListener('input', () => {
-      if (this.lfoNodes.length > 0) {
-        const rate = Number.parseFloat(this.rateEl.value);
-        this.lfoNodes.forEach((lfo, i) => {
-          lfo.frequency.value = rate * (1 + i * 0.1);
-        });
-      }
+    // Rate: update all LFO frequencies
+    UIConfigService.onInput(this.elementIds.rate, (_el, value) => {
+      const rate = Number.parseFloat(value);
+      this.lfoNodes.forEach((lfo, i) => {
+        lfo.frequency.value = rate * (1 + i * 0.1);
+      });
     });
 
-    this.depthEl.addEventListener('input', () => {
-      if (this.lfoGainNodes.length > 0) {
-        const depth = Number.parseFloat(this.depthEl.value);
-        this.lfoGainNodes.forEach((gainNode) => {
-          gainNode.gain.value = depth * 0.001;
-        });
-      }
+    // Depth (ms): update all LFO gain values (seconds)
+    UIConfigService.onInput(this.elementIds.depth, (_el, value) => {
+      const depthMs = Number.parseFloat(value);
+      const gainValue = depthMs * 0.001;
+      this.lfoGainNodes.forEach(g => {
+        g.gain.value = gainValue;
+      });
     });
 
-    this.mixEl.addEventListener('input', () => {
+    // Mix: update wet/dry
+    UIConfigService.onInput(this.elementIds.mix, (_el, value) => {
+      const mix = Number.parseFloat(value);
       if (this.wetGain && this.dryGain) {
-        const mix = Number.parseFloat(this.mixEl.value);
         this.wetGain.gain.value = mix;
         this.dryGain.gain.value = 1 - mix;
       }
     });
   }
 
-  private disconnectNodes(): void {
-    // Disconnect and stop previous nodes if re-initializing
+  private disconnect(): void {
+    // Stop and disconnect LFOs
     this.lfoNodes.forEach(lfo => {
       try { lfo.stop(); } catch {}
       lfo.disconnect();
     });
     this.lfoGainNodes.forEach(g => g.disconnect());
     this.delayNodes.forEach(d => d.disconnect());
-    if (this.chorusMerger) this.chorusMerger.disconnect();
-    if (this.wetGain) this.wetGain.disconnect();
-    if (this.dryGain) this.dryGain.disconnect();
+    this.lfoNodes = [];
+    this.lfoGainNodes = [];
+    this.delayNodes = [];
+
     if (this.inputGain) this.inputGain.disconnect();
     if (this.outputGain) this.outputGain.disconnect();
+    if (this.wetGain) this.wetGain.disconnect();
+    if (this.dryGain) this.dryGain.disconnect();
+    this.inputGain = null;
+    this.outputGain = null;
+    this.wetGain = null;
+    this.dryGain = null;
   }
 }

@@ -1,3 +1,5 @@
+import { UIConfigService } from "../services/ui-config-service";
+
 export type EnvelopeConfig = {
   attack: number;
   decay: number;
@@ -5,22 +7,30 @@ export type EnvelopeConfig = {
   release: number;
 };
 
-export class EnvelopeModule {
-  private readonly attackEl: HTMLInputElement;
-  private readonly decayEl: HTMLInputElement;
-  private readonly sustainEl: HTMLInputElement;
-  private readonly releaseEl: HTMLInputElement;
+export type EnvelopeModuleMode = 'amp' | 'filter';
 
-  constructor(
-    attackEl: HTMLInputElement,
-    decayEl: HTMLInputElement,
-    sustainEl: HTMLInputElement,
-    releaseEl: HTMLInputElement
-  ) {
-    this.attackEl = attackEl;
-    this.decayEl = decayEl;
-    this.sustainEl = sustainEl;
-    this.releaseEl = releaseEl;
+export class EnvelopeModule {
+  private readonly elementIds: {
+    attack: string;
+    decay: string;
+    sustain: string;
+    release: string;
+  };
+
+  constructor(mode: EnvelopeModuleMode = 'amp') {
+    this.elementIds = mode === 'filter'
+      ? {
+          attack: 'filter-attack',
+          decay: 'filter-decay',
+          sustain: 'filter-sustain',
+          release: 'filter-release',
+        }
+      : {
+          attack: 'attack',
+          decay: 'decay',
+          sustain: 'sustain',
+          release: 'release',
+        };
   }
 
   /**
@@ -28,12 +38,13 @@ export class EnvelopeModule {
    * @returns Object containing parameter values
    */
   getConfig(): EnvelopeConfig {
-    return {
-      attack: Number.parseFloat(this.attackEl.value),
-      decay: Number.parseFloat(this.decayEl.value),
-      sustain: Number.parseFloat(this.sustainEl.value),
-      release: Number.parseFloat(this.releaseEl.value)
-    };
+    const config = UIConfigService.getConfig({
+      attack: this.elementIds.attack,
+      decay: this.elementIds.decay,
+      sustain: this.elementIds.sustain,
+      release: this.elementIds.release,
+    });
+    return config as EnvelopeConfig;
   }
 
   /**
@@ -72,7 +83,7 @@ export class EnvelopeModule {
     const { release } = this.getConfig();
 
     param.cancelScheduledValues(startTime);
-    param.setValueAtTime(param.value, startTime);
+    param.setValueAtTime((param as any).value ?? 0, startTime);
     param.linearRampToValueAtTime(endValue, startTime + release);
 
     return release;
@@ -83,6 +94,6 @@ export class EnvelopeModule {
    * @returns Release time in seconds
    */
   getRelease(): number {
-    return Number.parseFloat(this.releaseEl.value);
+    return Number.parseFloat(UIConfigService.getInput(this.elementIds.release).value);
   }
 }

@@ -1,4 +1,5 @@
 import type { BaseEffectModule, EffectNodes } from './base-effect-module';
+import { UIConfigService } from '../../services/ui-config-service';
 
 export type CompressorConfig = {
   threshold: number;
@@ -8,40 +9,35 @@ export type CompressorConfig = {
   knee: number;
 };
 
+/**
+ * CompressorModule using UIConfigService with helper methods
+ * This version demonstrates the cleaner API with bindAudioParams()
+ */
 export class CompressorModule implements BaseEffectModule {
-  private readonly thresholdEl: HTMLInputElement;
-  private readonly ratioEl: HTMLInputElement;
-  private readonly attackEl: HTMLInputElement;
-  private readonly releaseEl: HTMLInputElement;
-  private readonly kneeEl: HTMLInputElement;
+  private readonly elementIds = {
+    threshold: 'compressor-threshold',
+    ratio: 'compressor-ratio',
+    attack: 'compressor-attack',
+    release: 'compressor-release',
+    knee: 'compressor-knee'
+  };
 
   private inputGain: GainNode | null = null;
   private outputGain: GainNode | null = null;
   private compressor: DynamicsCompressorNode | null = null;
 
-  constructor(
-    thresholdEl: HTMLInputElement,
-    ratioEl: HTMLInputElement,
-    attackEl: HTMLInputElement,
-    releaseEl: HTMLInputElement,
-    kneeEl: HTMLInputElement
-  ) {
-    this.thresholdEl = thresholdEl;
-    this.ratioEl = ratioEl;
-    this.attackEl = attackEl;
-    this.releaseEl = releaseEl;
-    this.kneeEl = kneeEl;
+  constructor() {
     this.setupParameterListeners();
   }
 
   getConfig(): CompressorConfig {
-    return {
-      threshold: Number.parseFloat(this.thresholdEl.value),
-      ratio: Number.parseFloat(this.ratioEl.value),
-      attack: Number.parseFloat(this.attackEl.value),
-      release: Number.parseFloat(this.releaseEl.value),
-      knee: Number.parseFloat(this.kneeEl.value),
-    };
+    return UIConfigService.getConfig({
+      threshold: this.elementIds.threshold,
+      ratio: this.elementIds.ratio,
+      attack: this.elementIds.attack,
+      release: this.elementIds.release,
+      knee: this.elementIds.knee
+    });
   }
 
   initialize(audioCtx: AudioContext, destination: AudioNode): EffectNodes {
@@ -81,22 +77,33 @@ export class CompressorModule implements BaseEffectModule {
     return this.compressor !== null;
   }
 
+  /**
+   * Setup parameter listeners using helper methods
+   * Much cleaner than manual addEventListener calls
+   */
   private setupParameterListeners(): void {
-    this.thresholdEl.addEventListener('input', () => {
-      if (this.compressor) this.compressor.threshold.value = Number.parseFloat(this.thresholdEl.value);
-    });
-    this.ratioEl.addEventListener('input', () => {
-      if (this.compressor) this.compressor.ratio.value = Number.parseFloat(this.ratioEl.value);
-    });
-    this.attackEl.addEventListener('input', () => {
-      if (this.compressor) this.compressor.attack.value = Number.parseFloat(this.attackEl.value);
-    });
-    this.releaseEl.addEventListener('input', () => {
-      if (this.compressor) this.compressor.release.value = Number.parseFloat(this.releaseEl.value);
-    });
-    this.kneeEl.addEventListener('input', () => {
-      if (this.compressor) this.compressor.knee.value = Number.parseFloat(this.kneeEl.value);
-    });
+    UIConfigService.bindAudioParams([
+      {
+        elementId: this.elementIds.threshold,
+        audioParam: () => this.compressor?.threshold
+      },
+      {
+        elementId: this.elementIds.ratio,
+        audioParam: () => this.compressor?.ratio
+      },
+      {
+        elementId: this.elementIds.attack,
+        audioParam: () => this.compressor?.attack
+      },
+      {
+        elementId: this.elementIds.release,
+        audioParam: () => this.compressor?.release
+      },
+      {
+        elementId: this.elementIds.knee,
+        audioParam: () => this.compressor?.knee
+      }
+    ]);
   }
 
   private disconnect(): void {

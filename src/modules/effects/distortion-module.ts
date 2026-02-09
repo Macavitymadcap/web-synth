@@ -1,4 +1,5 @@
 import type { BaseEffectModule, EffectNodes } from './base-effect-module';
+import { UIConfigService } from '../../services/ui-config-service';
 
 export type DistortionConfig = {
   drive: number; // How strong the distortion is
@@ -6,8 +7,10 @@ export type DistortionConfig = {
 };
 
 export class DistortionModule implements BaseEffectModule {
-  private readonly driveEl: HTMLInputElement;
-  private readonly blendEl: HTMLInputElement;
+  private readonly elementIds = {
+    drive: 'distortion-drive',
+    blend: 'distortion-blend'
+  };
 
   private inputNode: GainNode | null = null;
   private outputNode: GainNode | null = null;
@@ -15,17 +18,15 @@ export class DistortionModule implements BaseEffectModule {
   private dry: GainNode | null = null;
   private wet: GainNode | null = null;
 
-  constructor(driveEl: HTMLInputElement, blendEl: HTMLInputElement) {
-    this.driveEl = driveEl;
-    this.blendEl = blendEl;
-    this.setupListeners();
+  constructor() {
+    this.setupParameterListeners();
   }
 
   getConfig(): DistortionConfig {
-    return {
-      drive: Number(this.driveEl.value),
-      blend: Number(this.blendEl.value)
-    };
+    return UIConfigService.getConfig({
+      drive: this.elementIds.drive,
+      blend: this.elementIds.blend
+    }) as DistortionConfig;
   }
 
   initialize(audioCtx: AudioContext, destination: AudioNode): EffectNodes {
@@ -68,25 +69,28 @@ export class DistortionModule implements BaseEffectModule {
   }
 
   isInitialized(): boolean {
-    return !!this.shaper;
+    return this.shaper !== null;
   }
 
-  private setupListeners() {
-    this.driveEl.addEventListener('input', () => {
+  private setupParameterListeners(): void {
+    // Drive → update waveshaper curve
+    UIConfigService.onInput(this.elementIds.drive, (_el, value) => {
       if (this.shaper) {
-        this.shaper.curve = this.createCurve(Number(this.driveEl.value));
+        this.shaper.curve = this.createCurve(Number.parseFloat(value));
       }
     });
-    this.blendEl.addEventListener('input', () => {
+
+    // Blend → update wet/dry
+    UIConfigService.onInput(this.elementIds.blend, (_el, value) => {
       if (this.dry && this.wet) {
-        const blend = Number(this.blendEl.value);
+        const blend = Number.parseFloat(value);
         this.dry.gain.value = 1 - blend;
         this.wet.gain.value = blend;
       }
     });
   }
 
-  private disconnect() {
+  private disconnect(): void {
     if (this.inputNode) this.inputNode.disconnect();
     if (this.outputNode) this.outputNode.disconnect();
     if (this.shaper) this.shaper.disconnect();

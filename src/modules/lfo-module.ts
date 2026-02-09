@@ -1,3 +1,5 @@
+import { UIConfigService } from "../services/ui-config-service";
+
 export type LFOConfig = {
   rate: number;
   waveform: OscillatorType;
@@ -15,27 +17,20 @@ export type LFORouting = {
  * Handles LFO rate, waveform, and routing to filter and pitch
  */
 export class LFOModule {
-  private readonly rateEl: HTMLInputElement;
-  private readonly waveformEl: HTMLSelectElement;
-  private readonly toFilterEl: HTMLInputElement;
-  private readonly toPitchEl: HTMLInputElement;
+  // UI element IDs (no constructor params)
+  private readonly elementIds = {
+    rate: 'lfo-rate',
+    waveform: 'lfo-waveform',
+    toFilter: 'lfo-to-filter',
+    toPitch: 'lfo-to-pitch',
+  };
 
   private lfo: OscillatorNode | null = null;
   private lfoGain: GainNode | null = null;
   private lfoToFilter: GainNode | null = null;
   private lfoToPitch: GainNode | null = null;
 
-  constructor(
-    rateEl: HTMLInputElement,
-    waveformEl: HTMLSelectElement,
-    toFilterEl: HTMLInputElement,
-    toPitchEl: HTMLInputElement
-  ) {
-    this.rateEl = rateEl;
-    this.waveformEl = waveformEl;
-    this.toFilterEl = toFilterEl;
-    this.toPitchEl = toPitchEl;
-
+  constructor() {
     this.setupParameterListeners();
   }
 
@@ -44,12 +39,17 @@ export class LFOModule {
    * @returns Object containing LFO parameters
    */
   getConfig(): LFOConfig {
-    return {
-      rate: Number.parseFloat(this.rateEl.value),
-      waveform: this.waveformEl.value as OscillatorType,
-      toFilter: Number.parseFloat(this.toFilterEl.value),
-      toPitch: Number.parseFloat(this.toPitchEl.value)
-    };
+    const config = UIConfigService.getConfig({
+      rate: this.elementIds.rate,
+      toFilter: this.elementIds.toFilter,
+      toPitch: this.elementIds.toPitch,
+      waveform: {
+        id: this.elementIds.waveform,
+        select: true,
+        transform: (v) => v as OscillatorType
+      }
+    });
+    return config as LFOConfig;
   }
 
   /**
@@ -119,28 +119,19 @@ export class LFOModule {
    * @private
    */
   private setupParameterListeners(): void {
-    this.rateEl.addEventListener('input', () => {
+    // Bind simple AudioParams
+    UIConfigService.bindAudioParams([
+      { elementId: this.elementIds.rate, audioParam: () => this.lfo?.frequency },
+      { elementId: this.elementIds.toFilter, audioParam: () => this.lfoToFilter?.gain },
+      { elementId: this.elementIds.toPitch, audioParam: () => this.lfoToPitch?.gain },
+    ]);
+
+    // Waveform select handler
+    UIConfigService.onSelect(this.elementIds.waveform, (_el, value) => {
       if (this.lfo) {
-        this.lfo.frequency.value = Number.parseFloat(this.rateEl.value);
-      }
-    });
-
-    this.toFilterEl.addEventListener('input', () => {
-      if (this.lfoToFilter) {
-        this.lfoToFilter.gain.value = Number.parseFloat(this.toFilterEl.value);
-      }
-    });
-
-    this.toPitchEl.addEventListener('input', () => {
-      if (this.lfoToPitch) {
-        this.lfoToPitch.gain.value = Number.parseFloat(this.toPitchEl.value);
-      }
-    });
-
-    this.waveformEl.addEventListener('change', () => {
-      if (this.lfo) {
-        this.lfo.type = this.waveformEl.value as OscillatorType;
+        this.lfo.type = value as OscillatorType;
       }
     });
   }
 }
+// ...existing code...

@@ -2,38 +2,62 @@
 
 ## Overview
 
-Web Synth is a browser-based polyphonic synthesizer built with TypeScript, the Web Audio API, and native Web Components. It features a modular architecture with clear separation between audio processing (modules), user interface (components), and application logic (handlers).
+Web Synth is a browser-based polyphonic synthesizer built with TypeScript, the Web Audio API, and native Web Components. It features a modular architecture with clear separation between:
+- Audio processing (modules)
+- User interface (components)
+- Application logic (handlers)
+- Services (UIConfigService)
+
+**UIConfigService centralizes UI access and parameter binding.** Modules no longer receive DOM elements in their constructors; instead, they:
+- Define element IDs locally via `elementIds` object
+- Read config declaratively via `UIConfigService.getConfig()`
+- Bind runtime updates using helpers (`bindAudioParams`, `bindGainParam`, `onInput`, `onSelect`)
+
+This architecture provides:
+- ✅ Zero-parameter constructors (eliminates dependency injection)
+- ✅ 90% less boilerplate (declarative binding vs manual event listeners)
+- ✅ Better testability (mock DOM in tests, not fixtures)
+- ✅ Type-safe and flexible (helpers for simple cases, custom handlers for complex)
 
 ## Core Architecture Principles
 
 ### 1. **Modular Audio Processing**
 Audio functionality is encapsulated in self-contained modules in `src/modules/`. Each module:
-- Implements the `BaseEffectModule` interface directly
+- Implements `BaseEffectModule` interface
 - Manages its own Web Audio nodes
-- Exposes a configuration interface via `getConfig()`
-- Handles parameter updates via event listeners
+- Exposes configuration via `getConfig()` reading from UIConfigService
+- Binds parameter updates via UIConfigService helpers in constructor
 - Returns `{ input, output }` nodes for audio routing
+- Handles cleanup on re-initialization
 
 ### 2. **Native Web Components**
-UI elements are built as custom Web Components (extending `HTMLElement`). This provides:
+UI elements are built as custom Web Components (extending `HTMLElement`):
 - Encapsulation of markup, style, and behavior
 - Reusable, framework-independent components
-- Clean separation of concerns
-- Native browser performance
+- Dispatch standard DOM events (`input`, `change`)
+- Components are unaware of modules (loose coupling)
 
 ### 3. **Centralized Effects Management**
 The `EffectsManager` orchestrates the effects chain:
 - Registers effects with metadata (id, name, order, category)
-- Initializes effects in the correct order
+- Initializes effects in correct order
 - Manages audio routing between effects
 - Provides querying and status APIs
 
 ### 4. **Event-Driven Parameter Updates**
-Parameter changes flow through the system via DOM events:
-- UI components dispatch `input` events
-- Modules listen to their parameter elements
-- Audio nodes are updated in real-time
+Parameter changes flow through DOM events via UIConfigService:
+- UI components dispatch `input`/`change` events
+- Modules bind to these events using UIConfigService helpers
+- Audio nodes update in real-time
 - No manual coupling between UI and audio logic
+
+### 5. **Centralized UI Access via UIConfigService**
+`UIConfigService` is the single source of truth for UI interaction:
+- **Safe element access**: `exists()`, `tryGet*()` methods prevent errors
+- **Declarative config**: `getConfig({ id | { id, transform, select } })`
+- **Batch bindings**: `bindAudioParams([...])` for multiple parameters
+- **Single bindings**: `bindAudioParam()`, `bindGainParam()`
+- **Custom handlers**: `onInput()`, `onSelect()` for complex logic
 
 ---
 
@@ -44,51 +68,51 @@ src/
 ├── core/
 │   ├── synth.ts                    # Main synthesizer engine
 │   ├── effects-manager.ts          # Effects chain orchestration
-│   ├── oscillator-bank.ts          # Polyphonic voice management
-│   ├── note-scheduler.ts           # Timing and scheduling
-│   └── factory-presets.ts          # Preset configurations
+│   ├── oscillator-bank.ts          # Oscillator management (UIConfigService)
+│   ├── voice-manager.ts            # Voice allocation (UIConfigService)
+│   ├── settings-manager.ts         # Preset/settings management
+│   └── factory-presets.ts          # Factory preset definitions
 ├── modules/
 │   ├── effects/
-│   │   ├── base-effect-module.ts   # Effect interface definition
-│   │   ├── chorus-module.ts        # Chorus effect
-│   │   ├── delay-module.ts         # Delay effect
-│   │   ├── phaser-module.ts        # Phaser effect
-│   │   ├── reverb-module.ts        # Reverb effect
-│   │   ├── compressor-module.ts    # Dynamics compressor
-│   │   ├── distortion-module.ts    # Distortion/overdrive
-│   │   └── spectrum-analyser-module.ts # Frequency analyzer
-│   ├── envelope-module.ts          # ADSR envelope
-│   ├── lfo-module.ts              # Low-frequency oscillator
-│   └── filter-module.ts           # Filter (lowpass, highpass, etc.)
+│   │   ├── base-effect-module.ts   # Effect interface
+│   │   ├── chorus-module.ts        # Chorus (UIConfigService)
+│   │   ├── compressor-module.ts    # Compressor (UIConfigService)
+│   │   ├── delay-module.ts         # Delay (UIConfigService)
+│   │   ├── distortion-module.ts    # Distortion (UIConfigService)
+│   │   ├── phaser-module.ts        # Phaser (UIConfigService)
+│   │   ├── reverb-module.ts        # Reverb (UIConfigService)
+│   │   └── spectrum-analyser-module.ts # Analyser (UIConfigService)
+│   ├── envelope-module.ts          # ADSR envelope (UIConfigService)
+│   ├── filter-module.ts            # Filter (UIConfigService)
+│   ├── lfo-module.ts               # LFO (UIConfigService)
+│   └── master-module.ts            # Master volume (UIConfigService)
+├── services/
+│   └── ui-config-service.ts        # Centralized UI access/binding
 ├── components/
-│   ├── piano-keyboard.ts          # Visual keyboard interface
-│   ├── range-control.ts           # Labeled slider control
-│   ├── oscillator-control.ts      # Oscillator parameter UI
-│   ├── spectrum-analyser.ts       # Spectrum display component
-│   └── preset-selector.ts         # Preset selection UI
+│   ├── atoms/                      # Basic UI elements
+│   ├── molecules/                  # Composite controls
+│   └── organisms/                  # Complex components
 ├── handlers/
-│   ├── midi-handler.ts            # MIDI input handling
-│   ├── keyboard-handler.ts        # Computer keyboard mapping
-│   └── note-handler.ts            # Note on/off logic
-├── utils/
-│   └── frequency.ts               # Frequency/pitch utilities
-└── main.ts                        # Application entry point
+│   ├── keyboard-handlers.ts        # Computer keyboard input
+│   ├── midi-handler-setup.ts       # MIDI device integration
+│   ├── octave-handler.ts           # Octave switching
+│   ├── oscillator-management.ts    # Dynamic oscillator UI
+│   └── recording-handler.ts        # Audio recording
+└── main.ts                         # Application entry point
 
 test/
 ├── core/
-│   └── effects-manager.test.ts    # Effects chain tests
+│   ├── effects-manager.test.ts
+│   ├── oscillator-bank.test.ts     # UIConfigService tests
+│   └── voice-manager.test.ts       # UIConfigService tests
 ├── modules/
+│   ├── envelope-module.test.ts     # UIConfigService tests
 │   └── effects/
-│       ├── chorus-module.test.ts
-│       ├── delay-module.test.ts
-│       ├── phaser-module.test.ts
-│       ├── reverb-module.test.ts
-│       ├── compressor-module.test.ts
 │       └── spectrum-analyser-module.test.ts
 └── fixtures/
-    ├── mock-audio-context.ts      # Web Audio API mocks
-    ├── mock-input.ts              # HTMLInputElement mocks
-    └── mock-effect-module.ts      # BaseEffectModule mock
+    ├── mock-audio-context.ts       # Web Audio API mocks
+    ├── mock-input.ts               # HTMLInputElement mocks
+    └── mock-effect-module.ts       # BaseEffectModule mock
 ```
 
 ---
@@ -106,38 +130,72 @@ export interface EffectNodes {
 }
 
 export interface BaseEffectModule {
-  /**
-   * Initialize the effect with audio context and destination
-   * @param audioCtx - The AudioContext to create nodes in
-   * @param destination - The next node in the signal chain
-   * @returns Object containing input and output gain nodes
-   */
   initialize(audioCtx: AudioContext, destination: AudioNode): EffectNodes;
-
-  /**
-   * Get the input node for this effect
-   * @returns Input gain node, or null if not initialized
-   */
   getInput(): GainNode | null;
-
-  /**
-   * Get the output node for this effect
-   * @returns Output gain node, or null if not initialized
-   */
   getOutput(): GainNode | null;
-
-  /**
-   * Check if this effect has been initialized
-   * @returns True if initialized, false otherwise
-   */
   isInitialized(): boolean;
-
-  /**
-   * Get the current configuration of this effect
-   * @returns Effect-specific configuration object
-   */
-  getConfig(): any;
+  getConfig(): any; // Module-specific config object
 }
+```
+
+### UIConfigService
+
+Provides centralized, type-safe access to UI elements and parameter binding.
+
+**Key APIs:**
+
+```typescript
+// Element access
+const input = UIConfigService.getInput('my-param');
+const select = UIConfigService.getSelect('filter-type');
+const control = UIConfigService.getControl('my-control');
+
+// Safe access (returns null instead of throwing)
+const input = UIConfigService.tryGetInput('optional-param');
+
+// Check existence
+if (UIConfigService.exists('my-param')) { /* ... */ }
+
+// Declarative config parsing
+const config = UIConfigService.getConfig({
+  rate: 'chorus-rate',
+  depth: { id: 'chorus-depth', transform: (v) => parseFloat(v) * 0.001 },
+  type: { id: 'filter-type', select: true }
+});
+
+// Batch bind AudioParams (most common)
+UIConfigService.bindAudioParams([
+  { elementId: 'comp-threshold', audioParam: () => this.compressor?.threshold },
+  { elementId: 'comp-ratio', audioParam: () => this.compressor?.ratio }
+]);
+
+// Single AudioParam binding
+UIConfigService.bindAudioParam({
+  elementId: 'lfo-depth',
+  audioParam: () => this.lfoGain?.gain,
+  transform: (v) => parseFloat(v) * 0.001
+});
+
+// GainNode helper
+UIConfigService.bindGainParam({
+  elementId: 'master-volume',
+  gainNode: () => this.masterGain
+});
+
+// Custom handlers
+UIConfigService.onInput('chorus-mix', (el, value) => {
+  const mix = parseFloat(value);
+  if (this.wetGain && this.dryGain) {
+    this.wetGain.gain.value = mix;
+    this.dryGain.gain.value = 1 - mix;
+  }
+});
+
+UIConfigService.onSelect('filter-type', (el, value) => {
+  if (this.filter) {
+    this.filter.type = value as BiquadFilterType;
+  }
+});
 ```
 
 ### EffectsManager
@@ -147,8 +205,15 @@ Orchestrates the effects chain and provides a unified API:
 ```typescript
 const effectsManager = new EffectsManager();
 
-// Register effects with metadata
-effectsManager.register(chorusModule, {
+// Register effects (zero-parameter constructors)
+effectsManager.register(new CompressorModule(), {
+  id: 'compressor',
+  name: 'Compressor',
+  order: 100,
+  category: 'dynamics'
+});
+
+effectsManager.register(new ChorusModule(), {
   id: 'chorus',
   name: 'Chorus',
   order: 90,
@@ -164,29 +229,44 @@ const allEffects = effectsManager.getAllEffects();
 const modulationEffects = effectsManager.getEffectsByCategory('modulation');
 ```
 
-**Effect Order:**
-- Higher order values = earlier in the chain
-- Typical ordering:
-  - 100: Dynamics (compressor)
-  - 90-80: Modulation (chorus, phaser)
-  - 70-60: Time-based (delay, reverb)
-  - 50-40: Utility (analyser)
+**Effect Order** (higher = earlier in chain):
+- 100: Dynamics (compressor)
+- 90-80: Modulation (chorus, phaser)
+- 70-60: Time-based/distortion (delay, distortion)
+- 50: Reverb
+- 40: Utility (spectrum analyser)
+
+### VoiceManager
+
+Handles voice allocation and lifecycle using UIConfigService:
+
+```typescript
+const voiceManager = new VoiceManager(
+  oscillatorBank,
+  ampEnvelope,
+  filterModule,
+  lfoModule
+);
+
+// Reads polyphonic mode from UI
+const config = voiceManager.getConfig(); // { polyphonic: true }
+
+// Creates voices with LFO routing, envelopes, and filters
+voiceManager.createVoice(audioCtx, 'A4', 440, 0.8, destination);
+
+// Manages voice lifecycle with proper release scheduling
+voiceManager.stopVoice('A4', audioCtx.currentTime);
+```
 
 ---
 
-## Existing Effect Modules
+## Existing Modules (UIConfigService Pattern)
+
+All modules follow the zero-parameter constructor pattern with UIConfigService.
 
 ### Chorus Module
-
 ```typescript
-import { ChorusModule } from './modules/effects/chorus-module';
-
-const rateEl = document.getElementById('chorus-rate') as HTMLInputElement;
-const depthEl = document.getElementById('chorus-depth') as HTMLInputElement;
-const mixEl = document.getElementById('chorus-mix') as HTMLInputElement;
-
-const chorusModule = new ChorusModule(rateEl, depthEl, mixEl);
-
+const chorusModule = new ChorusModule();
 effectsManager.register(chorusModule, {
   id: 'chorus',
   name: 'Chorus',
@@ -195,106 +275,11 @@ effectsManager.register(chorusModule, {
 });
 ```
 
-**Configuration:**
-- `rate`: LFO frequency (Hz)
-- `depth`: Modulation depth (ms)
-- `mix`: Wet/dry balance (0-1)
-
-### Delay Module
-
-```typescript
-import { DelayModule } from './modules/effects/delay-module';
-
-const timeEl = document.getElementById('delay-time') as HTMLInputElement;
-const feedbackEl = document.getElementById('delay-feedback') as HTMLInputElement;
-const mixEl = document.getElementById('delay-mix') as HTMLInputElement;
-
-const delayModule = new DelayModule(timeEl, feedbackEl, mixEl);
-
-effectsManager.register(delayModule, {
-  id: 'delay',
-  name: 'Delay',
-  order: 70,
-  category: 'time-based'
-});
-```
-
-**Configuration:**
-- `time`: Delay time in seconds
-- `feedback`: Feedback amount (0-1)
-- `mix`: Wet/dry balance (0-1)
-
-### Phaser Module
-
-```typescript
-import { PhaserModule } from './modules/effects/phaser-module';
-
-const rateEl = document.getElementById('phaser-rate') as HTMLInputElement;
-const depthEl = document.getElementById('phaser-depth') as HTMLInputElement;
-const stagesEl = document.getElementById('phaser-stages') as HTMLInputElement;
-const feedbackEl = document.getElementById('phaser-feedback') as HTMLInputElement;
-const mixEl = document.getElementById('phaser-mix') as HTMLInputElement;
-
-const phaserModule = new PhaserModule(rateEl, depthEl, stagesEl, feedbackEl, mixEl);
-
-effectsManager.register(phaserModule, {
-  id: 'phaser',
-  name: 'Phaser',
-  order: 85,
-  category: 'modulation'
-});
-```
-
-**Configuration:**
-- `rate`: LFO frequency (Hz)
-- `depth`: Filter sweep range (Hz)
-- `stages`: Number of allpass filters (2-12)
-- `feedback`: Feedback amount (0-1)
-- `mix`: Wet/dry balance (0-1)
-
-### Reverb Module
-
-```typescript
-import { ReverbModule } from './modules/effects/reverb-module';
-
-const decayEl = document.getElementById('reverb-decay') as HTMLInputElement;
-const mixEl = document.getElementById('reverb-mix') as HTMLInputElement;
-
-const reverbModule = new ReverbModule(decayEl, mixEl);
-
-effectsManager.register(reverbModule, {
-  id: 'reverb',
-  name: 'Reverb',
-  order: 60,
-  category: 'time-based'
-});
-```
-
-**Configuration:**
-- `decay`: Reverb decay time in seconds
-- `mix`: Wet/dry balance (0-1)
-
-**Special behavior:** Reverb generates its own impulse response buffer. If you change the decay parameter after initialization, call `updateWithContext(audioCtx)` to regenerate the impulse response.
+**Config:** `rate` (Hz), `depth` (ms), `mix` (0-1)
 
 ### Compressor Module
-
 ```typescript
-import { CompressorModule } from './modules/effects/compressor-module';
-
-const thresholdEl = document.getElementById('comp-threshold') as HTMLInputElement;
-const ratioEl = document.getElementById('comp-ratio') as HTMLInputElement;
-const attackEl = document.getElementById('comp-attack') as HTMLInputElement;
-const releaseEl = document.getElementById('comp-release') as HTMLInputElement;
-const kneeEl = document.getElementById('comp-knee') as HTMLInputElement;
-
-const compressorModule = new CompressorModule(
-  thresholdEl,
-  ratioEl,
-  attackEl,
-  releaseEl,
-  kneeEl
-);
-
+const compressorModule = new CompressorModule();
 effectsManager.register(compressorModule, {
   id: 'compressor',
   name: 'Compressor',
@@ -303,43 +288,65 @@ effectsManager.register(compressorModule, {
 });
 ```
 
-**Configuration:**
-- `threshold`: Threshold in dB
-- `ratio`: Compression ratio
-- `attack`: Attack time in seconds
-- `release`: Release time in seconds
-- `knee`: Knee width in dB
+**Config:** `threshold` (dB), `ratio`, `attack` (s), `release` (s), `knee` (dB)
 
-### Distortion Module
-
+### Delay Module
 ```typescript
-import { DistortionModule } from './modules/effects/distortion-module';
-
-const driveEl = document.getElementById('dist-drive') as HTMLInputElement;
-const blendEl = document.getElementById('dist-blend') as HTMLInputElement;
-
-const distortionModule = new DistortionModule(driveEl, blendEl);
-
-effectsManager.register(distortionModule, {
-  id: 'distortion',
-  name: 'Distortion',
-  order: 95,
-  category: 'dynamics'
+const delayModule = new DelayModule();
+effectsManager.register(delayModule, {
+  id: 'delay',
+  name: 'Delay',
+  order: 70,
+  category: 'time-based'
 });
 ```
 
-**Configuration:**
-- `drive`: Distortion amount (0-100+)
-- `blend`: Wet/dry balance (0-1)
+**Config:** `time` (s), `feedback` (0-1), `mix` (0-1)
+
+### Distortion Module
+```typescript
+const distortionModule = new DistortionModule();
+effectsManager.register(distortionModule, {
+  id: 'distortion',
+  name: 'Distortion',
+  order: 60,
+  category: 'distortion'
+});
+```
+
+**Config:** `drive` (0-100+), `blend` (0-1)
+
+### Phaser Module
+```typescript
+const phaserModule = new PhaserModule();
+effectsManager.register(phaserModule, {
+  id: 'phaser',
+  name: 'Phaser',
+  order: 80,
+  category: 'modulation'
+});
+```
+
+**Config:** `rate` (Hz), `depth` (Hz), `stages` (2-12), `feedback` (0-1), `mix` (0-1)
+
+### Reverb Module
+```typescript
+const reverbModule = new ReverbModule();
+effectsManager.register(reverbModule, {
+  id: 'reverb',
+  name: 'Reverb',
+  order: 50,
+  category: 'time-based'
+});
+```
+
+**Config:** `decay` (s), `mix` (0-1)  
+**Special:** Call `reverbModule.updateWithContext(audioCtx)` when decay changes (handled in main.ts)
 
 ### Spectrum Analyser Module
-
 ```typescript
-import { SpectrumAnalyserModule } from './modules/effects/spectrum-analyser-module';
-
-const canvas = document.getElementById('spectrum-canvas') as HTMLCanvasElement;
+const canvas = (document.querySelector('spectrum-analyser') as SpectrumAnalyser)?.getCanvas();
 const spectrumAnalyserModule = new SpectrumAnalyserModule(canvas);
-
 effectsManager.register(spectrumAnalyserModule, {
   id: 'analyser',
   name: 'Spectrum Analyser',
@@ -348,24 +355,55 @@ effectsManager.register(spectrumAnalyserModule, {
 });
 ```
 
-**Configuration:**
-- `fftSize`: FFT size (default: 2048)
-- `smoothingTimeConstant`: Smoothing (default: 0.8)
-- `minFreq`: Minimum frequency to display (default: 20 Hz)
-- `maxFreq`: Maximum frequency to display (default: 5000 Hz)
+**Config (optional UI controls):** `fftSize`, `smoothingTimeConstant`, `minFreq`, `maxFreq`  
+**Special:** Canvas passed to constructor; visualizes automatically on each frame
 
-**Special behavior:** The analyser takes a canvas element in its constructor and automatically handles visualization on each animation frame. No additional setup required.
+### EnvelopeModule
+```typescript
+const ampEnvelope = new EnvelopeModule('amp');
+const filterEnvelope = new EnvelopeModule('filter');
+```
+
+**Config:** `attack`, `decay`, `sustain`, `release` (reads from `attack`/`filter-attack` etc.)
+
+### FilterModule
+```typescript
+const filterModule = new FilterModule(filterEnvelope);
+```
+
+**Config:** `type`, `frequency`, `q`, `envelopeAmount` (uses UIConfigService)
+
+### LFOModule
+```typescript
+const lfoModule = new LFOModule();
+```
+
+**Config:** `rate`, `filterDepth`, `pitchDepth` (uses UIConfigService)
+
+### MasterModule
+```typescript
+const masterModule = new MasterModule();
+```
+
+**Config:** `volume` (uses UIConfigService with `bindGainParam`)
+
+### OscillatorBank
+```typescript
+const oscillatorBank = new OscillatorBank();
+```
+
+**Config:** Reads `osc-{id}-waveform`, `osc-{id}-detune`, `osc-{id}-level` for each oscillator (uses UIConfigService)
 
 ---
 
 ## Adding New Effect Modules
 
-### Step 1: Create the Module File
-
-Create a new file in `src/modules/effects/[name]-module.ts`:
+### Step 1: Create Module File
 
 ```typescript
+// filepath: src/modules/effects/my-effect-module.ts
 import type { BaseEffectModule, EffectNodes } from './base-effect-module';
+import { UIConfigService } from '../../services/ui-config-service';
 
 export type MyEffectConfig = {
   param1: number;
@@ -373,95 +411,86 @@ export type MyEffectConfig = {
 };
 
 export class MyEffectModule implements BaseEffectModule {
-  private readonly param1El: HTMLInputElement;
-  private readonly param2El: HTMLInputElement;
+  // 1. Define element IDs
+  private readonly elementIds = {
+    param1: 'my-effect-param1',
+    param2: 'my-effect-param2'
+  };
 
+  // 2. Audio nodes
   private inputGain: GainNode | null = null;
   private outputGain: GainNode | null = null;
-  // ... other audio nodes
+  private effectNode: SomeNode | null = null;
 
-  constructor(param1El: HTMLInputElement, param2El: HTMLInputElement) {
-    this.param1El = param1El;
-    this.param2El = param2El;
-    
+  // 3. Zero-parameter constructor
+  constructor() {
     this.setupParameterListeners();
   }
 
+  // 4. Declarative config
   getConfig(): MyEffectConfig {
-    return {
-      param1: parseFloat(this.param1El.value),
-      param2: parseFloat(this.param2El.value)
-    };
+    return UIConfigService.getConfig({
+      param1: this.elementIds.param1,
+      param2: {
+        id: this.elementIds.param2,
+        transform: (v) => parseFloat(v) * 0.001
+      }
+    });
   }
 
+  // 5. Initialize nodes
   initialize(audioCtx: AudioContext, destination: AudioNode): EffectNodes {
-    // Clean up previous nodes if re-initializing
     this.disconnect();
 
-    // Create nodes
+    const { param1, param2 } = this.getConfig();
+
     this.inputGain = audioCtx.createGain();
     this.outputGain = audioCtx.createGain();
-    // ... create effect-specific nodes
+    this.effectNode = audioCtx.createSomeNode();
 
-    // Set up signal routing
-    this.inputGain.connect(/* ... */);
-    /* ... */.connect(this.outputGain);
+    this.effectNode.param1.value = param1;
+    this.effectNode.param2.value = param2;
+
+    // Connect: input -> effect -> output -> destination
+    this.inputGain.connect(this.effectNode);
+    this.effectNode.connect(this.outputGain);
     this.outputGain.connect(destination);
 
-    // Initialize with current parameter values
-    this.updateParameters();
-
-    return {
-      input: this.inputGain,
-      output: this.outputGain
-    };
+    return { input: this.inputGain, output: this.outputGain };
   }
 
-  getInput(): GainNode | null {
-    return this.inputGain;
-  }
-
-  getOutput(): GainNode | null {
-    return this.outputGain;
-  }
-
-  isInitialized(): boolean {
-    return this.inputGain !== null && this.outputGain !== null;
-  }
-
+  // 6. Bind parameters using helpers
   private setupParameterListeners(): void {
-    this.param1El.addEventListener('input', () => {
-      this.updateParameters();
-    });
-
-    this.param2El.addEventListener('input', () => {
-      this.updateParameters();
-    });
+    UIConfigService.bindAudioParams([
+      { elementId: this.elementIds.param1, audioParam: () => this.effectNode?.param1 },
+      { 
+        elementId: this.elementIds.param2,
+        audioParam: () => this.effectNode?.param2,
+        transform: (v) => parseFloat(v) * 0.001
+      }
+    ]);
   }
 
-  private updateParameters(): void {
-    if (!this.isInitialized()) return;
-
-    const config = this.getConfig();
-    // Update audio node parameters based on config
-    // Example: this.someNode.someParam.value = config.param1;
-  }
+  getInput(): GainNode | null { return this.inputGain; }
+  getOutput(): GainNode | null { return this.outputGain; }
+  isInitialized(): boolean { return this.effectNode !== null; }
 
   private disconnect(): void {
     if (this.inputGain) this.inputGain.disconnect();
     if (this.outputGain) this.outputGain.disconnect();
-    // ... disconnect other nodes
+    if (this.effectNode) this.effectNode.disconnect();
+    this.inputGain = null;
+    this.outputGain = null;
+    this.effectNode = null;
   }
 }
 ```
 
 ### Step 2: Add HTML Controls
 
-Add UI controls to `index.html`:
-
 ```html
 <range-control
-  id="my-param1"
+  id="my-effect-param1"
   label="Parameter 1"
   min="0"
   max="100"
@@ -470,38 +499,32 @@ Add UI controls to `index.html`:
 ></range-control>
 
 <range-control
-  id="my-param2"
+  id="my-effect-param2"
   label="Parameter 2"
   min="0"
-  max="1"
-  value="0.5"
-  step="0.01"
+  max="1000"
+  value="500"
+  step="10"
 ></range-control>
 ```
 
-### Step 3: Register with EffectsManager
-
-In `main.ts`:
+### Step 3: Register in main.ts
 
 ```typescript
 import { MyEffectModule } from './modules/effects/my-effect-module';
 
-const param1El = (document.getElementById('my-param1') as RangeControl).getInput();
-const param2El = (document.getElementById('my-param2') as RangeControl).getInput();
-
-const myEffectModule = new MyEffectModule(param1El, param2El);
+// Zero-parameter instantiation
+const myEffectModule = new MyEffectModule();
 
 effectsManager.register(myEffectModule, {
   id: 'my-effect',
   name: 'My Effect',
-  order: 85, // Choose appropriate position in chain
-  category: 'modulation' // or 'dynamics', 'time-based', 'utility'
+  order: 85,
+  category: 'modulation'
 });
 ```
 
-### Step 4: Initialize the Chain
-
-The effects manager will automatically initialize your effect when you call:
+### Step 4: Initialize Chain
 
 ```typescript
 const chainInput = effectsManager.initialize(audioCtx, masterGain);
@@ -513,164 +536,84 @@ const chainInput = effectsManager.initialize(audioCtx, masterGain);
 
 ### Philosophy
 
-- **Test business logic, not audio output**: Verify configuration, node creation, and routing
-- **Mock Web Audio API**: Use test fixtures to avoid real audio processing
-- **Focus on integration points**: Ensure modules work correctly with EffectsManager
-- **Test parameter updates**: Verify event listeners trigger correct node updates
+- **Test business logic, not audio output**: Verify config, node creation, routing
+- **Mock Web Audio API**: Use test fixtures
+- **Test parameter updates**: Trigger events, assert node state
+- **Use UIConfigService**: Create DOM elements in tests, no fixtures needed
 
-### Testing Fixtures
-
-Located in `test/fixtures/`:
-
-#### `mock-audio-context.ts`
-
-Provides a mock AudioContext with factory functions for all Web Audio node types:
+### Testing with UIConfigService
 
 ```typescript
-import { createMockAudioCtx } from '../../fixtures/mock-audio-context';
-
-const ctx = createMockAudioCtx();
-const nodes = module.initialize(ctx, destination);
-
-// Assert that nodes were created
-expect(ctx.createGain).toHaveBeenCalled();
-expect(ctx.createDelay).toHaveBeenCalled();
-```
-
-**Adding new node types:**
-
-If your module uses a Web Audio node type not yet in the mock, add a factory function:
-
-```typescript
-function createMyNode() {
-  return {
-    someProperty: { value: 0 },
-    connect: jest.fn(),
-    disconnect: jest.fn()
-  };
-}
-
-export function createMockAudioCtx(overrides: Partial<AudioContext> = {}) {
-  return {
-    createMyNode: jest.fn(() => createMyNode()),
-    // ...existing factories
-    sampleRate: 44100,
-    ...overrides
-  } as unknown as AudioContext;
-}
-```
-
-#### `mock-input.ts`
-
-Creates mock HTMLInputElement instances that support event listeners:
-
-```typescript
-import { createMockInput } from '../../fixtures/mock-input';
-
-const rateEl = createMockInput('2.5');
-
-// Later in test:
-(rateEl as any).value = '5.0';
-rateEl.dispatchEvent(new Event('input'));
-```
-
-#### `mock-effect-module.ts`
-
-Minimal BaseEffectModule implementation for testing EffectsManager:
-
-```typescript
-import { MockEffectModule } from '../../fixtures/mock-effect-module';
-
-const mockEffect = new MockEffectModule('test-effect');
-effectsManager.register(mockEffect, { ... });
-```
-
-### Test File Template
-
-Create `test/modules/effects/[name]-module.test.ts`:
-
-```typescript
-import { describe, it, expect, beforeEach, jest } from 'bun:test';
+import { describe, it, expect, beforeEach } from 'bun:test';
 import { MyEffectModule } from '../../../src/modules/effects/my-effect-module';
-import { createMockInput } from '../../fixtures/mock-input';
 import { createMockAudioCtx } from '../../fixtures/mock-audio-context';
 
-describe('MyEffectModule', () => {
-  let param1El: HTMLInputElement;
-  let param2El: HTMLInputElement;
-  let module: MyEffectModule;
-
+describe('MyEffectModule (UIConfigService)', () => {
   beforeEach(() => {
-    param1El = createMockInput('50');
-    param2El = createMockInput('0.5');
-    module = new MyEffectModule(param1El, param2El);
+    document.body.innerHTML = '';
+
+    // Create required elements
+    const param1 = document.createElement('input');
+    param1.id = 'my-effect-param1';
+    param1.type = 'number';
+    param1.value = '50';
+    document.body.appendChild(param1);
+
+    const param2 = document.createElement('input');
+    param2.id = 'my-effect-param2';
+    param2.type = 'number';
+    param2.value = '500';
+    document.body.appendChild(param2);
   });
 
-  it('returns correct config', () => {
+  it('reads config from UI via UIConfigService', () => {
+    const module = new MyEffectModule();
     expect(module.getConfig()).toEqual({ param1: 50, param2: 0.5 });
   });
 
-  it('initializes nodes and sets up signal flow', () => {
+  it('initializes nodes and connects them', () => {
     const ctx = createMockAudioCtx();
     const dest = { connect: jest.fn(), disconnect: jest.fn() } as any;
-    
+    const module = new MyEffectModule();
+
     const nodes = module.initialize(ctx, dest);
-    
+
     expect(nodes.input).toBeDefined();
     expect(nodes.output).toBeDefined();
     expect(ctx.createGain).toHaveBeenCalled();
-    // Assert other node creations
-  });
-
-  it('isInitialized returns true after initialize', () => {
-    const ctx = createMockAudioCtx();
-    const dest = { connect: jest.fn(), disconnect: jest.fn() } as any;
-    
-    module.initialize(ctx, dest);
-    
-    expect(module.isInitialized()).toBe(true);
   });
 
   it('updates parameters on input change', () => {
     const ctx = createMockAudioCtx();
     const dest = { connect: jest.fn(), disconnect: jest.fn() } as any;
+    const module = new MyEffectModule();
     module.initialize(ctx, dest);
 
-    // Change input value
-    (param1El as any).value = '75';
-    
-    // Trigger the module's event listener
-    param1El.dispatchEvent(new Event('input'));
-    
-    // Assert on internal node state
-    expect(module['someNode']!.someParam.value).toBeCloseTo(75);
+    const input = document.getElementById('my-effect-param1') as HTMLInputElement;
+    input.value = '75';
+    input.dispatchEvent(new Event('input'));
+
+    expect(module['effectNode']!.param1.value).toBe(75);
   });
 });
 ```
 
-### Testing Parameter Updates - Critical Pattern
+### Testing Pattern - Critical
 
-**⚠️ IMPORTANT:** Always test parameter changes by triggering the module's event listeners, not by manually setting node values:
+**⚠️ IMPORTANT:** Always trigger events to test parameter updates:
 
 **❌ WRONG:**
 ```typescript
-// This bypasses the module's event listeners!
-(mixEl as any).value = '0.7';
-module['wetGain'].gain.value = 0.7;  // Manual assignment
-module['dryGain'].gain.value = 0.3;
+module['effectNode'].param.value = 75; // Bypasses listeners
 ```
 
 **✅ CORRECT:**
 ```typescript
-// This tests the actual behavior when users interact with controls
-(mixEl as any).value = '0.7';
-mixEl.dispatchEvent(new Event('input'));  // Module updates its own nodes
-
-expect(module['wetGain']!.gain.value).toBeCloseTo(0.7);
-expect(module['dryGain']!.gain.value).toBeCloseTo(0.3);
+const input = document.getElementById('my-param') as HTMLInputElement;
+input.value = '75';
+input.dispatchEvent(new Event('input')); // Tests actual behavior
+expect(module['effectNode']!.param.value).toBe(75);
 ```
-
-See [`test/modules/effects/chorus-module.test.ts`](../test/modules/effects/chorus-module.test.ts) for a complete example.
 
 ### Running Tests
 
@@ -678,7 +621,7 @@ See [`test/modules/effects/chorus-module.test.ts`](../test/modules/effects/choru
 # Run all tests
 bun test
 
-# Run specific test file
+# Run specific test
 bun test test/modules/effects/my-effect-module.test.ts
 
 # Watch mode
@@ -690,8 +633,6 @@ bun test --watch
 ## Web Components
 
 ### Creating Custom Components
-
-Extend `HTMLElement` and define custom elements:
 
 ```typescript
 class MyControl extends HTMLElement {
@@ -717,19 +658,21 @@ class MyControl extends HTMLElement {
 customElements.define('my-control', MyControl);
 ```
 
-Usage in HTML:
-
+**Usage:**
 ```html
 <my-control label="Volume" min="0" max="1" value="0.5"></my-control>
 ```
 
 ### Existing Components
 
-- **`<piano-keyboard>`**: Interactive piano keyboard visualization
-- **`<range-control>`**: Labeled slider with min/max/step attributes
-- **`<oscillator-control>`**: Complete oscillator parameter UI
-- **`<spectrum-analyser>`**: Frequency spectrum display
-- **`<preset-selector>`**: Preset selection dropdown
+- **`<range-control>`**: Labeled slider
+- **`<piano-keyboard>`**: Interactive keyboard
+- **`<oscillator-control>`**: Oscillator UI
+- **`<spectrum-analyser>`**: Spectrum display
+- **`<preset-selector>`**: Preset dropdown
+- **`<adsr-controls>`**: ADSR envelope UI
+- **`<filter-type-picker>`**: Filter type selector
+- **`<waveform-picker>`**: Oscillator waveform selector
 
 ---
 
@@ -749,11 +692,11 @@ graph LR
     F --> H
     G --> H
     
-    H --> I[Chorus]
-    I --> J[Phaser]
-    J --> K[Delay]
-    K --> L[WaveShaper]
-    L --> M[Compressor]
+    H --> I[Compressor]
+    I --> J[Chorus]
+    J --> K[Phaser]
+    K --> L[Delay]
+    L --> M[Distortion]
     M --> N[Reverb]
     N --> O[Spectrum Analyser]
     O --> P[EffectsManager Output]
@@ -767,71 +710,104 @@ graph LR
 ```
 
 **Key points:**
-- Effects are initialized in reverse order (highest order first)
-- Each effect's output connects to the next effect's input
-- The chain is built backwards from the destination
-- Analyser typically goes last (lowest order) as it's passive
+- Effects initialized in reverse order (build chain backward)
+- Each effect's output connects to next effect's input
+- Voices connect to EffectsManager input
+- Analyser is passive (lowest order)
 
 ---
 
 ## Best Practices
 
-### Effect Module Design
+### Module Design
 
-1. **Always implement BaseEffectModule**: Don't create custom interfaces
-2. **Use input/output gain nodes**: Provides consistent routing points
-3. **Clean up on re-initialization**: Call `disconnect()` before creating new nodes
-4. **Parse parameters carefully**: Use `parseFloat()` or `parseInt()` with validation
-5. **Handle null states**: Check `isInitialized()` before accessing nodes
-6. **Use descriptive config types**: Export a typed config interface
+1. **Zero-parameter constructors**: Use UIConfigService, not dependency injection
+2. **Define `elementIds`**: Centralized, type-safe ID references
+3. **Use UIConfigService helpers**: `bindAudioParams()` for simple cases
+4. **Custom handlers for complex logic**: `onInput()` when updating multiple nodes
+5. **Clean up on re-initialization**: Call `disconnect()` before creating new nodes
+6. **Guard updates**: Check `isInitialized()` in parameter listeners
 
 ### Parameter Handling
 
-1. **Set up listeners in constructor**: Attach to DOM elements immediately
-2. **Update nodes in listeners**: Don't store duplicate state
-3. **Check initialization**: Guard against updates before `initialize()` is called
-4. **Use AudioParam.value**: Set node parameters directly, not via intermediate variables
+1. **Prefer helpers**: Use `bindAudioParams()`, `bindGainParam()` when possible
+2. **Use transforms**: Convert units (ms→s), clamp ranges, round values
+3. **Mix patterns**: Helpers for simple bindings, custom handlers for complex
+4. **Lazy node access**: Use `() => this.node?.param` to handle null states
 
 ### Testing
 
-1. **Mock everything**: Never use real AudioContext in tests
-2. **Test the interface**: Focus on public methods and configuration
-3. **Trigger events**: Use `dispatchEvent()` to test parameter updates
-4. **Check node creation**: Verify factory methods were called
-5. **Assert on node state**: Access private nodes via `module['nodeName']`
+1. **Mock Web Audio API**: Use `createMockAudioCtx()`
+2. **Create DOM in tests**: Set up elements in `beforeEach()`
+3. **Trigger events**: Use `dispatchEvent(new Event('input'))`
+4. **Assert on config**: Test `getConfig()` with various input values
+5. **Verify node state**: Access private nodes via `module['nodeName']`
 
 ### Code Organization
 
-1. **Private fields first**: List all audio nodes at the top
-2. **Public methods next**: `getConfig()`, `initialize()`, etc.
-3. **Private helpers last**: `setupParameterListeners()`, `updateParameters()`, etc.
-4. **Group related code**: Keep parameter update logic together
+1. **elementIds first**: Constant reference object at top
+2. **Nodes next**: Private, nullable audio node properties
+3. **Constructor**: Zero-parameter, calls `setupParameterListeners()`
+4. **Public methods**: `getConfig()`, `initialize()`, `getInput/Output()`, `isInitialized()`
+5. **Private helpers**: `setupParameterListeners()`, `disconnect()`
 
 ---
 
 ## Common Patterns
 
-### Wet/Dry Mix
-
+### Pattern 1: Simple AudioParam Binding
 ```typescript
-private updateMix(): void {
-  const mix = parseFloat(this.mixEl.value);
+UIConfigService.bindAudioParams([
+  { elementId: 'delay-time', audioParam: () => this.delay?.delayTime },
+  { elementId: 'delay-feedback', audioParam: () => this.feedback?.gain }
+]);
+```
+
+### Pattern 2: With Transform
+```typescript
+UIConfigService.bindAudioParam({
+  elementId: 'lfo-depth',
+  audioParam: () => this.lfoGain?.gain,
+  transform: (v) => parseFloat(v) * 0.001 // ms to seconds
+});
+```
+
+### Pattern 3: Wet/Dry Mix (Custom Handler)
+```typescript
+UIConfigService.onInput('chorus-mix', (el, value) => {
+  const mix = parseFloat(value);
   if (this.wetGain && this.dryGain) {
     this.wetGain.gain.value = mix;
     this.dryGain.gain.value = 1 - mix;
   }
-}
+});
 ```
 
-### LFO Modulation
+### Pattern 4: Select Element
+```typescript
+UIConfigService.onSelect('filter-type', (element, value) => {
+  if (this.filter) {
+    this.filter.type = value as BiquadFilterType;
+  }
+});
+```
 
+### Pattern 5: GainNode Binding
+```typescript
+UIConfigService.bindGainParam({
+  elementId: 'master-volume',
+  gainNode: () => this.masterGain
+});
+```
+
+### Pattern 6: LFO Modulation
 ```typescript
 // Create LFO
 const lfo = audioCtx.createOscillator();
 const lfoGain = audioCtx.createGain();
 
-lfo.frequency.value = parseFloat(this.rateEl.value);
-lfoGain.gain.value = parseFloat(this.depthEl.value) * 0.001;
+lfo.frequency.value = config.rate;
+lfoGain.gain.value = config.depth;
 
 // Connect to target parameter
 lfo.connect(lfoGain);
@@ -839,12 +815,10 @@ lfoGain.connect(delayNode.delayTime);
 lfo.start();
 ```
 
-### Feedback Loop
-
+### Pattern 7: Feedback Loop
 ```typescript
-// Create feedback path
 const feedbackGain = audioCtx.createGain();
-feedbackGain.gain.value = parseFloat(this.feedbackEl.value);
+feedbackGain.gain.value = config.feedback;
 
 // Signal flow: input -> effect -> output + feedback
 effectNode.connect(this.outputGain);
@@ -852,10 +826,9 @@ effectNode.connect(feedbackGain);
 feedbackGain.connect(effectNode); // Feedback loop
 ```
 
-### Multi-Stage Filters
-
+### Pattern 8: Multi-Stage Filters
 ```typescript
-const stages = parseInt(this.stagesEl.value);
+const stages = config.stages;
 this.filters = [];
 
 for (let i = 0; i < stages; i++) {
@@ -907,32 +880,39 @@ Presets can configure:
 
 ### Effect Not Working
 
-1. **Check registration**: Verify effect is registered with EffectsManager
-2. **Check initialization**: Ensure `effectsManager.initialize()` was called
-3. **Check order**: Higher order = earlier in chain (may be unexpected)
-4. **Check console**: Look for errors in effect initialization
-5. **Check signal flow**: Verify nodes are connected correctly
+1. **Check registration**: Verify effect registered with EffectsManager
+2. **Check initialization**: Ensure `effectsManager.initialize()` called
+3. **Check order**: Higher order = earlier in chain
+4. **Check console**: Look for initialization errors
+5. **Check signal flow**: Verify node connections
 
 ### Parameter Changes Not Working
 
-1. **Check element reference**: Ensure you're passing the correct `HTMLInputElement`
-2. **Check listener setup**: Verify `addEventListener()` is called in constructor
-3. **Check initialization guard**: Ensure `isInitialized()` check is in place
-4. **Check parsing**: Use `parseFloat()` or `parseInt()` on `element.value`
+1. **Check element ID**: Verify ID matches exactly (case-sensitive)
+2. **Check listener setup**: Ensure `setupParameterListeners()` called in constructor
+3. **Check initialization**: Use `isInitialized()` guard in listeners
+4. **Check UIConfigService**: Use `exists()` to verify element presence
+
+### Element Not Found Error
+
+1. **Check element ID spelling**: IDs are case-sensitive
+2. **Check HTML**: Ensure element exists before module instantiation
+3. **Use safe access**: `tryGetInput()` for optional elements
+4. **Check component getInput()**: RangeControl needs `.getInput()` call
 
 ### Audio Glitches
 
-1. **Check disconnection**: Call `disconnect()` on all nodes before re-initializing
-2. **Check feedback loops**: Ensure feedback gain is < 1.0
-3. **Check buffer sizes**: Large FFT sizes can cause performance issues
+1. **Check disconnection**: Call `disconnect()` before re-initialization
+2. **Check feedback loops**: Ensure feedback gain < 1.0
+3. **Check buffer sizes**: Large FFT sizes cause performance issues
 4. **Check parameter ranges**: Extreme values may cause instability
 
 ### Tests Failing
 
-1. **Check mocks**: Ensure `createMockAudioCtx()` has all required factory methods
-2. **Check events**: Use `dispatchEvent()` to trigger parameter updates
-3. **Check assertions**: Access private nodes via `module['nodeName']`
-4. **Check initialization**: Call `module.initialize()` before testing parameters
+1. **Check DOM setup**: Create all elements in `beforeEach()`
+2. **Trigger events**: Use `dispatchEvent()`, don't set values directly
+3. **Check element IDs**: Must match module's `elementIds`
+4. **Check mocks**: Verify `createMockAudioCtx()` has required factories
 
 ---
 
@@ -942,20 +922,21 @@ Presets can configure:
 - [Web Components](https://developer.mozilla.org/en-US/docs/Web/Web_Components)
 - [TypeScript Handbook](https://www.typescriptlang.org/docs/handbook/intro.html)
 - [Bun Test Runner](https://bun.sh/docs/cli/test)
+- **[UIConfigService Integration Guide](./synth-0017.md)** - Detailed migration patterns
 
 ---
 
 ## Future Improvements
 
 - [ ] Visual editor for effects chain ordering
-- [ ] User-savable presets
+- [ ] User-savable presets (beyond factory presets)
 - [ ] MIDI CC mapping for effect parameters
 - [ ] Automation/envelope for effect parameters
 - [ ] Preset morphing/interpolation
 - [ ] Multi-band effects (EQ, compression)
 - [ ] Sidechain compression
 - [ ] Arpeggiator/sequencer
-- [ ] Recording/export functionality
+- [ ] Recording/export functionality (partial implementation exists)
 
 ---
 

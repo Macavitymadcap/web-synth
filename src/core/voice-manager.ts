@@ -1,3 +1,4 @@
+import { UIConfigService } from "../services/ui-config-service";
 import { OscillatorBank, type OscillatorInstance } from "../core/oscillator-bank";
 import { EnvelopeModule } from "../modules/envelope-module";
 import { FilterModule, type FilterInstance } from "../modules/filter-module";
@@ -21,20 +22,23 @@ export type VoiceManagerConfig = {
  */
 export class VoiceManager {
   private readonly voices = new Map<string, Voice>();
-  private readonly polyEl: HTMLInputElement;
+
+  // UI element IDs
+  private readonly elementIds = {
+    polyphonic: "poly",
+  };
+
   private readonly oscillatorBank: OscillatorBank;
   private readonly ampEnvelope: EnvelopeModule;
   private readonly filterModule: FilterModule;
   private readonly lfoModule: LFOModule;
 
   constructor(
-    polyEl: HTMLInputElement,
     oscillatorBank: OscillatorBank,
     ampEnvelope: EnvelopeModule,
     filterModule: FilterModule,
     lfoModule: LFOModule
   ) {
-    this.polyEl = polyEl;
     this.oscillatorBank = oscillatorBank;
     this.ampEnvelope = ampEnvelope;
     this.filterModule = filterModule;
@@ -46,8 +50,9 @@ export class VoiceManager {
    * @returns Object containing voice manager parameters
    */
   getConfig(): VoiceManagerConfig {
+    const polyEl = UIConfigService.tryGetControl<HTMLInputElement>(this.elementIds.polyphonic);
     return {
-      polyphonic: this.polyEl.checked
+      polyphonic: polyEl ? !!polyEl.checked : true
     };
   }
 

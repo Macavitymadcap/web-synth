@@ -56,12 +56,13 @@ export class OscillatorSection extends HTMLElement {
     // Listen for remove events
     control.addEventListener("remove", (e: Event) => {
       const customEvent = e as CustomEvent;
-      this.removeOscillator(customEvent.detail.id);
+      this.removeOscillator(customEvent.detail?.id ?? id);
     });
     
-    // Listen for changes to oscillator parameters
-    control.addEventListener("change", () => {
-      this.updateOscillatorConfig(id, control);
+    // Listen for config changes from the child component
+    control.addEventListener("configchange", (e: Event) => {
+      const cfg = (e as CustomEvent).detail;
+      this.updateOscillatorConfig(id, cfg);
     });
     
     const container = this.querySelector("#oscillator-list");
@@ -71,12 +72,12 @@ export class OscillatorSection extends HTMLElement {
     this.dispatchChangeEvent();
   }
 
-  private updateOscillatorConfig(id: number, control: any): void {
+  private updateOscillatorConfig(id: number, cfg: { waveform: OscillatorType; detune: number; level: number }): void {
     const oscillator = this.oscillators.find(osc => osc.id === id);
     if (oscillator) {
-      oscillator.waveform = control.waveform;
-      oscillator.detune = control.detune;
-      oscillator.level = control.level;
+      oscillator.waveform = cfg.waveform;
+      oscillator.detune = cfg.detune;
+      oscillator.level = cfg.level;
       this.dispatchChangeEvent();
     }
   }

@@ -101,6 +101,15 @@ export class OscillatorControl extends HTMLElement {
     this.detuneControl = this.querySelector('.osc-detune') as RangeControl;
     this.levelControl = this.querySelector('.osc-level') as RangeControl;
     this.removeBtn = this.querySelector('button')!;
+
+    // Assign ids so UIConfigService + OscillatorBank can discover them
+    const idx = this.dataset.id;
+    if (idx) {
+      this.waveSelect.id = `osc-${idx}-waveform`;
+      // UIConfigService.getInput unwraps RangeControl by id
+      (this.detuneControl as unknown as HTMLElement).id = `osc-${idx}-detune`;
+      (this.levelControl as unknown as HTMLElement).id = `osc-${idx}-level`;
+    }
     
     // Listen for changes and dispatch custom event
     this.waveSelect.addEventListener('change', () => this.notifyChange());

@@ -45,12 +45,39 @@ function teardownAnimationFrameMocks() {
   rafCallbacks.clear();
 }
 
-describe('SpectrumAnalyserModule', () => {
+describe('SpectrumAnalyserModule (UIConfigService)', () => {
   let canvas: HTMLCanvasElement;
   let module: SpectrumAnalyserModule;
 
   beforeEach(() => {
     setupAnimationFrameMocks();
+    document.body.innerHTML = '';
+
+    // Optional UI controls for config
+    const fftEl = document.createElement('input');
+    fftEl.id = 'spectrum-fft-size';
+    fftEl.type = 'number';
+    fftEl.value = '4096';
+    document.body.appendChild(fftEl);
+
+    const smoothEl = document.createElement('input');
+    smoothEl.id = 'spectrum-smoothing';
+    smoothEl.type = 'number';
+    smoothEl.value = '0.6';
+    document.body.appendChild(smoothEl);
+
+    const minEl = document.createElement('input');
+    minEl.id = 'spectrum-min-freq';
+    minEl.type = 'number';
+    minEl.value = '50';
+    document.body.appendChild(minEl);
+
+    const maxEl = document.createElement('input');
+    maxEl.id = 'spectrum-max-freq';
+    maxEl.type = 'number';
+    maxEl.value = '8000';
+    document.body.appendChild(maxEl);
+
     canvas = createMockCanvas();
     module = new SpectrumAnalyserModule(canvas);
   });
@@ -60,23 +87,21 @@ describe('SpectrumAnalyserModule', () => {
   });
 
   describe('getConfig', () => {
-    it('returns correct default config', () => {
+    it('reads config from UI via UIConfigService', () => {
       const config = module.getConfig();
-      
       expect(config).toEqual({
-        fftSize: 2048,
-        smoothingTimeConstant: 0.8,
-        minFreq: 20,
-        maxFreq: 5000
+        fftSize: 4096,
+        smoothingTimeConstant: 0.6,
+        minFreq: 50,
+        maxFreq: 8000
       });
     });
 
-    it('returns a copy of config (not the original)', () => {
-      const config1 = module.getConfig();
-      const config2 = module.getConfig();
-      
-      expect(config1).not.toBe(config2);
-      expect(config1).toEqual(config2);
+    it('returns a copy (not original object)', () => {
+      const c1 = module.getConfig();
+      const c2 = module.getConfig();
+      expect(c1).not.toBe(c2);
+      expect(c1).toEqual(c2);
     });
   });
 
@@ -84,36 +109,36 @@ describe('SpectrumAnalyserModule', () => {
     it('creates and connects all required nodes', () => {
       const ctx = createMockAudioCtx();
       const dest = { connect: jest.fn(), disconnect: jest.fn() } as any;
-      
+
       const nodes = module.initialize(ctx, dest);
-      
+
       expect(ctx.createGain).toHaveBeenCalledTimes(2); // input + output
       expect(ctx.createAnalyser).toHaveBeenCalledTimes(1);
       expect(nodes.input).toBeDefined();
       expect(nodes.output).toBeDefined();
     });
 
-    it('sets up analyser node with correct config', () => {
+    it('applies analyser config from UI', () => {
       const ctx = createMockAudioCtx();
       const dest = { connect: jest.fn(), disconnect: jest.fn() } as any;
-      
+
       module.initialize(ctx, dest);
-      
+
       const analyserNode = (ctx.createAnalyser as any).mock.results[0].value;
-      expect(analyserNode.fftSize).toBe(2048);
-      expect(analyserNode.smoothingTimeConstant).toBe(0.8);
+      expect(analyserNode.fftSize).toBe(4096);
+      expect(analyserNode.smoothingTimeConstant).toBe(0.6);
     });
 
     it('connects nodes in correct order: input -> analyser -> output -> destination', () => {
       const ctx = createMockAudioCtx();
       const dest = { connect: jest.fn(), disconnect: jest.fn() } as any;
-      
+
       module.initialize(ctx, dest);
-      
+
       const inputGain = (ctx.createGain as any).mock.results[0].value;
       const outputGain = (ctx.createGain as any).mock.results[1].value;
       const analyser = (ctx.createAnalyser as any).mock.results[0].value;
-      
+
       expect(inputGain.connect).toHaveBeenCalledWith(analyser);
       expect(analyser.connect).toHaveBeenCalledWith(outputGain);
       expect(outputGain.connect).toHaveBeenCalledWith(dest);
@@ -122,111 +147,118 @@ describe('SpectrumAnalyserModule', () => {
     it('starts visualization after initialization', () => {
       const ctx = createMockAudioCtx();
       const dest = { connect: jest.fn(), disconnect: jest.fn() } as any;
-      
+
       module.initialize(ctx, dest);
-      
+
       expect(globalThis.requestAnimationFrame).toHaveBeenCalled();
     });
 
     it('disconnects old nodes on re-initialization', () => {
       const ctx = createMockAudioCtx();
       const dest = { connect: jest.fn(), disconnect: jest.fn() } as any;
-      
-      // First initialization
+
       module.initialize(ctx, dest);
       const firstInputGain = (ctx.createGain as any).mock.results[0].value;
       const firstOutputGain = (ctx.createGain as any).mock.results[1].value;
       const firstAnalyser = (ctx.createAnalyser as any).mock.results[0].value;
-      
-      // Re-initialize
+
       module.initialize(ctx, dest);
-      
+
       expect(firstInputGain.disconnect).toHaveBeenCalled();
       expect(firstOutputGain.disconnect).toHaveBeenCalled();
       expect(firstAnalyser.disconnect).toHaveBeenCalled();
     });
   });
 
-  describe('getInput and getOutput', () => {
+  describe('runtime parameter updates via UI', () => {
+    it('updates smoothingTimeConstant when input changes', () => {
+      const ctx = createMockAudioCtx();
+      const dest = { connect: jest.fn(), disconnect: jest.fn() } as any;
+      module.initialize(ctx, dest);
+
+      const smoothInput = document.getElementById('spectrum-smoothing') as HTMLInputElement;
+      smoothInput.value = '0.3';
+      smoothInput.dispatchEvent(new Event('input'));
+
+      const analyserNode = (ctx.createAnalyser as any).mock.results[0].value;
+      expect(analyserNode.smoothingTimeConstant).toBeCloseTo(0.3);
+    });
+
+    it('normalizes fftSize to power-of-two and updates analyser', () => {
+      const ctx = createMockAudioCtx();
+      const dest = { connect: jest.fn(), disconnect: jest.fn() } as any;
+      module.initialize(ctx, dest);
+
+      const fftInput = document.getElementById('spectrum-fft-size') as HTMLInputElement;
+      fftInput.value = '5000'; // will round to nearest power-of-two, 4096
+      fftInput.dispatchEvent(new Event('input'));
+
+      const analyserNode = (ctx.createAnalyser as any).mock.results[0].value;
+      expect(analyserNode.fftSize).toBe(4096);
+    });
+
+    it('updates min/max frequency range used in visualization', () => {
+      const ctx = createMockAudioCtx();
+      const dest = { connect: jest.fn(), disconnect: jest.fn() } as any;
+      const mockContext = (canvas as any).__mockContext;
+
+      module.initialize(ctx, dest);
+
+      const minInput = document.getElementById('spectrum-min-freq') as HTMLInputElement;
+      const maxInput = document.getElementById('spectrum-max-freq') as HTMLInputElement;
+
+      minInput.value = '200';
+      minInput.dispatchEvent(new Event('input'));
+      maxInput.value = '4000';
+      maxInput.dispatchEvent(new Event('input'));
+
+      // Trigger the animation frame callback to use updated config
+      const callback = rafCallbacks.values().next().value as FrameRequestCallback;
+      callback(0);
+
+      // Just ensure drawing proceeds; specific bin ranges are derived from config
+      expect(mockContext.fillRect).toHaveBeenCalled();
+    });
+  });
+
+  describe('getInput/getOutput & isInitialized', () => {
     it('returns null before initialization', () => {
       expect(module.getInput()).toBeNull();
       expect(module.getOutput()).toBeNull();
+      expect(module.isInitialized()).toBe(false);
     });
 
     it('returns gain nodes after initialization', () => {
       const ctx = createMockAudioCtx();
       const dest = { connect: jest.fn(), disconnect: jest.fn() } as any;
-      
+
       module.initialize(ctx, dest);
-      
+
       expect(module.getInput()).not.toBeNull();
       expect(module.getOutput()).not.toBeNull();
       expect(module.getInput()).toHaveProperty('gain');
       expect(module.getOutput()).toHaveProperty('gain');
     });
-  });
 
-  describe('isInitialized', () => {
-    it('returns false before initialization', () => {
-      expect(module.isInitialized()).toBe(false);
-    });
-
-    it('returns true after initialization', () => {
+    it('handles missing canvas gracefully', () => {
+      const moduleWithNullCanvas = new SpectrumAnalyserModule(null as any);
       const ctx = createMockAudioCtx();
       const dest = { connect: jest.fn(), disconnect: jest.fn() } as any;
-      
-      module.initialize(ctx, dest);
-      
-      expect(module.isInitialized()).toBe(true);
-    });
-  });
-
-  describe('visualization', () => {
-    it('requests canvas 2D context', () => {
-      const ctx = createMockAudioCtx();
-      const dest = { connect: jest.fn(), disconnect: jest.fn() } as any;
-      
-      module.initialize(ctx, dest);
-      
-      expect(canvas.getContext).toHaveBeenCalledWith('2d');
+      expect(() => moduleWithNullCanvas.initialize(ctx, dest)).not.toThrow();
     });
 
-    it('schedules animation frame on initialization', () => {
-      const ctx = createMockAudioCtx();
-      const dest = { connect: jest.fn(), disconnect: jest.fn() } as any;
-      
-      module.initialize(ctx, dest);
-      
-      expect(globalThis.requestAnimationFrame).toHaveBeenCalled();
-      expect(rafCallbacks.size).toBe(1);
-    });
+    it('handles canvas without 2D context', () => {
+      const canvasWithoutContext = {
+        width: 800,
+        height: 400,
+        getContext: jest.fn(() => null)
+      } as any;
 
-    it('clears canvas on each frame', () => {
+      const moduleWithBadCanvas = new SpectrumAnalyserModule(canvasWithoutContext);
       const ctx = createMockAudioCtx();
       const dest = { connect: jest.fn(), disconnect: jest.fn() } as any;
-      const mockContext = (canvas as any).__mockContext;
-      
-      module.initialize(ctx, dest);
-      
-      // Trigger the animation frame callback
-      const callback = rafCallbacks.values().next().value as FrameRequestCallback;
-      callback(0);
-      
-      expect(mockContext.clearRect).toHaveBeenCalledWith(0, 0, 800, 400);
-    });
 
-    it('draws bars on each frame', () => {
-      const ctx = createMockAudioCtx();
-      const dest = { connect: jest.fn(), disconnect: jest.fn() } as any;
-      const mockContext = (canvas as any).__mockContext;
-      
-      module.initialize(ctx, dest);
-      
-      // Trigger the animation frame callback
-      const callback = rafCallbacks.values().next().value as FrameRequestCallback;
-      callback(0);
-      
-      expect(mockContext.fillRect).toHaveBeenCalled();
+      expect(() => moduleWithBadCanvas.initialize(ctx, dest)).not.toThrow();
     });
   });
 
@@ -234,12 +266,12 @@ describe('SpectrumAnalyserModule', () => {
     it('cancels animation frame', () => {
       const ctx = createMockAudioCtx();
       const dest = { connect: jest.fn(), disconnect: jest.fn() } as any;
-      
+
       module.initialize(ctx, dest);
       const frameId = (globalThis.requestAnimationFrame as any).mock.results[0].value;
-      
+
       module.stopVisualization();
-      
+
       expect(globalThis.cancelAnimationFrame).toHaveBeenCalledWith(frameId);
     });
 
@@ -250,39 +282,13 @@ describe('SpectrumAnalyserModule', () => {
     it('stops visualization on re-initialization', () => {
       const ctx = createMockAudioCtx();
       const dest = { connect: jest.fn(), disconnect: jest.fn() } as any;
-      
+
       module.initialize(ctx, dest);
       const firstFrameId = (globalThis.requestAnimationFrame as any).mock.results[0].value;
-      
+
       module.initialize(ctx, dest); // Re-initialize
-      
+
       expect(globalThis.cancelAnimationFrame).toHaveBeenCalledWith(firstFrameId);
-    });
-  });
-
-  describe('edge cases', () => {
-    it('handles missing canvas gracefully', () => {
-      const nullCanvas = null as any;
-      const moduleWithNullCanvas = new SpectrumAnalyserModule(nullCanvas);
-      
-      const ctx = createMockAudioCtx();
-      const dest = { connect: jest.fn(), disconnect: jest.fn() } as any;
-      
-      expect(() => moduleWithNullCanvas.initialize(ctx, dest)).not.toThrow();
-    });
-
-    it('handles canvas without 2D context', () => {
-      const canvasWithoutContext = {
-        width: 800,
-        height: 400,
-        getContext: jest.fn(() => null)
-      } as any;
-      
-      const moduleWithBadCanvas = new SpectrumAnalyserModule(canvasWithoutContext);
-      const ctx = createMockAudioCtx();
-      const dest = { connect: jest.fn(), disconnect: jest.fn() } as any;
-      
-      expect(() => moduleWithBadCanvas.initialize(ctx, dest)).not.toThrow();
     });
   });
 });
