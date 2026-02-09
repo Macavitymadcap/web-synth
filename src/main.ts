@@ -159,39 +159,39 @@ const spectrumAnalyserModule = new SpectrumAnalyserModule(spectrumCanvas);
 
 // Effects Manager
 const effectsManager = new EffectsManager();
+effectsManager.register(compressorModule, {
+  id: 'compressor',
+  name: 'Compressor',
+  order: 100, // Should be first in chain to tame dynamics before other effects
+  category: 'dynamics'
+});
+
 effectsManager.register(chorusModule, {
   id: 'chorus',
   name: 'Chorus',
-  order: 100, // First in chain
+  order: 90,
   category: 'modulation'
 });
 
 effectsManager.register(phaserModule, {
   id: 'phaser',
   name: 'Phaser',
-  order: 90,
+  order: 80,
   category: 'modulation'
 });
 
 effectsManager.register(delayModule, {
   id: 'delay',
   name: 'Delay',
-  order: 80,
+  order: 70,
   category: 'time-based'
 });
 
 effectsManager.register(distortionModule, {
   id: 'distortion',
   name: 'Distortion',
-  order: 70,
-  category: 'distortion'
-});
-
-effectsManager.register(compressorModule, {
-  id: 'compressor',
-  name: 'Compressor',
   order: 60,
-  category: 'dynamics'
+  category: 'distortion'
 });
 
 effectsManager.register(reverbModule, {
