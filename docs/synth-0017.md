@@ -581,7 +581,7 @@ export class MyModule implements BaseEffectModule {
 4. ✅ ReverbModule (2 params)
 
 ### Phase 2: Medium Modules (5-7 params)
-5. ChorusModule (3 params)
+5. ✅ ChorusModule (3 params)
 6. PhaserModule (5 params)
 7. LFOModule (4 params)
 8. EnvelopeModule (4 params)

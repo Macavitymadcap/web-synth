@@ -94,13 +94,6 @@ const lfoToFilter = (document.getElementById("lfo-to-filter") as RangeControl).g
 const lfoToPitch = (document.getElementById("lfo-to-pitch") as RangeControl).getInput();
 const lfoWaveform = document.getElementById("lfo-waveform") as HTMLSelectElement;
 
-// Phaser controls
-const phaserRate = (document.getElementById("phaser-rate") as RangeControl).getInput();
-const phaserDepth = (document.getElementById("phaser-depth") as RangeControl).getInput();
-const phaserStages = (document.getElementById("phaser-stages") as RangeControl).getInput();
-const phaserFeedback = (document.getElementById("phaser-feedback") as RangeControl).getInput();
-const phaserMix = (document.getElementById("phaser-mix") as RangeControl).getInput();
-
 // Master controls
 const poly = document.getElementById("poly") as HTMLInputElement;
 const masterVolume = (document.getElementById("master-volume") as RangeControl).getInput();
@@ -125,17 +118,11 @@ const lfoModule = new LFOModule(lfoRate, lfoWaveform, lfoToFilter, lfoToPitch);
 const masterModule = new MasterModule(masterVolume);
 
 // Effects
+const compressorModule = new CompressorModule();
 const chorusModule = new ChorusModule();
-const phaserModule = new PhaserModule(
-  phaserRate,
-  phaserDepth,
-  phaserStages,
-  phaserFeedback,
-  phaserMix
-);
+const phaserModule = new PhaserModule();
 const delayModule = new DelayModule();
 const distortionModule = new DistortionModule();
-const compressorModule = new CompressorModule();
 const reverbModule = new ReverbModule();
 const spectrumAnalyserModule = new SpectrumAnalyserModule(spectrumCanvas);
 

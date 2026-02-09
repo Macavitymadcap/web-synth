@@ -1,32 +1,40 @@
 import { describe, it, expect, beforeEach, jest } from 'bun:test';
 import { PhaserModule } from '../../../src/modules/effects/phaser-module';
-import { createMockInput } from '../../fixtures/mock-input';
 import { createMockAudioCtx } from '../../fixtures/mock-audio-context';
 
 describe('PhaserModule', () => {
-  let rateEl: HTMLInputElement;
-  let depthEl: HTMLInputElement;
-  let stagesEl: HTMLInputElement;
-  let feedbackEl: HTMLInputElement;
-  let mixEl: HTMLInputElement;
   let phaser: PhaserModule;
 
   beforeEach(() => {
-    rateEl = createMockInput('1.2');
-    depthEl = createMockInput('500');
-    stagesEl = createMockInput('4');
-    feedbackEl = createMockInput('0.5');
-    mixEl = createMockInput('0.7');
-    phaser = new PhaserModule(rateEl, depthEl, stagesEl, feedbackEl, mixEl);
+    // Clear DOM before each test
+    document.body.innerHTML = '';
+
+    // Create required input elements
+    const elementIds = ['phaser-rate', 'phaser-depth', 'phaser-stages', 'phaser-feedback', 'phaser-mix'];
+    elementIds.forEach(id => {
+      const input = document.createElement('input');
+      input.id = id;
+      input.type = 'number';
+      document.body.appendChild(input);
+    });
+
+    // Set default config values
+    (document.getElementById('phaser-rate') as HTMLInputElement).value = '1.5';
+    (document.getElementById('phaser-depth') as HTMLInputElement).value = '300';
+    (document.getElementById('phaser-stages') as HTMLInputElement).value = '4';
+    (document.getElementById('phaser-feedback') as HTMLInputElement).value = '0.5';
+    (document.getElementById('phaser-mix') as HTMLInputElement).value = '0.35';
+
+    phaser = new PhaserModule();
   });
 
   it('returns correct config', () => {
     expect(phaser.getConfig()).toEqual({
-      rate: 1.2,
-      depth: 500,
+      rate: 1.5,
+      depth: 300,
       stages: 4,
       feedback: 0.5,
-      mix: 0.7,
+      mix: 0.35
     });
   });
 
@@ -38,8 +46,8 @@ describe('PhaserModule', () => {
     expect(nodes.input).toBeDefined();
     expect(nodes.output).toBeDefined();
     expect(ctx.createGain).toHaveBeenCalled();
-    expect(ctx.createBiquadFilter).toHaveBeenCalledTimes(4);
-    expect(ctx.createOscillator).toHaveBeenCalledTimes(1);
+    expect(ctx.createBiquadFilter).toHaveBeenCalled();
+    expect(phaser['allpassFilters'].length).toBe(4);
   });
 
   it('isInitialized returns true after initialize', () => {
@@ -49,29 +57,28 @@ describe('PhaserModule', () => {
     expect(phaser.isInitialized()).toBe(true);
   });
 
-  it('updates LFO frequency on rate change', () => {
+  it('updates LFO rate on rate change', () => {
     const ctx = createMockAudioCtx();
     const dest = { connect: jest.fn() } as any;
     phaser.initialize(ctx, dest);
 
-    // Simulate parameter change
-    (rateEl as any).value = '2.5';
-    if (phaser['lfo']) {
-      phaser['lfo'].frequency.value = 2.5;
-      expect(phaser['lfo'].frequency.value).toBeCloseTo(2.5);
-    }
+    const rateInput = document.getElementById('phaser-rate') as HTMLInputElement;
+    rateInput.value = '3.0';
+    rateInput.dispatchEvent(new Event('input'));
+
+    expect(phaser['lfo']!.frequency.value).toBeCloseTo(3);
   });
 
-  it('updates LFO gain on depth change', () => {
+  it('updates LFO depth on depth change', () => {
     const ctx = createMockAudioCtx();
     const dest = { connect: jest.fn() } as any;
     phaser.initialize(ctx, dest);
 
-    (depthEl as any).value = '800';
-    if (phaser['lfoGain']) {
-      phaser['lfoGain'].gain.value = 800;
-      expect(phaser['lfoGain'].gain.value).toBeCloseTo(800);
-    }
+    const depthInput = document.getElementById('phaser-depth') as HTMLInputElement;
+    depthInput.value = '500';
+    depthInput.dispatchEvent(new Event('input'));
+
+    expect(phaser['lfoGain']!.gain.value).toBeCloseTo(500);
   });
 
   it('updates feedback gain on feedback change', () => {
@@ -79,11 +86,11 @@ describe('PhaserModule', () => {
     const dest = { connect: jest.fn() } as any;
     phaser.initialize(ctx, dest);
 
-    (feedbackEl as any).value = '0.8';
-    if (phaser['feedbackGain']) {
-      phaser['feedbackGain'].gain.value = 0.8;
-      expect(phaser['feedbackGain'].gain.value).toBeCloseTo(0.8);
-    }
+    const feedbackInput = document.getElementById('phaser-feedback') as HTMLInputElement;
+    feedbackInput.value = '0.7';
+    feedbackInput.dispatchEvent(new Event('input'));
+
+    expect(phaser['feedbackGain']!.gain.value).toBeCloseTo(0.7);
   });
 
   it('updates wet/dry gain on mix change', () => {
@@ -91,12 +98,41 @@ describe('PhaserModule', () => {
     const dest = { connect: jest.fn() } as any;
     phaser.initialize(ctx, dest);
 
-    (mixEl as any).value = '0.3';
-    if (phaser['dryGain'] && phaser['wetGain']) {
-      phaser['dryGain'].gain.value = 0.7;
-      phaser['wetGain'].gain.value = 0.3;
-      expect(phaser['dryGain'].gain.value).toBeCloseTo(0.7);
-      expect(phaser['wetGain'].gain.value).toBeCloseTo(0.3);
-    }
+    const mixInput = document.getElementById('phaser-mix') as HTMLInputElement;
+    mixInput.value = '0.6';
+    mixInput.dispatchEvent(new Event('input'));
+
+    expect(phaser['wetGain']!.gain.value).toBeCloseTo(0.6);
+    expect(phaser['dryGain']!.gain.value).toBeCloseTo(0.4);
+  });
+
+  it('re-initializes on stages change', () => {
+    const ctx = createMockAudioCtx();
+    const dest = { connect: jest.fn() } as any;
+
+    const spy = jest.spyOn(phaser, 'initialize');
+    phaser.initialize(ctx, dest);
+
+    const stagesInput = document.getElementById('phaser-stages') as HTMLInputElement;
+    stagesInput.value = '6';
+    stagesInput.dispatchEvent(new Event('input'));
+
+    expect(spy).toHaveBeenCalledTimes(2);
+    expect(phaser['allpassFilters'].length).toBe(6);
+  });
+
+  it('getInput and getOutput return null before initialization', () => {
+    expect(phaser.getInput()).toBeNull();
+    expect(phaser.getOutput()).toBeNull();
+    expect(phaser.isInitialized()).toBe(false);
+  });
+
+  it('getInput and getOutput return nodes after initialization', () => {
+    const ctx = createMockAudioCtx();
+    const dest = { connect: jest.fn() } as any;
+    phaser.initialize(ctx, dest);
+
+    expect(phaser.getInput()).not.toBeNull();
+    expect(phaser.getOutput()).not.toBeNull();
   });
 });
