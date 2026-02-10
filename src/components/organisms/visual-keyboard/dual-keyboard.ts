@@ -10,7 +10,7 @@ export class DualKeyboard extends HTMLElement {
       <piano-keyboard id="keyboard-lower" octave="${lowerOctave}" keys="${lowerKeys}"></piano-keyboard>
 
       <controls-group>
-        <octave-picker id="octave-upper" label="Upper Octave" value="${upperOctave}" min="2" max="5"></octave-picker>
+        <octave-picker id="octave-upper" label="Upper Octave" value="${upperOctave}" min="3" max="6"></octave-picker>
         <octave-picker id="octave-lower" label="Lower Octave" value="${lowerOctave}" min="2" max="5"></octave-picker>   
       </controls-group>
     `;
