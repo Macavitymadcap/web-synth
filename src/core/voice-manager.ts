@@ -1,9 +1,9 @@
 import { UIConfigService } from "../services/ui-config-service";
-import { OscillatorBank, type OscillatorInstance } from "../core/oscillator-bank";
-import { EnvelopeModule } from "../modules/envelope-module";
-import { FilterModule, type FilterInstance } from "../modules/filter-module";
-import { LFOModule } from "../modules/lfo-module";
-import { NoiseModule } from "../modules/noise-module";
+import type { OscillatorBank, OscillatorInstance } from "./oscillator-bank";
+import type { EnvelopeModule } from "../modules/envelope-module";
+import type { FilterModule, FilterInstance } from "../modules/filter-module";
+import type { LFOModule } from "../modules/lfo-module";
+import type { NoiseModule } from "../modules/noise-module";
 
 export type Voice = {
   oscillators: OscillatorInstance[];
@@ -22,6 +22,7 @@ export type VoiceManagerConfig = {
 /**
  * VoiceManager handles voice allocation and lifecycle
  * Manages polyphonic vs monophonic modes and voice cleanup
+ * Supports multiple LFO routing for complex modulation
  */
 export class VoiceManager {
   private readonly voices = new Map<string, Voice>();
@@ -34,20 +35,20 @@ export class VoiceManager {
   private readonly oscillatorBank: OscillatorBank;
   private readonly ampEnvelope: EnvelopeModule;
   private readonly filterModule: FilterModule;
-  private readonly lfoModule: LFOModule;
+  private readonly lfoModules: LFOModule[];
   private readonly noiseModule: NoiseModule;
 
   constructor(
     oscillatorBank: OscillatorBank,
     ampEnvelope: EnvelopeModule,
     filterModule: FilterModule,
-    lfoModule: LFOModule,
+    lfoModules: LFOModule[],
     noiseModule: NoiseModule
   ) {
     this.oscillatorBank = oscillatorBank;
     this.ampEnvelope = ampEnvelope;
     this.filterModule = filterModule;
-    this.lfoModule = lfoModule;
+    this.lfoModules = lfoModules;
     this.noiseModule = noiseModule;
   }
 
@@ -84,14 +85,23 @@ export class VoiceManager {
       this.stopAllVoices(audioCtx.currentTime);
     }
 
-    // Get LFO modulation nodes
-    const lfoToFilter = this.lfoModule.getFilterModulation();
-    const lfoToPitch = this.lfoModule.getPitchModulation();
+    // Combine LFO modulations from all LFO modules
+    const filterModulations = this.lfoModules
+      .map(lfo => lfo.getFilterModulation())
+      .filter((node): node is GainNode => node !== null);
+
+    const pitchModulations = this.lfoModules
+      .map(lfo => lfo.getPitchModulation())
+      .filter((node): node is GainNode => node !== null);
+
+    // Create mixer nodes for combining multiple LFO signals
+    const combinedFilterMod = this.combineLFOs(audioCtx, filterModulations);
+    const combinedPitchMod = this.combineLFOs(audioCtx, pitchModulations);
 
     // Create filter using FilterModule
     const filterInstance = this.filterModule.createFilter(
       audioCtx,
-      lfoToFilter ?? undefined
+      combinedFilterMod ?? undefined
     );
 
     // Voice gain
@@ -102,14 +112,14 @@ export class VoiceManager {
       audioCtx,
       frequency,
       filterInstance.filter,
-      lfoToPitch ?? undefined
+      combinedPitchMod ?? undefined
     );
 
     // Add noise if enabled - BEFORE connecting filter to gain
     const noiseOutput = this.noiseModule.createNoiseSource(audioCtx);
     if (noiseOutput) {
       noiseOutput.source.connect(noiseOutput.gain);
-      noiseOutput.gain.connect(filterInstance.filter); // Noise goes through filter
+      noiseOutput.gain.connect(filterInstance.filter);
       noiseOutput.source.start();
     }
 
@@ -139,6 +149,27 @@ export class VoiceManager {
       noiseSource: noiseOutput?.source,
       noiseGain: noiseOutput?.gain
     });
+  }
+
+  /**
+   * Combine multiple LFO modulation signals into a single output
+   * @param audioCtx - The AudioContext to create nodes in
+   * @param modulations - Array of LFO modulation gain nodes
+   * @returns Combined gain node or null if no modulations
+   * @private
+   */
+  private combineLFOs(audioCtx: AudioContext, modulations: GainNode[]): GainNode | null {
+    if (modulations.length === 0) return null;
+    if (modulations.length === 1) return modulations[0];
+
+    // Create a mixer gain node to sum multiple LFO signals
+    const mixer = audioCtx.createGain();
+    mixer.gain.value = 1 / modulations.length; // Average the signals
+
+    // Connect all LFO modulations to the mixer
+    modulations.forEach(mod => mod.connect(mixer));
+
+    return mixer;
   }
 
   /**
@@ -226,6 +257,9 @@ export class VoiceManager {
   clearAllVoices(): void {
     for (const voice of this.voices.values()) {
       this.oscillatorBank.stopOscillators(voice.oscillators);
+      if (voice.noiseSource) {
+        voice.noiseSource.stop();
+      }
     }
     this.voices.clear();
   }

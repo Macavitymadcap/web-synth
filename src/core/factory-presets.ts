@@ -16,8 +16,11 @@ export const FACTORY_PRESETS: Preset[] = [
         type: "lowpass", cutoff: 1200, resonance: 0.5, envAmount: 800,
         attack: 1, decay: 0.5, sustain: 0.7, release: 1
       },
-      lfo: { waveform: "sine", rate: 0.3, toFilter: 150, toPitch: 0 },
+      lfos: [
+        { waveform: "sine", rate: 0.3, toFilter: 150, toPitch: 0 }
+      ],
       chorus: { rate: 0.3, depth: 20, mix: 0.4 },
+      tremolo: { rate: 0.4, depth: 0.15 },
       reverb: { decay: 3.5, reverbMix: 0.45 },
       delay: { time: 0.5, feedback: 0.25, mix: 0.15 },
       distortion: { drive: 0.5, blend: 0.15 },
@@ -25,7 +28,8 @@ export const FACTORY_PRESETS: Preset[] = [
         threshold: -28, ratio: 3, attack: 0.08, release: 0.4, knee: 18
       },
       phaser: { rate: 0.7, depth: 700, stages: 4, feedback: 0.3, mix: 0.5 },
-      noise: { enabled: false, type: "white", level: 0.1}
+      noise: { enabled: false, type: "white", level: 0.1 },
+      flanger: { rate: 0.2, depth: 2, feedback: 0.2, mix: 0.15 }
     }
   },
   {
@@ -42,8 +46,11 @@ export const FACTORY_PRESETS: Preset[] = [
         type: "lowpass", cutoff: 300, resonance: 0.5, envAmount: 200,
         attack: 0.01, decay: 0.2, sustain: 0.4, release: 0.15
       },
-      lfo: { waveform: "sine", rate: 5, toFilter: 0, toPitch: 0 },
+      lfos: [
+        { waveform: "sine", rate: 5, toFilter: 0, toPitch: 0 }
+      ],
       chorus: { rate: 0.5, depth: 0, mix: 0 },
+      tremolo: { rate: 0, depth: 0 },
       reverb: { decay: 0.3, reverbMix: 0.05 },
       delay: { time: 0.375, feedback: 0.2, mix: 0 },
       distortion: { drive: 0.2, blend: 0.1 },
@@ -51,7 +58,8 @@ export const FACTORY_PRESETS: Preset[] = [
         threshold: -18, ratio: 6, attack: 0.01, release: 0.18, knee: 8
       },
       phaser: { rate: 0.5, depth: 200, stages: 2, feedback: 0.1, mix: 0 },
-      noise: { enabled: false, type: "white", level: 0.1}
+      noise: { enabled: false, type: "white", level: 0.1 },
+      flanger: { rate: 0.1, depth: 0, feedback: 0, mix: 0 }
     }
   },
   {
@@ -68,8 +76,11 @@ export const FACTORY_PRESETS: Preset[] = [
         type: "notch", cutoff: 4000, resonance: 2, envAmount: 2500,
         attack: 0.02, decay: 0.15, sustain: 0.7, release: 0.2
       },
-      lfo: { waveform: "sine", rate: 4.5, toFilter: 0, toPitch: 8 },
+      lfos: [
+        { waveform: "sine", rate: 4.5, toFilter: 0, toPitch: 8 }
+      ],
       chorus: { rate: 0.5, depth: 12, mix: 0.25 },
+      tremolo: { rate: 0, depth: 0 },
       reverb: { decay: 1.2, reverbMix: 0.2 },
       delay: { time: 0.375, feedback: 0.3, mix: 0.15 },
       distortion: { drive: 2.5, blend: 0.3 },
@@ -77,7 +88,8 @@ export const FACTORY_PRESETS: Preset[] = [
         threshold: -22, ratio: 4, attack: 0.015, release: 0.22, knee: 12
       },
       phaser: { rate: 1.2, depth: 900, stages: 4, feedback: 0.4, mix: 0.35 },
-      noise: { enabled: false, type: "white", level: 0.1}
+      noise: { enabled: false, type: "white", level: 0.1 },
+      flanger: { rate: 0.7, depth: 3, feedback: 0.14, mix: 0.018 }
     }
   },
   {
@@ -94,8 +106,11 @@ export const FACTORY_PRESETS: Preset[] = [
         type: "bandpass", cutoff: 800, resonance: 3, envAmount: 3000,
         attack: 0.001, decay: 0.2, sustain: 0.1, release: 0.1
       },
-      lfo: { waveform: "sine", rate: 5, toFilter: 0, toPitch: 0 },
+      lfos: [
+        { waveform: "sine", rate: 5, toFilter: 0, toPitch: 0 }
+      ],
       chorus: { rate: 0.5, depth: 0, mix: 0 },
+      tremolo: { rate: 0, depth: 0 },
       reverb: { decay: 0.5, reverbMix: 0.1 },
       delay: { time: 0.375, feedback: 0.2, mix: 0 },
       distortion: { drive: 1.5, blend: 0.25 },
@@ -103,7 +118,8 @@ export const FACTORY_PRESETS: Preset[] = [
         threshold: -16, ratio: 7, attack: 0.01, release: 0.12, knee: 6
       },
       phaser: { rate: 0.8, depth: 400, stages: 2, feedback: 0.2, mix: 0.15 },
-      noise: { enabled: false, type: "white", level: 0.1}
+      noise: { enabled: false, type: "white", level: 0.1 },
+      flanger: { rate: 0.2, depth: 0, feedback: 0, mix: 0 }
     }
   },
   {
@@ -119,8 +135,11 @@ export const FACTORY_PRESETS: Preset[] = [
         type: "lowpass", cutoff: 400, resonance: 12, envAmount: 0,
         attack: 0.01, decay: 0.1, sustain: 0.5, release: 0.1
       },
-      lfo: { waveform: "square", rate: 6, toFilter: 1800, toPitch: 0 },
+      lfos: [
+        { waveform: "square", rate: 6, toFilter: 1800, toPitch: 0 }
+      ],
       chorus: { rate: 0.5, depth: 0, mix: 0 },
+      tremolo: { rate: 0, depth: 0 },
       reverb: { decay: 0.3, reverbMix: 0.05 },
       delay: { time: 0.375, feedback: 0.2, mix: 0 },
       distortion: { drive: 2.2, blend: 0.35 },
@@ -128,7 +147,8 @@ export const FACTORY_PRESETS: Preset[] = [
         threshold: -14, ratio: 8, attack: 0.008, release: 0.11, knee: 7
       },
       phaser: { rate: 1.5, depth: 1200, stages: 4, feedback: 0.5, mix: 0.25 },
-      noise: { enabled: false, type: "white", level: 0.1}
+      noise: { enabled: false, type: "white", level: 0.1 },
+      flanger: { rate: 0.2, depth: 0, feedback: 0, mix: 0 }
     }
   },
   {
@@ -145,8 +165,11 @@ export const FACTORY_PRESETS: Preset[] = [
         type: "lowshelf", cutoff: 3500, resonance: 0.8, envAmount: 500,
         attack: 0.01, decay: 0.4, sustain: 0.6, release: 0.4
       },
-      lfo: { waveform: "sine", rate: 5, toFilter: 0, toPitch: 0 },
+      lfos: [
+        { waveform: "sine", rate: 5, toFilter: 0, toPitch: 0 }
+      ],
       chorus: { rate: 0.3, depth: 18, mix: 0.35 },
+      tremolo: { rate: 6.5, depth: 0.25 },
       reverb: { decay: 1.8, reverbMix: 0.25 },
       delay: { time: 0.25, feedback: 0.15, mix: 0.1 },
       distortion: { drive: 0.01, blend: 0.1 },
@@ -154,7 +177,8 @@ export const FACTORY_PRESETS: Preset[] = [
         threshold: -26, ratio: 2.5, attack: 0.04, release: 0.3, knee: 14
       },
       phaser: { rate: 0.4, depth: 350, stages: 3, feedback: 0.15, mix: 0.18 },
-      noise: { enabled: false, type: "white", level: 0.1}
+      noise: { enabled: false, type: "white", level: 0.1 },
+      flanger: { rate: 0.3, depth: 2, feedback: 0.18, mix: 0.12 }
     }
   },
   {
@@ -172,8 +196,11 @@ export const FACTORY_PRESETS: Preset[] = [
         type: "allpass", cutoff: 8000, resonance: 0.5, envAmount: 0,
         attack: 0.01, decay: 0.1, sustain: 1, release: 0.05
       },
-      lfo: { waveform: "sine", rate: 6, toFilter: 0, toPitch: 0 },
+      lfos: [
+        { waveform: "sine", rate: 6, toFilter: 0, toPitch: 0 }
+      ],
       chorus: { rate: 0.5, depth: 25, mix: 0.5 },
+      tremolo: { rate: 0, depth: 0 },
       reverb: { decay: 2.5, reverbMix: 0.3 },
       delay: { time: 0.375, feedback: 0.2, mix: 0 },
       distortion: { drive: 0, blend: 0 },
@@ -181,7 +208,8 @@ export const FACTORY_PRESETS: Preset[] = [
         threshold: -30, ratio: 2, attack: 0.05, release: 0.18, knee: 10
       },
       phaser: { rate: 0.3, depth: 200, stages: 4, feedback: 0.2, mix: 0.12 },
-      noise: { enabled: false, type: "white", level: 0.1}
+      noise: { enabled: false, type: "white", level: 0.1 },
+      flanger: { rate: 0.5, depth: 3, feedback: 0.22, mix: 0.18 }
     }
   },
   {
@@ -199,8 +227,11 @@ export const FACTORY_PRESETS: Preset[] = [
         type: "lowpass", cutoff: 2500, resonance: 0.8, envAmount: 400,
         attack: 1, decay: 0.4, sustain: 0.85, release: 1.2
       },
-      lfo: { waveform: "sine", rate: 0.5, toFilter: 100, toPitch: 0 },
+      lfos: [
+        { waveform: "sine", rate: 0.5, toFilter: 100, toPitch: 0 }
+      ],
       chorus: { rate: 0.3, depth: 22, mix: 0.5 },
+      tremolo: { rate: 0.35, depth: 0.12 },
       reverb: { decay: 3.5, reverbMix: 0.5 },
       delay: { time: 0.5, feedback: 0.25, mix: 0.2 },
       distortion: { drive: 0.3, blend: 0.1 },
@@ -208,7 +239,8 @@ export const FACTORY_PRESETS: Preset[] = [
         threshold: -32, ratio: 2.2, attack: 0.12, release: 0.7, knee: 16
       },
       phaser: { rate: 0.5, depth: 600, stages: 4, feedback: 0.25, mix: 0.22 },
-      noise: { enabled: true, type: "brown", level: 0.04}
+      noise: { enabled: true, type: "brown", level: 0.04 },
+      flanger: { rate: 0.2, depth: 1.5, feedback: 0.1, mix: 0.05 }
     }
   },
   {
@@ -226,8 +258,11 @@ export const FACTORY_PRESETS: Preset[] = [
         type: "bandpass", cutoff: 2800, resonance: 3, envAmount: 2000,
         attack: 0.05, decay: 0.25, sustain: 0.75, release: 0.2
       },
-      lfo: { waveform: "sine", rate: 5, toFilter: 0, toPitch: 0 },
+      lfos: [
+        { waveform: "sine", rate: 5, toFilter: 0, toPitch: 0 }
+      ],
       chorus: { rate: 0.4, depth: 15, mix: 0.3 },
+      tremolo: { rate: 0, depth: 0 },
       reverb: { decay: 1.8, reverbMix: 0.25 },
       delay: { time: 0.375, feedback: 0.2, mix: 0 },
       distortion: { drive: 1.2, blend: 0.18 },
@@ -235,7 +270,8 @@ export const FACTORY_PRESETS: Preset[] = [
         threshold: -20, ratio: 4.5, attack: 0.02, release: 0.19, knee: 10
       },
       phaser: { rate: 0.7, depth: 400, stages: 3, feedback: 0.18, mix: 0.13 },
-      noise: { enabled: true, type: "pink", level: 0.06}
+      noise: { enabled: true, type: "pink", level: 0.06 },
+      flanger: { rate: 0.4, depth: 2, feedback: 0.15, mix: 0.05 }
     }
   },
   {
@@ -251,8 +287,11 @@ export const FACTORY_PRESETS: Preset[] = [
         type: "lowshelf", cutoff: 3500, resonance: 0.5, envAmount: 300,
         attack: 0.1, decay: 0.1, sustain: 0.8, release: 0.3
       },
-      lfo: { waveform: "sine", rate: 4.8, toFilter: 0, toPitch: 5 },
+      lfos: [
+        { waveform: "sine", rate: 4.8, toFilter: 0, toPitch: 5 }
+      ],
       chorus: { rate: 0.4, depth: 10, mix: 0.2 },
+      tremolo: { rate: 4.2, depth: 0.18 },
       reverb: { decay: 2.2, reverbMix: 0.35 },
       delay: { time: 0.375, feedback: 0.25, mix: 0.1 },
       distortion: { drive: 0, blend: 0 },
@@ -260,7 +299,8 @@ export const FACTORY_PRESETS: Preset[] = [
         threshold: -34, ratio: 2, attack: 0.09, release: 0.25, knee: 8
       },
       phaser: { rate: 0.2, depth: 150, stages: 2, feedback: 0.1, mix: 0.08 },
-      noise: { enabled: true, type: "pink", level: 0.02}
+      noise: { enabled: true, type: "pink", level: 0.03 },
+      flanger: { rate: 0.3, depth: 1, feedback: 0.1, mix: 0.05 }
     }
   },
   {
@@ -277,8 +317,11 @@ export const FACTORY_PRESETS: Preset[] = [
         type: "highpass", cutoff: 3500, resonance: 4, envAmount: 3500,
         attack: 0.002, decay: 0.2, sustain: 0.2, release: 0.1
       },
-      lfo: { waveform: "sine", rate: 5, toFilter: 0, toPitch: 0 },
+      lfos: [
+        { waveform: "sine", rate: 5, toFilter: 0, toPitch: 0 }
+      ],
       chorus: { rate: 0.6, depth: 15, mix: 0.3 },
+      tremolo: { rate: 0, depth: 0 },
       reverb: { decay: 1.5, reverbMix: 0.3 },
       delay: { time: 0.1875, feedback: 0.4, mix: 0.3 },
       distortion: { drive: 0.8, blend: 0.2 },
@@ -286,7 +329,8 @@ export const FACTORY_PRESETS: Preset[] = [
         threshold: -24, ratio: 3.5, attack: 0.012, release: 0.13, knee: 9
       },
       phaser: { rate: 1.1, depth: 800, stages: 3, feedback: 0.3, mix: 0.2 },
-      noise: { enabled: false, type: "white", level: 0.1}
+      noise: { enabled: false, type: "white", level: 0.1 },
+      flanger: { rate: 0.2, depth: 0, feedback: 0, mix: 0 }
     }
   },
   {
@@ -304,8 +348,11 @@ export const FACTORY_PRESETS: Preset[] = [
         type: "notch", cutoff: 8000, resonance: 0.5, envAmount: 0,
         attack: 0.001, decay: 0.8, sustain: 0.5, release: 0.6
       },
-      lfo: { waveform: "sine", rate: 5, toFilter: 0, toPitch: 0 },
+      lfos: [
+        { waveform: "sine", rate: 5, toFilter: 0, toPitch: 0 }
+      ],
       chorus: { rate: 0.5, depth: 12, mix: 0.25 },
+      tremolo: { rate: 0, depth: 0 },
       reverb: { decay: 3, reverbMix: 0.4 },
       delay: { time: 0.25, feedback: 0.35, mix: 0.25 },
       distortion: { drive: 0.2, blend: 0.1 },
@@ -313,7 +360,8 @@ export const FACTORY_PRESETS: Preset[] = [
         threshold: -26, ratio: 2.8, attack: 0.03, release: 0.31, knee: 11
       },
       phaser: { rate: 0.9, depth: 1000, stages: 4, feedback: 0.35, mix: 0.28 },
-      noise: { enabled: true, type: "white", level: 0.03}
+      noise: { enabled: true, type: "white", level: 0.03 },
+      flanger: { rate: 0.5, depth: 2, feedback: 0.18, mix: 0.12 }
     }
   },
   {
@@ -330,8 +378,11 @@ export const FACTORY_PRESETS: Preset[] = [
         type: "peaking", cutoff: 3200, resonance: 1.5, envAmount: 1200,
         attack: 0.01, decay: 0.1, sustain: 0.6, release: 0.12
       },
-      lfo: { waveform: "sine", rate: 5, toFilter: 0, toPitch: 0 },
+      lfos: [
+        { waveform: "sine", rate: 5, toFilter: 0, toPitch: 0 }
+      ],
       chorus: { rate: 0.3, depth: 10, mix: 0.18 },
+      tremolo: { rate: 0, depth: 0 },
       reverb: { decay: 0.7, reverbMix: 0.18 },
       delay: { time: 0.18, feedback: 0.22, mix: 0.12 },
       distortion: { drive: 6, blend: 0.7 },
@@ -339,7 +390,8 @@ export const FACTORY_PRESETS: Preset[] = [
         threshold: -20, ratio: 5, attack: 0.01, release: 0.15, knee: 10
       },
       phaser: { rate: 1.7, depth: 1200, stages: 4, feedback: 0.5, mix: 0.3 },
-      noise: { enabled: false, type: "white", level: 0.1}
+      noise: { enabled: false, type: "white", level: 0.1 },
+      flanger: { rate: 0.7, depth: 4, feedback: 0.3, mix: 0.18 }
     }
   },
   {
@@ -356,8 +408,11 @@ export const FACTORY_PRESETS: Preset[] = [
         type: "lowpass", cutoff: 1800, resonance: 2.2, envAmount: 800,
         attack: 0.01, decay: 0.1, sustain: 0.2, release: 0.1
       },
-      lfo: { waveform: "triangle", rate: 2.5, toFilter: 0, toPitch: 0 },
+      lfos: [
+        { waveform: "triangle", rate: 2.5, toFilter: 0, toPitch: 0 }
+      ],
       chorus: { rate: 0.2, depth: 6, mix: 0.1 },
+      tremolo: { rate: 0, depth: 0 },
       reverb: { decay: 0.5, reverbMix: 0.08 },
       delay: { time: 0.12, feedback: 0.18, mix: 0.08 },
       distortion: { drive: 8, blend: 0.6 },
@@ -365,7 +420,8 @@ export const FACTORY_PRESETS: Preset[] = [
         threshold: -12, ratio: 9, attack: 0.006, release: 0.09, knee: 5
       },
       phaser: { rate: 0.6, depth: 400, stages: 2, feedback: 0.18, mix: 0.12 },
-      noise: { enabled: true, type: "pink", level: 0.12}
+      noise: { enabled: true, type: "pink", level: 0.12 },
+      flanger: { rate: 0.2, depth: 1, feedback: 0.1, mix: 0.08 }
     }
   },
   {
@@ -381,8 +437,11 @@ export const FACTORY_PRESETS: Preset[] = [
         type: "highpass", cutoff: 2000, resonance: 1.5, envAmount: 1500,
         attack: 1.5, decay: 0.8, sustain: 0.75, release: 2
       },
-      lfo: { waveform: "sine", rate: 0.25, toFilter: 1200, toPitch: 0 },
+      lfos: [
+        { waveform: "sine", rate: 0.25, toFilter: 1200, toPitch: 0 }
+      ],
       chorus: { rate: 0.4, depth: 40, mix: 0.7 },
+      tremolo: { rate: 0.3, depth: 0.2 },
       reverb: { decay: 5, reverbMix: 0.75 },
       delay: { time: 1, feedback: 0.5, mix: 0.4 },
       distortion: { drive: 0, blend: 0 },
@@ -390,7 +449,163 @@ export const FACTORY_PRESETS: Preset[] = [
         threshold: -38, ratio: 1.8, attack: 0.3, release: 1.5, knee: 25
       },
       phaser: { rate: 0.2, depth: 800, stages: 8, feedback: 0.5, mix: 0.5 },
-      noise: { enabled: true, type: "pink", level: 0.95 }
+      noise: { enabled: true, type: "pink", level: 0.95 },
+      flanger: { rate: 0.15, depth: 5, feedback: 0.25, mix: 0.25 }
+    }
+  },
+  {
+    name: "Slow Pulse Pad",
+    description: "Deep breathing pad with slow tremolo swell",
+    settings: {
+      master: { polyphonic: true, masterVolume: 0.24 },
+      oscillators: [
+        { waveform: "sawtooth", detune: -8, level: 0.85 },
+        { waveform: "sawtooth", detune: 0, level: 1 },
+        { waveform: "sawtooth", detune: 8, level: 0.85 }
+      ],
+      envelope: { attack: 1.2, decay: 0.5, sustain: 0.9, release: 1.8 },
+      filter: {
+        type: "lowpass", cutoff: 1500, resonance: 0.8, envAmount: 600,
+        attack: 1.5, decay: 0.6, sustain: 0.8, release: 1.5
+      },
+      lfos: [
+        { waveform: "sine", rate: 0.25, toFilter: 200, toPitch: 0 }
+      ],
+      chorus: { rate: 0.3, depth: 25, mix: 0.45 },
+      tremolo: { rate: 0.6, depth: 0.4 },
+      reverb: { decay: 4, reverbMix: 0.5 },
+      delay: { time: 0.75, feedback: 0.3, mix: 0.25 },
+      distortion: { drive: 0.3, blend: 0.1 },
+      compressor: {
+        threshold: -30, ratio: 2.5, attack: 0.1, release: 0.5, knee: 15
+      },
+      phaser: { rate: 0.4, depth: 500, stages: 4, feedback: 0.25, mix: 0.3 },
+      noise: { enabled: false, type: "white", level: 0.1 },
+      flanger: { rate: 0.18, depth: 3, feedback: 0.18, mix: 0.12 }
+    }
+  },
+  {
+    name: "Helicopter Bass",
+    description: "Fast tremolo on bass for rhythmic pulsing effect",
+    settings: {
+      master: { polyphonic: false, masterVolume: 0.3 },
+      oscillators: [
+        { waveform: "square", detune: 0, level: 1 },
+        { waveform: "sawtooth", detune: 0, level: 0.6 }
+      ],
+      envelope: { attack: 0.002, decay: 0.08, sustain: 0.9, release: 0.15 },
+      filter: {
+        type: "lowpass", cutoff: 600, resonance: 4, envAmount: 400,
+        attack: 0.002, decay: 0.1, sustain: 0.5, release: 0.1
+      },
+      lfos: [
+        { waveform: "sine", rate: 5, toFilter: 0, toPitch: 0 }
+      ],
+      chorus: { rate: 0.5, depth: 0, mix: 0 },
+      tremolo: { rate: 12, depth: 0.75 },
+      reverb: { decay: 0.4, reverbMix: 0.08 },
+      delay: { time: 0.125, feedback: 0.3, mix: 0.15 },
+      distortion: { drive: 2.5, blend: 0.3 },
+      compressor: {
+        threshold: -16, ratio: 6, attack: 0.008, release: 0.12, knee: 8
+      },
+      phaser: { rate: 0.8, depth: 300, stages: 2, feedback: 0.15, mix: 0.1 },
+      noise: { enabled: false, type: "white", level: 0.1 },
+      flanger: { rate: 0.2, depth: 0, feedback: 0, mix: 0 }
+    }
+  },
+  {
+    name: "Tremolo Rhodes",
+    description: "Electric piano with vintage amp tremolo character",
+    settings: {
+      master: { polyphonic: true, masterVolume: 0.26 },
+      oscillators: [
+        { waveform: "sine", detune: 0, level: 1 },
+        { waveform: "sine", detune: 1200, level: 0.3 },
+        { waveform: "triangle", detune: 0, level: 0.4 }
+      ],
+      envelope: { attack: 0.005, decay: 0.5, sustain: 0.35, release: 0.6 },
+      filter: {
+        type: "lowshelf", cutoff: 3200, resonance: 0.7, envAmount: 400,
+        attack: 0.01, decay: 0.35, sustain: 0.5, release: 0.5
+      },
+      lfos: [
+        { waveform: "sine", rate: 5, toFilter: 0, toPitch: 0 }
+      ],
+      chorus: { rate: 0.4, depth: 20, mix: 0.4 },
+      tremolo: { rate: 5.5, depth: 0.5 },
+      reverb: { decay: 2, reverbMix: 0.28 },
+      delay: { time: 0.375, feedback: 0.2, mix: 0.12 },
+      distortion: { drive: 0.8, blend: 0.15 },
+      compressor: {
+        threshold: -24, ratio: 3, attack: 0.02, release: 0.25, knee: 12
+      },
+      phaser: { rate: 0.5, depth: 400, stages: 3, feedback: 0.2, mix: 0.15 },
+      noise: { enabled: true, type: "pink", level: 0.04 },
+      flanger: { rate: 0.3, depth: 2, feedback: 0.15, mix: 0.1 }
+    }
+  },
+  {
+    name: "Shimmer Bells",
+    description: "Bell tones with tremolo for ethereal shimmer",
+    settings: {
+      master: { polyphonic: true, masterVolume: 0.25 },
+      oscillators: [
+        { waveform: "sine", detune: 0, level: 1 },
+        { waveform: "sine", detune: 1900, level: 0.5 },
+        { waveform: "sine", detune: 2400, level: 0.35 }
+      ],
+      envelope: { attack: 0.01, decay: 1.5, sustain: 0.25, release: 1.2 },
+      filter: {
+        type: "highshelf", cutoff: 4000, resonance: 0.6, envAmount: 0,
+        attack: 0.01, decay: 1, sustain: 0.4, release: 1
+      },
+      lfos: [
+        { waveform: "sine", rate: 5, toFilter: 0, toPitch: 0 }
+      ],
+      chorus: { rate: 0.6, depth: 15, mix: 0.35 },
+      tremolo: { rate: 4.8, depth: 0.45 },
+      reverb: { decay: 3.5, reverbMix: 0.55 },
+      delay: { time: 0.5, feedback: 0.4, mix: 0.35 },
+      distortion: { drive: 0.1, blend: 0.05 },
+      compressor: {
+        threshold: -28, ratio: 2.5, attack: 0.05, release: 0.4, knee: 14
+      },
+      phaser: { rate: 0.7, depth: 800, stages: 4, feedback: 0.3, mix: 0.25 },
+      noise: { enabled: true, type: "white", level: 0.02 },
+      flanger: { rate: 0.5, depth: 2, feedback: 0.18, mix: 0.12 }
+    }
+  },
+  {
+    name: "Complex Texture",
+    description: "Multiple LFOs for evolving movement",
+    settings: {
+      master: { polyphonic: true, masterVolume: 0.25 },
+      oscillators: [
+        { waveform: "sawtooth", detune: 0, level: 0.8 },
+        { waveform: "sawtooth", detune: 0, level: 1 },
+        { waveform: "sawtooth", detune: 0, level: 0.8 }
+      ],
+      envelope: { attack: 0.8, decay: 0.4, sustain: 0.85, release: 1.2 },
+      filter: {
+        type: "lowpass", cutoff: 1200, resonance: 0.5, envAmount: 800,
+        attack: 1, decay: 0.5, sustain: 0.7, release: 1
+      },
+      lfos: [
+        { waveform: "sine", rate: 0.5, toFilter: 200, toPitch: 0 },
+        { waveform: "triangle", rate: 0.8, toFilter: 100, toPitch: 5 }
+      ],
+      chorus: { rate: 0.3, depth: 20, mix: 0.4 },
+      tremolo: { rate: 0.4, depth: 0.15 },
+      reverb: { decay: 3.5, reverbMix: 0.45 },
+      delay: { time: 0.5, feedback: 0.25, mix: 0.15 },
+      distortion: { drive: 0.5, blend: 0.15 },
+      compressor: {
+        threshold: -28, ratio: 3, attack: 0.08, release: 0.4, knee: 18
+      },
+      phaser: { rate: 0.7, depth: 700, stages: 4, feedback: 0.3, mix: 0.5 },
+      noise: { enabled: false, type: "white", level: 0.1 },
+      flanger: { rate: 0.2, depth: 3, feedback: 0.18, mix: 0.12 }
     }
   },
 ];

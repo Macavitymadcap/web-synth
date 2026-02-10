@@ -40,34 +40,18 @@ export type LFOSettings = {
   toPitch: number;
 };
 
-export type ChorusSettings = {
-  rate: number;
-  depth: number;
-  mix: number;
-};
-
-export type ReverbSettings = {
-  decay: number;
-  reverbMix: number;
-};
-
-export type WaveShaperSettings = {
-  drive: number;
-  blend: number;
-};
-
-export type DelaySettings = {
-  time: number;
-  feedback: number;
-  mix: number;
-};
-
 export type CompressorSettings = {
   threshold: number;
   ratio: number;
   attack: number;
   release: number;
   knee: number;
+};
+
+export type ChorusSettings = {
+  rate: number;
+  depth: number;
+  mix: number;
 };
 
 export type PhaserSettings = {
@@ -78,19 +62,50 @@ export type PhaserSettings = {
   mix: number;
 };
 
+export type TremoloSettings = {
+  rate: number;
+  depth: number;
+};
+
+export type FlangerSettings = {
+  rate: number;
+  depth: number;
+  feedback: number;
+  mix: number;
+};
+
+export type DelaySettings = {
+  time: number;
+  feedback: number;
+  mix: number;
+};
+
+export type WaveShaperSettings = {
+  drive: number;
+  blend: number;
+};
+
+export type ReverbSettings = {
+  decay: number;
+  reverbMix: number;
+};
+
 export interface SynthSettings {
   master: MasterSettings;
   oscillators: OscillatorSettings[];
   envelope: EnvelopeSettings;
   filter: FilterSettings;
-  lfo: LFOSettings;
-  chorus: ChorusSettings;
-  reverb: ReverbSettings;
-  compressor: CompressorSettings;
-  distortion: WaveShaperSettings;
-  delay: DelaySettings;
-  phaser: PhaserSettings;
+  lfos: LFOSettings[];
   noise: NoiseConfig;
+
+  compressor: CompressorSettings;
+  chorus: ChorusSettings;
+  phaser: PhaserSettings;
+  tremolo: TremoloSettings;
+  flanger: FlangerSettings;
+  delay: DelaySettings;
+  distortion: WaveShaperSettings;
+  reverb: ReverbSettings;
 }
 
 export interface Preset {

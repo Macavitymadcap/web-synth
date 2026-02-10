@@ -1,4 +1,4 @@
-import { OscillatorConfig } from "../../core/oscillator-bank";
+import { OscillatorConfig } from "../../../core/oscillator-bank";
 
 export class OscillatorSection extends HTMLElement {
   private oscillators: OscillatorConfig[] = [];

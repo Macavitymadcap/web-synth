@@ -1,22 +1,25 @@
 import type { OscillatorBank } from "./oscillator-bank";
-import type { OscillatorSection } from "../components/organisms/oscillator-section";
+import type { OscillatorSection } from "../components/organisms/oscillator-bank/oscillator-section";
 import type { RangeControl } from "../components/atoms/range-control";
-import { 
-  SynthSettings, 
-  MasterSettings, 
-  EnvelopeSettings, 
-  FilterSettings, 
-  FilterType, 
-  LFOSettings, 
-  ChorusSettings, 
-  WaveShaperSettings, 
-  ReverbSettings, 
-  CompressorSettings, 
-  DelaySettings, 
-  Preset 
+import {
+  SynthSettings,
+  MasterSettings,
+  EnvelopeSettings,
+  FilterSettings,
+  FilterType,
+  LFOSettings,
+  ChorusSettings,
+  WaveShaperSettings,
+  ReverbSettings,
+  CompressorSettings,
+  DelaySettings,
+  Preset,
+  TremoloSettings,
+  FlangerSettings
 } from "./settings.model";
 import type { PhaserConfig } from "../modules/effects/phaser-module";
 import type { NoiseConfig } from "../modules/noise-module";
+import { LFOSection } from "../components/organisms/lfo-bank/lfo-section";
 
 const STORAGE_KEY = "web-synth-settings";
 const USER_PRESETS_KEY = "web-synth-user-presets";
@@ -34,14 +37,16 @@ export class SettingsManager {
       oscillators: this.getOscillatorSettings(),
       envelope: this.getEnvelopeSettings(),
       filter: this.getFilterSettings(),
-      lfo: this.getLFOSettings(),
+      lfos: this.getLFOSettings(),
       chorus: this.getChorusSettings(),
       distortion: this.getWaveShaperSettings(),
       compressor: this.getCompressorSettings(),
       reverb: this.getReverbSettings(),
       delay: this.getDelaySettings(),
       phaser: this.getPhaserSettings(),
-      noise: this.getNoiseSettings(), // Add this
+      noise: this.getNoiseSettings(),
+      tremolo: this.getTremoloSettings(),
+      flanger: this.getFlangerSettings(),
     };
   }
 
@@ -84,13 +89,14 @@ export class SettingsManager {
     };
   }
 
-  private getLFOSettings(): LFOSettings {
-    return {
-      waveform: (document.getElementById("lfo-waveform") as HTMLSelectElement)?.value as OscillatorType ?? "sine",
-      rate: Number.parseFloat((document.getElementById("lfo-rate") as HTMLInputElement)?.value ?? "5"),
-      toFilter: Number.parseFloat((document.getElementById("lfo-to-filter") as HTMLInputElement)?.value ?? "0"),
-      toPitch: Number.parseFloat((document.getElementById("lfo-to-pitch") as HTMLInputElement)?.value ?? "0"),
-    };
+  private getLFOSettings(): LFOSettings[] {
+    const section = document.querySelector("lfo-section") as LFOSection;
+    if (!section || typeof section.getLFOs !== 'function') {
+      return [{ waveform: "sine" as OscillatorType, rate: 5, toFilter: 0, toPitch: 0 }];
+    }
+
+    const lfos = section.getLFOs();
+    return lfos.length > 0 ? lfos : [{ waveform: "sine" as OscillatorType, rate: 5, toFilter: 0, toPitch: 0 }];
   }
 
   private getChorusSettings(): ChorusSettings {
@@ -143,6 +149,22 @@ export class SettingsManager {
     };
   }
 
+  private getTremoloSettings(): TremoloSettings {
+    return {
+      rate: Number.parseFloat((document.getElementById("tremolo-rate") as HTMLInputElement)?.value ?? "5"),
+      depth: Number.parseFloat((document.getElementById("tremolo-depth") as HTMLInputElement)?.value ?? "0.5"),
+    };
+  }
+
+  private getFlangerSettings(): FlangerSettings {
+    return {
+      rate: Number.parseFloat((document.getElementById("flanger-rate") as HTMLInputElement)?.value ?? "0.5"),
+      depth: Number.parseFloat((document.getElementById("flanger-depth") as HTMLInputElement)?.value ?? "2"),
+      feedback: Number.parseFloat((document.getElementById("flanger-feedback") as HTMLInputElement)?.value ?? "0.5"),
+      mix: Number.parseFloat((document.getElementById("flanger-mix") as HTMLInputElement)?.value ?? "0.5"),
+    };
+  }
+
   // Add this method
   private getNoiseSettings(): NoiseConfig {
     return {
@@ -158,15 +180,17 @@ export class SettingsManager {
     this.updateOscillatorBank();
     this.applyEnvelopeSettings(settings.envelope);
     this.applyFilterSettings(settings.filter);
-    this.applyLFOSettings(settings.lfo);
+    this.applyLFOSettings(settings.lfos);
+
+    this.applyCompressorSettings(settings.compressor);
     this.applyChorusSettings(settings.chorus);
+    this.applyPhaserSettings(settings.phaser);
+    this.applyTremoloSettings(settings.tremolo);
+    this.applyDelaySettings(settings.delay);
     this.applyWaveShaperSettings(settings.distortion);
     this.applyReverbSettings(settings.reverb);
-    this.applyCompressorSettings(settings.compressor);
-    this.applyDelaySettings(settings.delay);
-    this.applyPhaserSettings(settings.phaser);
-    
-    // Add this line
+    this.applyFlangerSettings(settings.flanger);
+
     if (settings.noise) {
       this.applyNoiseSettings(settings.noise);
     }
@@ -238,16 +262,20 @@ export class SettingsManager {
     this.setControlValue("filter-release", settings.release);
   }
 
-  private applyLFOSettings(settings: LFOSettings): void {
-    const lfoWave = document.getElementById("lfo-waveform") as HTMLSelectElement;
-    if (lfoWave) {
-      lfoWave.value = settings.waveform;
-      lfoWave.dispatchEvent(new Event("change"));
-    }
+  private applyLFOSettings(lfos: LFOSettings[]): void {
+    const section = document.querySelector("lfo-section") as LFOSection;
+    if (!section) return;
 
-    this.setControlValue("lfo-rate", settings.rate);
-    this.setControlValue("lfo-to-filter", settings.toFilter);
-    this.setControlValue("lfo-to-pitch", settings.toPitch);
+    // Clear existing LFOs
+    section.clearAll();
+
+    // Ensure we have at least one LFO
+    const lfosToAdd = lfos.length > 0 ? lfos : [{ waveform: "sine" as OscillatorType, rate: 5, toFilter: 0, toPitch: 0 }];
+
+    // Add new LFOs
+    for (const lfo of lfosToAdd) {
+      section.addLFO(lfo.waveform, lfo.rate, lfo.toFilter, lfo.toPitch);
+    }
   }
 
   private applyChorusSettings(settings: ChorusSettings): void {
@@ -286,6 +314,18 @@ export class SettingsManager {
     this.setControlValue("phaser-stages", settings.stages);
     this.setControlValue("phaser-feedback", settings.feedback);
     this.setControlValue("phaser-mix", settings.mix);
+  }
+
+  private applyTremoloSettings(settings: TremoloSettings): void {
+    this.setControlValue("tremolo-rate", settings.rate);
+    this.setControlValue("tremolo-depth", settings.depth);
+  }
+
+  private applyFlangerSettings(settings: FlangerSettings): void {
+    this.setControlValue("flanger-rate", settings.rate);
+    this.setControlValue("flanger-depth", settings.depth);
+    this.setControlValue("flanger-feedback", settings.feedback);
+    this.setControlValue("flanger-mix", settings.mix);
   }
 
   // Add this method

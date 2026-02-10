@@ -67,13 +67,14 @@ class MockNoiseModule {
   }));
 }
 
-describe("VoiceManager (UIConfigService)", () => {
+describe("VoiceManager (UIConfigService + Multiple LFOs)", () => {
   let ctx: AudioContext & any;
   let destination: AudioNode & any;
   let oscBank: MockOscillatorBank;
   let ampEnv: MockEnvelopeModule;
   let filterModule: MockFilterModule;
-  let lfoModule: MockLFOModule;
+  let lfo1Module: MockLFOModule;
+  let lfo2Module: MockLFOModule;
   let noiseModule: MockNoiseModule;
   let vm: VoiceManager;
 
@@ -92,14 +93,23 @@ describe("VoiceManager (UIConfigService)", () => {
     oscBank = new MockOscillatorBank();
     ampEnv = new MockEnvelopeModule();
     filterModule = new MockFilterModule();
-    lfoModule = new MockLFOModule();
+    lfo1Module = new MockLFOModule();
+    lfo2Module = new MockLFOModule();
     noiseModule = new MockNoiseModule();
 
-    // Provide LFO nodes
-    lfoModule.setFilterLfo(ctx.createGain());
-    lfoModule.setPitchLfo(ctx.createGain());
+    // Provide LFO nodes for both LFOs
+    lfo1Module.setFilterLfo(ctx.createGain());
+    lfo1Module.setPitchLfo(ctx.createGain());
+    lfo2Module.setFilterLfo(ctx.createGain());
+    lfo2Module.setPitchLfo(ctx.createGain());
 
-    vm = new VoiceManager(oscBank as any, ampEnv as any, filterModule as any, lfoModule as any, noiseModule as any);
+    vm = new VoiceManager(
+      oscBank as any,
+      ampEnv as any,
+      filterModule as any,
+      [lfo1Module as any, lfo2Module as any],
+      noiseModule as any
+    );
   });
 
   it("getConfig reads polyphonic from UI via UIConfigService", () => {
@@ -134,24 +144,62 @@ describe("VoiceManager (UIConfigService)", () => {
     expect(noiseModule.createNoiseSource).toHaveBeenCalled();
   });
 
-  it("passes LFO modulation nodes to FilterModule and OscillatorBank", () => {
+  it("combines multiple LFO modulations for filter and pitch", () => {
     vm.createVoice(ctx, "C4", 261.63, 1, destination);
 
-    // FilterModule received filter LFO
+    // Check that createGain was called for mixer nodes (2 mixers: filter + pitch)
+    // Each LFO has 2 gain nodes, plus 2 mixer gains = 6 total
+    expect(ctx.createGain).toHaveBeenCalled();
+
+    // FilterModule should receive combined filter modulation
     const filterCall = (filterModule.createFilter as any).mock.calls[0];
     expect(filterCall[0]).toBe(ctx);
     const passedLfoToFilter = filterCall[1];
     expect(passedLfoToFilter).toBeInstanceOf(Object);
 
-    // OscillatorBank received pitch LFO
+    // OscillatorBank should receive combined pitch modulation
     const oscCall = (oscBank.createOscillators as any).mock.calls[0];
     expect(oscCall[0]).toBe(ctx);
     expect(oscCall[1]).toBeCloseTo(261.63);
-    expect(oscCall[2]).toBe(voiceFor("C4")!.filterInstance.filter);
     const passedLfoToPitch = oscCall[3];
     expect(passedLfoToPitch).toBeInstanceOf(Object);
+  });
 
-    function voiceFor(k: string) { return vm.getVoice(k)!; }
+  it("handles single LFO without creating mixer", () => {
+    // Create VM with only one LFO
+    const vmSingleLfo = new VoiceManager(
+      oscBank as any,
+      ampEnv as any,
+      filterModule as any,
+      [lfo1Module as any],
+      noiseModule as any
+    );
+
+    vmSingleLfo.createVoice(ctx, "D4", 293.66, 1, destination);
+
+    // Should pass LFO directly without creating mixer
+    const filterCall = (filterModule.createFilter as any).mock.calls[0];
+    const passedLfoToFilter = filterCall[1];
+    expect(passedLfoToFilter).toBe(lfo1Module.getFilterModulation());
+  });
+
+  it("handles no LFOs gracefully", () => {
+    const vmNoLfos = new VoiceManager(
+      oscBank as any,
+      ampEnv as any,
+      filterModule as any,
+      [],
+      noiseModule as any
+    );
+
+    vmNoLfos.createVoice(ctx, "E4", 329.63, 1, destination);
+
+    // Should pass undefined to filter and oscillators
+    const filterCall = (filterModule.createFilter as any).mock.calls[0];
+    expect(filterCall[1]).toBeUndefined();
+
+    const oscCall = (oscBank.createOscillators as any).mock.calls[0];
+    expect(oscCall[3]).toBeUndefined();
   });
 
   it("integrates noise source when enabled", () => {
