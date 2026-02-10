@@ -14,7 +14,8 @@ import {
   CompressorSettings,
   DelaySettings,
   Preset,
-  TremoloSettings
+  TremoloSettings,
+  FlangerSettings
 } from "./settings.model";
 import type { PhaserConfig } from "../modules/effects/phaser-module";
 import type { NoiseConfig } from "../modules/noise-module";
@@ -36,7 +37,7 @@ export class SettingsManager {
       oscillators: this.getOscillatorSettings(),
       envelope: this.getEnvelopeSettings(),
       filter: this.getFilterSettings(),
-      lfos: this.getLFOSettings(),  // Changed to array
+      lfos: this.getLFOSettings(),
       chorus: this.getChorusSettings(),
       distortion: this.getWaveShaperSettings(),
       compressor: this.getCompressorSettings(),
@@ -45,6 +46,7 @@ export class SettingsManager {
       phaser: this.getPhaserSettings(),
       noise: this.getNoiseSettings(),
       tremolo: this.getTremoloSettings(),
+      flanger: this.getFlangerSettings(),
     };
   }
 
@@ -154,6 +156,15 @@ export class SettingsManager {
     };
   }
 
+  private getFlangerSettings(): FlangerSettings {
+    return {
+      rate: Number.parseFloat((document.getElementById("flanger-rate") as HTMLInputElement)?.value ?? "0.5"),
+      depth: Number.parseFloat((document.getElementById("flanger-depth") as HTMLInputElement)?.value ?? "2"),
+      feedback: Number.parseFloat((document.getElementById("flanger-feedback") as HTMLInputElement)?.value ?? "0.5"),
+      mix: Number.parseFloat((document.getElementById("flanger-mix") as HTMLInputElement)?.value ?? "0.5"),
+    };
+  }
+
   // Add this method
   private getNoiseSettings(): NoiseConfig {
     return {
@@ -169,14 +180,16 @@ export class SettingsManager {
     this.updateOscillatorBank();
     this.applyEnvelopeSettings(settings.envelope);
     this.applyFilterSettings(settings.filter);
-    this.applyLFOSettings(settings.lfos);  // Changed to array
-    this.applyChorusSettings(settings.chorus);
-    this.applyWaveShaperSettings(settings.distortion);
-    this.applyReverbSettings(settings.reverb);
+    this.applyLFOSettings(settings.lfos);
+
     this.applyCompressorSettings(settings.compressor);
-    this.applyDelaySettings(settings.delay);
+    this.applyChorusSettings(settings.chorus);
     this.applyPhaserSettings(settings.phaser);
     this.applyTremoloSettings(settings.tremolo);
+    this.applyDelaySettings(settings.delay);
+    this.applyWaveShaperSettings(settings.distortion);
+    this.applyReverbSettings(settings.reverb);
+    this.applyFlangerSettings(settings.flanger);
 
     if (settings.noise) {
       this.applyNoiseSettings(settings.noise);
@@ -306,6 +319,13 @@ export class SettingsManager {
   private applyTremoloSettings(settings: TremoloSettings): void {
     this.setControlValue("tremolo-rate", settings.rate);
     this.setControlValue("tremolo-depth", settings.depth);
+  }
+
+  private applyFlangerSettings(settings: FlangerSettings): void {
+    this.setControlValue("flanger-rate", settings.rate);
+    this.setControlValue("flanger-depth", settings.depth);
+    this.setControlValue("flanger-feedback", settings.feedback);
+    this.setControlValue("flanger-mix", settings.mix);
   }
 
   // Add this method

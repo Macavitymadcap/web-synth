@@ -12,13 +12,14 @@ import { LFOModule } from "./modules/lfo-module";
 import { EffectsManager } from "./core/effects-manager";
 
 // Effects
+import { CompressorModule } from "./modules/effects/compressor-module";
 import { ChorusModule } from "./modules/effects/chorus-module";
 import { PhaserModule } from "./modules/effects/phaser-module";
 import { TremoloModule } from "./modules/effects/tremolo-module";
+import { FlangerModule } from "./modules/effects/flanger-module";
 import { DelayModule } from "./modules/effects/delay-module";
-import { ReverbModule } from "./modules/effects/reverb-module";
 import { DistortionModule } from "./modules/effects/distortion-module";
-import { CompressorModule } from "./modules/effects/compressor-module";
+import { ReverbModule } from "./modules/effects/reverb-module";
 import { SpectrumAnalyserModule } from "./modules/effects/spectrum-analyser-module";
 
 // Handlers
@@ -63,6 +64,7 @@ import "./components/organisms/lfo-bank/lfo-module-controls";
 
 import "./components/organisms/chorus-effect";
 import "./components/organisms/phaser-effect";
+import "./components/organisms/flanger-effect";
 import "./components/organisms/tremolo-effect";
 import "./components/organisms/reverb-effect";
 import "./components/organisms/compressor-effect";
@@ -75,7 +77,7 @@ import { NoiseModule } from "./modules/noise-module";
 import "./components/organisms/lfo-bank/lfo-section";
 import "./components/organisms/lfo-bank/lfo-control";
 import "./components/organisms/lfo-bank/lfo-controls";
-import { LFOSection } from "./components/organisms/lfo-bank/lfo-section";
+import type { LFOSection } from "./components/organisms/lfo-bank/lfo-section";
 
 // Keyboard and MIDI controls
 const octaveUpper = document.getElementById("octave-upper") as HTMLSelectElement;
@@ -108,6 +110,7 @@ const compressorModule = new CompressorModule();
 const chorusModule = new ChorusModule();
 const phaserModule = new PhaserModule();
 const tremoloModule = new TremoloModule();
+const flangerModule = new FlangerModule();
 const delayModule = new DelayModule();
 const distortionModule = new DistortionModule();
 const reverbModule = new ReverbModule();
@@ -125,49 +128,56 @@ effectsManager.register(compressorModule, {
 effectsManager.register(chorusModule, {
   id: 'chorus',
   name: 'Chorus',
-  order: 90,
+  order: 95,
   category: 'modulation'
 });
 
 effectsManager.register(phaserModule, {
   id: 'phaser',
   name: 'Phaser',
-  order: 80,
+  order: 90,
   category: 'modulation'
 });
 
 effectsManager.register(tremoloModule, {
   id: 'tremolo',
   name: 'Tremolo',
-  order: 75,
+  order: 85,
+  category: 'modulation'
+});
+
+effectsManager.register(flangerModule, {
+  id: 'flanger',
+  name: 'Flanger',
+  order: 80,
   category: 'modulation'
 });
 
 effectsManager.register(delayModule, {
   id: 'delay',
   name: 'Delay',
-  order: 70,
+  order: 75,
   category: 'time-based'
 });
 
 effectsManager.register(distortionModule, {
   id: 'distortion',
   name: 'Distortion',
-  order: 60,
+  order: 70,
   category: 'distortion'
 });
 
 effectsManager.register(reverbModule, {
   id: 'reverb',
   name: 'Reverb',
-  order: 50, // Last effect before analyser
+  order: 65, // Last effect before analyser
   category: 'time-based'
 });
 
 effectsManager.register(spectrumAnalyserModule, {
   id: 'analyser',
   name: 'Spectrum Analyser',
-  order: 40,
+  order: 60, // Always last in chain
   category: 'utility'
 });
 

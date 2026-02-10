@@ -11,7 +11,7 @@
 ### Sprint 2 (Week 3-4): Feature Velocity
 - [x] Add Tremolo
 - [x] Add Second LFO  
-- [ ] Add Flanger
+- [x] Add Flanger
 - [ ] Component audit cleanup
 
 ### Sprint 3 (Week 5-6): Professional Polish
@@ -98,8 +98,6 @@ Pick features from your list based on this priority:
 4. **Flanger** - Complements existing chorus/phaser
 5. **Oscilloscope** - Visual feedback, reuses analyser pattern
 6. **Parametric EQ** - Professional tool, moderate complexity
-
-**Skip for now:** Ring modulator, noise gate, formant filter (specialist/complex)
 
 ## Phase 3: Architecture Improvements (1 week)
 

@@ -766,8 +766,9 @@ customElements.define('my-control', MyControl);
 
 ## Signal Flow
 
+filepath: /Users/dank/Code/personal/web/web-synth/docs/architecture.md
 ```mermaid
-graph LR
+graph TD
     A[User Input] --> B[Synth.playFrequency]
     B --> C[VoiceManager]
     
@@ -785,22 +786,45 @@ graph LR
     F --> J[EffectsManager Input]
     G --> J
     
-    J --> K[Compressor]
-    K --> L[Chorus]
-    L --> M[Phaser]
-    M --> N[Delay]
-    N --> O[Distortion]
-    O --> P[Reverb]
-    P --> Q[Spectrum Analyser]
-    Q --> R[EffectsManager Output]
-    R --> S[Master Volume]
-    S --> T[AudioContext.destination]
+    subgraph EM["Effects Manager"]
+        J --> K[Compressor]
+        K --> L[Chorus]
+        L --> M[Phaser]
+        M --> N[Tremolo]
+        N --> O[Flanger]
+        O --> P[Delay]
+        P --> Q[Distortion]
+        Q --> R[Reverb]
+        R --> S[Spectrum Analyser]
+        S --> T[EffectsManager Output]
+    end
     
-    style A fill:#00ffff,stroke:#00ffff,color:#000
-    style T fill:#ff00ff,stroke:#ff00ff,color:#000
-    style J fill:#ffff00,stroke:#ffff00,color:#000
-    style R fill:#ffff00,stroke:#ffff00,color:#000
-    style H fill:#00ff00,stroke:#00ff00,color:#000
+    T --> U[Master Volume]
+    U --> V[AudioContext.destination]
+    
+    style A fill:#0a0015,stroke:#00ffff,stroke-width:3px,color:#00ffff
+    style B fill:#0a0015,stroke:#00d4ff,stroke-width:2px,color:#00d4ff
+    style C fill:#0a0015,stroke:#00d4ff,stroke-width:2px,color:#00d4ff
+    style D fill:#0a0015,stroke:#00d4ff,stroke-width:2px,color:#00d4ff
+    style E fill:#0a0015,stroke:#00ff88,stroke-width:2px,color:#00ff88
+    style F fill:#0a0015,stroke:#00ff88,stroke-width:2px,color:#00ff88
+    style G fill:#0a0015,stroke:#00ff88,stroke-width:2px,color:#00ff88
+    style H fill:#0a0015,stroke:#b800ff,stroke-width:3px,color:#b800ff
+    style I fill:#0a0015,stroke:#00ff88,stroke-width:2px,color:#00ff88
+    style J fill:#0a0015,stroke:#ffff00,stroke-width:3px,color:#ffff00
+    style K fill:#0a0015,stroke:#ff00ff,stroke-width:2px,color:#ff00ff
+    style L fill:#0a0015,stroke:#ff00ff,stroke-width:2px,color:#ff00ff
+    style M fill:#0a0015,stroke:#ff00ff,stroke-width:2px,color:#ff00ff
+    style N fill:#0a0015,stroke:#ff00ff,stroke-width:2px,color:#ff00ff
+    style O fill:#0a0015,stroke:#ff00ff,stroke-width:2px,color:#ff00ff
+    style P fill:#0a0015,stroke:#ff00ff,stroke-width:2px,color:#ff00ff
+    style Q fill:#0a0015,stroke:#ff00ff,stroke-width:2px,color:#ff00ff
+    style R fill:#0a0015,stroke:#ff00ff,stroke-width:2px,color:#ff00ff
+    style S fill:#0a0015,stroke:#ff00ff,stroke-width:2px,color:#ff00ff
+    style T fill:#0a0015,stroke:#ffff00,stroke-width:3px,color:#ffff00
+    style U fill:#0a0015,stroke:#00d4ff,stroke-width:2px,color:#00d4ff
+    style V fill:#0a0015,stroke:#ff3366,stroke-width:3px,color:#ff3366
+    style EM fill:#1a0033,stroke:#ff00ff,stroke-width:3px,color:#00ffff
 ```
 
 **Key points:**

@@ -28,7 +28,8 @@ export const FACTORY_PRESETS: Preset[] = [
         threshold: -28, ratio: 3, attack: 0.08, release: 0.4, knee: 18
       },
       phaser: { rate: 0.7, depth: 700, stages: 4, feedback: 0.3, mix: 0.5 },
-      noise: { enabled: false, type: "white", level: 0.1 }
+      noise: { enabled: false, type: "white", level: 0.1 },
+      flanger: { rate: 0.2, depth: 2, feedback: 0.2, mix: 0.15 }
     }
   },
   {
@@ -57,7 +58,8 @@ export const FACTORY_PRESETS: Preset[] = [
         threshold: -18, ratio: 6, attack: 0.01, release: 0.18, knee: 8
       },
       phaser: { rate: 0.5, depth: 200, stages: 2, feedback: 0.1, mix: 0 },
-      noise: { enabled: false, type: "white", level: 0.1 }
+      noise: { enabled: false, type: "white", level: 0.1 },
+      flanger: { rate: 0.1, depth: 0, feedback: 0, mix: 0 }
     }
   },
   {
@@ -86,7 +88,8 @@ export const FACTORY_PRESETS: Preset[] = [
         threshold: -22, ratio: 4, attack: 0.015, release: 0.22, knee: 12
       },
       phaser: { rate: 1.2, depth: 900, stages: 4, feedback: 0.4, mix: 0.35 },
-      noise: { enabled: false, type: "white", level: 0.1 }
+      noise: { enabled: false, type: "white", level: 0.1 },
+      flanger: { rate: 0.7, depth: 3, feedback: 0.14, mix: 0.018 }
     }
   },
   {
@@ -115,7 +118,8 @@ export const FACTORY_PRESETS: Preset[] = [
         threshold: -16, ratio: 7, attack: 0.01, release: 0.12, knee: 6
       },
       phaser: { rate: 0.8, depth: 400, stages: 2, feedback: 0.2, mix: 0.15 },
-      noise: { enabled: false, type: "white", level: 0.1 }
+      noise: { enabled: false, type: "white", level: 0.1 },
+      flanger: { rate: 0.2, depth: 0, feedback: 0, mix: 0 }
     }
   },
   {
@@ -143,7 +147,8 @@ export const FACTORY_PRESETS: Preset[] = [
         threshold: -14, ratio: 8, attack: 0.008, release: 0.11, knee: 7
       },
       phaser: { rate: 1.5, depth: 1200, stages: 4, feedback: 0.5, mix: 0.25 },
-      noise: { enabled: false, type: "white", level: 0.1 }
+      noise: { enabled: false, type: "white", level: 0.1 },
+      flanger: { rate: 0.2, depth: 0, feedback: 0, mix: 0 }
     }
   },
   {
@@ -172,7 +177,8 @@ export const FACTORY_PRESETS: Preset[] = [
         threshold: -26, ratio: 2.5, attack: 0.04, release: 0.3, knee: 14
       },
       phaser: { rate: 0.4, depth: 350, stages: 3, feedback: 0.15, mix: 0.18 },
-      noise: { enabled: false, type: "white", level: 0.1 }
+      noise: { enabled: false, type: "white", level: 0.1 },
+      flanger: { rate: 0.3, depth: 2, feedback: 0.18, mix: 0.12 }
     }
   },
   {
@@ -202,7 +208,8 @@ export const FACTORY_PRESETS: Preset[] = [
         threshold: -30, ratio: 2, attack: 0.05, release: 0.18, knee: 10
       },
       phaser: { rate: 0.3, depth: 200, stages: 4, feedback: 0.2, mix: 0.12 },
-      noise: { enabled: false, type: "white", level: 0.1 }
+      noise: { enabled: false, type: "white", level: 0.1 },
+      flanger: { rate: 0.5, depth: 3, feedback: 0.22, mix: 0.18 }
     }
   },
   {
@@ -232,7 +239,8 @@ export const FACTORY_PRESETS: Preset[] = [
         threshold: -32, ratio: 2.2, attack: 0.12, release: 0.7, knee: 16
       },
       phaser: { rate: 0.5, depth: 600, stages: 4, feedback: 0.25, mix: 0.22 },
-      noise: { enabled: true, type: "brown", level: 0.04 }
+      noise: { enabled: true, type: "brown", level: 0.04 },
+      flanger: { rate: 0.2, depth: 1.5, feedback: 0.1, mix: 0.05 }
     }
   },
   {
@@ -262,7 +270,8 @@ export const FACTORY_PRESETS: Preset[] = [
         threshold: -20, ratio: 4.5, attack: 0.02, release: 0.19, knee: 10
       },
       phaser: { rate: 0.7, depth: 400, stages: 3, feedback: 0.18, mix: 0.13 },
-      noise: { enabled: true, type: "pink", level: 0.06 }
+      noise: { enabled: true, type: "pink", level: 0.06 },
+      flanger: { rate: 0.4, depth: 2, feedback: 0.15, mix: 0.05 }
     }
   },
   {
@@ -290,7 +299,8 @@ export const FACTORY_PRESETS: Preset[] = [
         threshold: -34, ratio: 2, attack: 0.09, release: 0.25, knee: 8
       },
       phaser: { rate: 0.2, depth: 150, stages: 2, feedback: 0.1, mix: 0.08 },
-      noise: { enabled: true, type: "pink", level: 0.06 }
+      noise: { enabled: true, type: "pink", level: 0.03 },
+      flanger: { rate: 0.3, depth: 1, feedback: 0.1, mix: 0.05 }
     }
   },
   {
@@ -319,7 +329,8 @@ export const FACTORY_PRESETS: Preset[] = [
         threshold: -24, ratio: 3.5, attack: 0.012, release: 0.13, knee: 9
       },
       phaser: { rate: 1.1, depth: 800, stages: 3, feedback: 0.3, mix: 0.2 },
-      noise: { enabled: false, type: "white", level: 0.1 }
+      noise: { enabled: false, type: "white", level: 0.1 },
+      flanger: { rate: 0.2, depth: 0, feedback: 0, mix: 0 }
     }
   },
   {
@@ -349,7 +360,8 @@ export const FACTORY_PRESETS: Preset[] = [
         threshold: -26, ratio: 2.8, attack: 0.03, release: 0.31, knee: 11
       },
       phaser: { rate: 0.9, depth: 1000, stages: 4, feedback: 0.35, mix: 0.28 },
-      noise: { enabled: true, type: "white", level: 0.03 }
+      noise: { enabled: true, type: "white", level: 0.03 },
+      flanger: { rate: 0.5, depth: 2, feedback: 0.18, mix: 0.12 }
     }
   },
   {
@@ -378,7 +390,8 @@ export const FACTORY_PRESETS: Preset[] = [
         threshold: -20, ratio: 5, attack: 0.01, release: 0.15, knee: 10
       },
       phaser: { rate: 1.7, depth: 1200, stages: 4, feedback: 0.5, mix: 0.3 },
-      noise: { enabled: false, type: "white", level: 0.1 }
+      noise: { enabled: false, type: "white", level: 0.1 },
+      flanger: { rate: 0.7, depth: 4, feedback: 0.3, mix: 0.18 }
     }
   },
   {
@@ -407,7 +420,8 @@ export const FACTORY_PRESETS: Preset[] = [
         threshold: -12, ratio: 9, attack: 0.006, release: 0.09, knee: 5
       },
       phaser: { rate: 0.6, depth: 400, stages: 2, feedback: 0.18, mix: 0.12 },
-      noise: { enabled: true, type: "pink", level: 0.12 }
+      noise: { enabled: true, type: "pink", level: 0.12 },
+      flanger: { rate: 0.2, depth: 1, feedback: 0.1, mix: 0.08 }
     }
   },
   {
@@ -435,7 +449,8 @@ export const FACTORY_PRESETS: Preset[] = [
         threshold: -38, ratio: 1.8, attack: 0.3, release: 1.5, knee: 25
       },
       phaser: { rate: 0.2, depth: 800, stages: 8, feedback: 0.5, mix: 0.5 },
-      noise: { enabled: true, type: "pink", level: 0.95 }
+      noise: { enabled: true, type: "pink", level: 0.95 },
+      flanger: { rate: 0.15, depth: 5, feedback: 0.25, mix: 0.25 }
     }
   },
   {
@@ -465,7 +480,8 @@ export const FACTORY_PRESETS: Preset[] = [
         threshold: -30, ratio: 2.5, attack: 0.1, release: 0.5, knee: 15
       },
       phaser: { rate: 0.4, depth: 500, stages: 4, feedback: 0.25, mix: 0.3 },
-      noise: { enabled: false, type: "white", level: 0.1 }
+      noise: { enabled: false, type: "white", level: 0.1 },
+      flanger: { rate: 0.18, depth: 3, feedback: 0.18, mix: 0.12 }
     }
   },
   {
@@ -494,7 +510,8 @@ export const FACTORY_PRESETS: Preset[] = [
         threshold: -16, ratio: 6, attack: 0.008, release: 0.12, knee: 8
       },
       phaser: { rate: 0.8, depth: 300, stages: 2, feedback: 0.15, mix: 0.1 },
-      noise: { enabled: false, type: "white", level: 0.1 }
+      noise: { enabled: false, type: "white", level: 0.1 },
+      flanger: { rate: 0.2, depth: 0, feedback: 0, mix: 0 }
     }
   },
   {
@@ -524,7 +541,8 @@ export const FACTORY_PRESETS: Preset[] = [
         threshold: -24, ratio: 3, attack: 0.02, release: 0.25, knee: 12
       },
       phaser: { rate: 0.5, depth: 400, stages: 3, feedback: 0.2, mix: 0.15 },
-      noise: { enabled: true, type: "pink", level: 0.04 }
+      noise: { enabled: true, type: "pink", level: 0.04 },
+      flanger: { rate: 0.3, depth: 2, feedback: 0.15, mix: 0.1 }
     }
   },
   {
@@ -554,7 +572,8 @@ export const FACTORY_PRESETS: Preset[] = [
         threshold: -28, ratio: 2.5, attack: 0.05, release: 0.4, knee: 14
       },
       phaser: { rate: 0.7, depth: 800, stages: 4, feedback: 0.3, mix: 0.25 },
-      noise: { enabled: true, type: "white", level: 0.02 }
+      noise: { enabled: true, type: "white", level: 0.02 },
+      flanger: { rate: 0.5, depth: 2, feedback: 0.18, mix: 0.12 }
     }
   },
   {
@@ -585,7 +604,8 @@ export const FACTORY_PRESETS: Preset[] = [
         threshold: -28, ratio: 3, attack: 0.08, release: 0.4, knee: 18
       },
       phaser: { rate: 0.7, depth: 700, stages: 4, feedback: 0.3, mix: 0.5 },
-      noise: { enabled: false, type: "white", level: 0.1 }
+      noise: { enabled: false, type: "white", level: 0.1 },
+      flanger: { rate: 0.2, depth: 3, feedback: 0.18, mix: 0.12 }
     }
   },
 ];

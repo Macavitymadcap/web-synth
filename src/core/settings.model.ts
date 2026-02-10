@@ -67,6 +67,13 @@ export type TremoloSettings = {
   depth: number;
 };
 
+export type FlangerSettings = {
+  rate: number;
+  depth: number;
+  feedback: number;
+  mix: number;
+};
+
 export type DelaySettings = {
   time: number;
   feedback: number;
@@ -95,6 +102,7 @@ export interface SynthSettings {
   chorus: ChorusSettings;
   phaser: PhaserSettings;
   tremolo: TremoloSettings;
+  flanger: FlangerSettings;
   delay: DelaySettings;
   distortion: WaveShaperSettings;
   reverb: ReverbSettings;
