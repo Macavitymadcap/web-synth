@@ -1,7 +1,7 @@
 export class DualKeyboard extends HTMLElement {
   connectedCallback() {
-    const upperOctave = this.getAttribute('upper-octave') || '5';
-    const lowerOctave = this.getAttribute('lower-octave') || '4';
+    const upperOctave = this.getAttribute('upper-octave') || '6';
+    const lowerOctave = this.getAttribute('lower-octave') || '5';
     const upperKeys = this.getAttribute('upper-keys') || 'qwertyu,23567';
     const lowerKeys = this.getAttribute('lower-keys') || 'zxcvbnm,sdghj';
 

@@ -290,7 +290,7 @@ export const FACTORY_PRESETS: Preset[] = [
         threshold: -34, ratio: 2, attack: 0.09, release: 0.25, knee: 8
       },
       phaser: { rate: 0.2, depth: 150, stages: 2, feedback: 0.1, mix: 0.08 },
-      noise: { enabled: true, type: "pink", level: 0.02 }
+      noise: { enabled: true, type: "pink", level: 0.002 }
     }
   },
   {
