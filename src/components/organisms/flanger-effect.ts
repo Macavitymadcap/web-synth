@@ -3,6 +3,11 @@ export class FlangerEffect extends HTMLElement {
     this.innerHTML = `
       <module-section id="flanger-effect" title="Flanger">
         <div slot="instructions">
+          <p>
+            Flanger creates a sweeping, jet-plane-like effect by mixing the input signal with a delayed
+            version of itself. The delay time is modulated by an LFO, creating characteristic comb 
+            filtering and movement in the sound.
+          </p>
           <instruction-list>
             <instruction-item label="Rate">LFO speed for sweep effect (0.1-10 Hz)</instruction-item>
             <instruction-item label="Depth">Intensity of delay modulation (0-10 ms)</instruction-item>
