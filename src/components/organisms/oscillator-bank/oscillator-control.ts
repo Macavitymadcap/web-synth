@@ -1,3 +1,4 @@
+import { NeonSelect } from '../../atoms/neon-select';
 import type { RangeControl } from '../../atoms/range-control';
 
 export class OscillatorControl extends HTMLElement {
@@ -63,15 +64,13 @@ export class OscillatorControl extends HTMLElement {
         }
       </style>
       <controls-group>
-        <label class="osc-label">
-          Waveform
-          <select class="osc-wave">
-            <option value="sine" ${waveform === "sine" ? "selected" : ""}>Sine</option>
-            <option value="square" ${waveform === "square" ? "selected" : ""}>Square</option>
-            <option value="sawtooth" ${waveform === "sawtooth" ? "selected" : ""}>Sawtooth</option>
-            <option value="triangle" ${waveform === "triangle" ? "selected" : ""}>Triangle</option>
-          </select>
-        </label>
+       <neon-select
+        class="osc-wave"
+        label="Waveform"
+        type="waveform"
+        value="${waveform}"
+       >
+       </neon-select> 
         
         <range-control
           label="Detune"
@@ -97,7 +96,8 @@ export class OscillatorControl extends HTMLElement {
       </controls-group>
     `;
     
-    this.waveSelect = this.querySelector('.osc-wave')!;
+    const waveSelect = this.querySelector('.osc-wave') as NeonSelect;
+    this.waveSelect = waveSelect.getSelect()!;
     this.detuneControl = this.querySelector('.osc-detune') as RangeControl;
     this.levelControl = this.querySelector('.osc-level') as RangeControl;
     this.removeBtn = this.querySelector('button')!;
@@ -113,8 +113,8 @@ export class OscillatorControl extends HTMLElement {
     
     // Listen for changes and dispatch custom event
     this.waveSelect.addEventListener('change', () => this.notifyChange());
-    this.detuneControl.addEventListener('valuechange', () => this.notifyChange());
-    this.levelControl.addEventListener('valuechange', () => this.notifyChange());
+    this.detuneControl.addEventListener('input', () => this.notifyChange());
+    this.levelControl.addEventListener('input', () => this.notifyChange());
     
     this.removeBtn.addEventListener('click', () => {
       this.dispatchEvent(new CustomEvent('remove', { bubbles: true }));

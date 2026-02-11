@@ -126,9 +126,9 @@ export class LFOControl extends HTMLElement {
     
     // Listen for changes and dispatch custom event
     this.waveSelect.addEventListener('change', () => this.notifyChange());
-    this.rateControl.addEventListener('valuechange', () => this.notifyChange());
-    this.toFilterControl.addEventListener('valuechange', () => this.notifyChange());
-    this.toPitchControl.addEventListener('valuechange', () => this.notifyChange());
+    this.rateControl.addEventListener('input', () => this.notifyChange());
+    this.toFilterControl.addEventListener('input', () => this.notifyChange());
+    this.toPitchControl.addEventListener('input', () => this.notifyChange());
     
     this.removeBtn.addEventListener('click', () => {
       this.dispatchEvent(new CustomEvent('remove', { bubbles: true }));

@@ -416,23 +416,38 @@ export class MyEffectModule implements BaseEffectModule {
 ### Step 2: Add HTML Controls
 
 ```html
+<neon-select
+  id="my-effect-type"
+  label="Effect Type"
+  value="default">
+  <option value="default">Default</option>
+  <option value="advanced">Advanced</option>
+</neon-select>
+
 <range-control
   id="my-effect-param1"
-  label="Parameter 1"
+  label="Mix"
   min="0"
-  max="100"
-  value="50"
-  step="1"
-></range-control>
+  max="1"
+  value="0.5"
+  step="0.01"
+  formatter="percent">
+</range-control>
 
 <range-control
   id="my-effect-param2"
-  label="Parameter 2"
-  min="0"
-  max="1000"
-  value="500"
+  label="Frequency"
+  min="20"
+  max="20000"
+  value="1000"
   step="10"
-></range-control>
+  formatter="hz">
+</range-control>
+
+<toggle-switch
+  id="my-effect-enabled"
+  label="Enabled">
+</toggle-switch>
 ```
 
 ### Step 3: Register in main.ts
@@ -558,36 +573,6 @@ export function createMyModuleManager(
 
 ### Step 4: Wire Up in main.ts
 
-```typescript
-const section = document.querySelector("my-module-section") as MyModuleSection;
-let modules: MyModule[] = [];
-
-const manager = createMyModuleManager(
-  section,
-  modules,
-  () => {} // Callback after synth exists
-);
-
-manager.initialize();
-
-// After modules array populated and synth created
-section.addEventListener('modules-changed', () => {
-  // Handle module changes (e.g., recreate voice manager)
-  synth.updateModules(modules);
-});
-```
-
----
-
-## Testing Strategy
-
-### Philosophy
-
-- **Test business logic, not audio output**: Verify config, node creation, routing
-- **Mock Web Audio API**: Use test fixtures
-- **Test parameter updates**: Trigger events, assert node state
-- **Use UIConfigService**: Create DOM elements in tests, no fixtures needed
-
 ### Testing with UIConfigService
 
 ```typescript
@@ -599,48 +584,49 @@ describe('MyEffectModule (UIConfigService)', () => {
   beforeEach(() => {
     document.body.innerHTML = '';
 
-    // Create required elements
-    const param1 = document.createElement('input');
-    param1.id = 'my-effect-param1';
-    param1.type = 'number';
-    param1.value = '50';
-    document.body.appendChild(param1);
+    // Create neon-select (discovers inner <select> by id)
+    const typeSelect = document.createElement('neon-select');
+    typeSelect.setAttribute('id', 'my-effect-type');
+    typeSelect.setAttribute('type', 'filter');
+    document.body.appendChild(typeSelect);
+    typeSelect.connectedCallback(); // Trigger render
 
-    const param2 = document.createElement('input');
-    param2.id = 'my-effect-param2';
-    param2.type = 'number';
-    param2.value = '500';
-    document.body.appendChild(param2);
+    // Create range-control (discovers inner <input> by id)
+    const mixControl = document.createElement('range-control');
+    mixControl.setAttribute('id', 'my-effect-mix');
+    mixControl.setAttribute('formatter', 'percent');
+    mixControl.setAttribute('value', '0.5');
+    document.body.appendChild(mixControl);
+    mixControl.connectedCallback();
+
+    // Create toggle-switch
+    const toggle = document.createElement('toggle-switch');
+    toggle.setAttribute('id', 'my-effect-enabled');
+    document.body.appendChild(toggle);
+    toggle.connectedCallback();
   });
 
-  it('reads config from UI via UIConfigService', () => {
+  it('reads config from atoms via UIConfigService', () => {
     const module = new MyEffectModule();
-    expect(module.getConfig()).toEqual({ param1: 50, param2: 0.5 });
+    const config = module.getConfig();
+    
+    expect(config.type).toBe('lowpass'); // neon-select default
+    expect(config.mix).toBe(0.5);        // range-control
+    expect(config.enabled).toBe(false);  // toggle-switch
   });
 
-  it('initializes nodes and connects them', () => {
+  it('updates on native input events', () => {
     const ctx = createMockAudioCtx();
-    const dest = { connect: jest.fn(), disconnect: jest.fn() } as any;
     const module = new MyEffectModule();
+    module.initialize(ctx, ctx.destination);
 
-    const nodes = module.initialize(ctx, dest);
+    // range-control dispatches native 'input'
+    const mixInput = document.querySelector('#my-effect-mix range-control')!
+      .querySelector('input')!;
+    mixInput.value = '0.75';
+    mixInput.dispatchEvent(new Event('input'));
 
-    expect(nodes.input).toBeDefined();
-    expect(nodes.output).toBeDefined();
-    expect(ctx.createGain).toHaveBeenCalled();
-  });
-
-  it('updates parameters on input change', () => {
-    const ctx = createMockAudioCtx();
-    const dest = { connect: jest.fn(), disconnect: jest.fn() } as any;
-    const module = new MyEffectModule();
-    module.initialize(ctx, dest);
-
-    const input = document.getElementById('my-effect-param1') as HTMLInputElement;
-    input.value = '75';
-    input.dispatchEvent(new Event('input'));
-
-    expect(module['effectNode']!.param1.value).toBe(75);
+    expect(module['wetGain']!.gain.value).toBe(0.75);
   });
 });
 ```
@@ -848,6 +834,14 @@ graph TD
 6. **Guard updates**: Check `isInitialized()` in parameter listeners
 7. **Dynamic IDs for multi-instance**: Pass ID parameter for modules supporting multiple instances
 
+### Component Design
+
+1. **Use atomic components**: Prefer `neon-select`, `neon-label`, `range-control`, `toggle-switch`
+2. **Consistent formatters**: Use normalized names (`percent`, `hz`, `seconds`, `db`)
+3. **Native events**: All atoms dispatch `input` and `change` events
+4. **Type safety**: `neon-select` provides preset types (`waveform`, `filter`, `octave`, `noise`)
+5. **Style deduplication**: Atoms use shared global styles (inject once)
+
 ### Parameter Handling
 
 1. **Prefer helpers**: Use `bindAudioParams()`, `bindGainParam()` when possible
@@ -973,6 +967,35 @@ for (let i = 0; i < stages; i++) {
 }
 ```
 
+### Pattern 10: Using Atoms Consistently
+
+```typescript
+// neon-select with preset types
+UIConfigService.onSelect('filter-type', (el, value) => {
+  if (this.filter) {
+    this.filter.type = value as BiquadFilterType;
+  }
+});
+
+// range-control with normalized formatters
+// Use "percent" not "%" or "percentage"
+// Use "hz" not "hertz"
+// Use "seconds" not "s"
+UIConfigService.bindAudioParams([
+  { elementId: 'chorus-mix', audioParam: () => this.wetGain?.gain },  // formatter="percent"
+  { elementId: 'chorus-rate', audioParam: () => this.lfo?.frequency }  // formatter="hz"
+]);
+
+// toggle-switch with native events (no more 'togglechange')
+UIConfigService.onInput('noise-enabled', (el, value) => {
+  // Checkbox value comes as string "true"/"false" or checked property
+  const enabled = (el as HTMLInputElement).checked;
+  if (this.noiseNode) {
+    this.noiseNode.gain.value = enabled ? 0.3 : 0;
+  }
+});
+```
+
 ---
 
 ## Preset System
@@ -1072,6 +1095,14 @@ Presets can configure:
 3. **Check element IDs**: Must match module's `elementIds`
 4. **Check mocks**: Verify `createMockAudioCtx()` has required factories
 5. **Check dynamic IDs**: Create elements for each ID in multi-instance tests
+
+### Atom Issues
+
+1. **neon-select not found**: Ensure `id` is on `<neon-select>`, not inner `<select>`
+2. **Formatter not working**: Check spelling (`percent` not `percentage`, `hz` not `hertz`)
+3. **Events not firing**: Atoms dispatch native `input`/`change`, not custom events
+4. **Toggle value wrong**: Use `.checked` property, not `.value`
+5. **Options not showing**: For `neon-select`, check `type` attribute or provide `<option>` children
 
 ---
 

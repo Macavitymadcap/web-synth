@@ -33,11 +33,12 @@ export class LFOModuleControls extends HTMLElement {
 
         <div slot="content">
           <controls-group>
-            <waveform-picker 
+            <neon-select 
               id="${prefix}-waveform" 
               label="Waveform" 
-              value="${defaultWaveform}">
-            </waveform-picker>
+              type="lfo-waveform" 
+              value="${defaultWaveform}"
+            ></neon-select>
             <range-control 
               label="Rate" 
               id="${prefix}-rate" 

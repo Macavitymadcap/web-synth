@@ -31,12 +31,12 @@ import { createOscillatorManager } from "./handlers/oscillator-management";
 import { createLFOManager } from "./handlers/lfo-management";
 
 // Components
-import "./components/atoms/filter-type-picker";
 import "./components/atoms/range-control";
 import "./components/atoms/toggle-switch";
-import "./components/atoms/waveform-picker";
-import "./components/atoms/octave-picker";
 import "./components/atoms/subsection-header";
+import "./components/atoms/neon-label";
+import "./components/atoms/neon-select";
+import type { NeonSelect } from "./components/atoms/neon-select";
 
 import "./components/layout/app-header";
 import "./components/layout/help-popover";
@@ -80,8 +80,8 @@ import "./components/organisms/lfo-bank/lfo-controls";
 import type { LFOSection } from "./components/organisms/lfo-bank/lfo-section";
 
 // Keyboard and MIDI controls
-const octaveUpper = document.getElementById("octave-upper") as HTMLSelectElement;
-const octaveLower = document.getElementById("octave-lower") as HTMLSelectElement;
+const octaveUpper = document.getElementById("octave-upper") as NeonSelect;
+const octaveLower = document.getElementById("octave-lower") as NeonSelect;
 const keyboardUpper = document.getElementById("keyboard-upper") as PianoKeyboard;
 const keyboardLower = document.getElementById("keyboard-lower") as PianoKeyboard;
 const midiToggle = document.getElementById("midi-enabled") as HTMLInputElement;

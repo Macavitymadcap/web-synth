@@ -22,14 +22,7 @@ export class NoiseGenerator extends HTMLElement {
         
         <div slot="content">
           <controls-group>
-            <label>
-              <span style="font-size: 0.75rem; color: var(--text-secondary); text-transform: uppercase;">Noise Type</span>
-              <select id="noise-type" style="padding: 0.5rem; border: 2px solid var(--neon-cyan); border-radius: 4px; background: rgba(10, 0, 21, 0.8); color: var(--neon-cyan); cursor: pointer;">
-                <option value="white">White</option>
-                <option value="pink">Pink</option>
-                <option value="brown">Brown</option>
-              </select>
-            </label>
+            <neon-select id="noise-type" label="Noise Type" type="noise" value="white"></neon-select>
             
             <range-control 
               label="Level" 
