@@ -1,4 +1,3 @@
-
 const STYLE_ID = "module-section-styles";
 
 function ensureGlobalStyles() {
@@ -255,7 +254,7 @@ export class ModuleSection extends HTMLElement {
               aria-expanded="${this.isExpanded}" 
               title="${this.isExpanded ? 'Collapse' : 'Expand'}"
             >
-              ${this.isExpanded ? '−' : '+'}
+              <span class="toggle-icon">${this.isExpanded ? '−' : '+'}</span>
             </neon-button>
           </div>
         </div>
@@ -301,18 +300,19 @@ export class ModuleSection extends HTMLElement {
 
   private toggleCollapse() {
     this.isExpanded = !this.isExpanded;
-    
+
     if (this.contentWrapper) {
       this.contentWrapper.classList.toggle('expanded', this.isExpanded);
       this.contentWrapper.classList.toggle('collapsed', !this.isExpanded);
     }
-    
+
     if (this.toggleButton) {
       const icon = this.toggleButton.querySelector('.toggle-icon');
       if (icon) icon.textContent = this.isExpanded ? '−' : '+';
       this.toggleButton.setAttribute('aria-expanded', String(this.isExpanded));
+      this.toggleButton.setAttribute('title', this.isExpanded ? 'Collapse' : 'Expand');
     }
-    
+
     // Save state to localStorage
     const id = this.getAttribute('id');
     if (id) {

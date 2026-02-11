@@ -41,6 +41,7 @@ import "./components/atoms/neon-label";
 import "./components/atoms/neon-select";
 import type { NeonSelect } from "./components/atoms/neon-select";
 import "./components/atoms/neon-button";
+import type { NeonButton } from "./components/atoms/neon-button";
 
 // Molecules
 import "./components/molecules/adsr-controls";
@@ -54,20 +55,19 @@ import "./components/molecules/keyboard-mapping-info";
 
 // Organisms
 import "./components/organisms/visual-keyboard/dual-keyboard";
-import "./components/organisms/module-section";
 import "./components/organisms/visual-keyboard/piano-keyboard";
 import type { PianoKeyboard } from "./components/organisms/visual-keyboard/piano-keyboard";
+import "./components/organisms/visual-keyboard/visual-keyboard";
+import "./components/organisms/module-section";
 import "./components/organisms/preset-selector";
 import type { PresetSelector } from "./components/organisms/preset-selector";
 import "./components/organisms/master-controls";
 import "./components/organisms/presets-controls";
 import "./components/organisms/oscillator-controls";
 import "./components/organisms/lfo-controls";
-import "./components/organisms/visual-keyboard/visual-keyboard";
 import "./components/organisms/adsr-module";
 import "./components/organisms/filter-module-controls";
 import "./components/organisms/spectrum-analyser";
-import "./components/organisms/noise-generator";
 import type { SpectrumAnalyser } from "./components/organisms/spectrum-analyser";
 
 // Layout
@@ -82,11 +82,11 @@ const keyboardLower = document.getElementById("keyboard-lower") as PianoKeyboard
 const midiToggle = document.getElementById("midi-enabled") as HTMLInputElement;
 
 // Record controls
-const recordBtn = document.getElementById("record") as HTMLButtonElement;
+const recordBtn = document.getElementById("record") as NeonButton;
 
 // Oscillator controls
 const oscillatorList = document.getElementById("oscillator-list") as HTMLElement;
-const addOscBtn = document.getElementById("add-oscillator") as HTMLButtonElement;
+const addOscBtn = document.getElementById("add-oscillator") as NeonButton;
 
 // Analyser controls
 const spectrumAnalyserEl = document.querySelector('spectrum-analyser') as SpectrumAnalyser;

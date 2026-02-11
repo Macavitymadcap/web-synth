@@ -23,3 +23,24 @@
 ### Sprint 4 (Week 7+): Advanced Features
 - [ ] Create documentation site
 
+
+```
+┌──────────────────────────────────────────────────────────┐
+│ Header: Brand + Presets toolbar                          │
+├────────────────┬─────────────────────────────────────────┤
+│                │  Keyboard (always visible)              │
+│  Voice Panel   │  Analyser                               │
+│  (sticky       ├─────────────────────────────────────────┤
+│   sidebar)     │  Effects Rack                           │
+│                │  ┌──────┬──────┬──────┬──────┬────┐     │
+│  ┌──────────┐  │  │ Comp │Chor  │Phas  │ Trem │ .. │     │
+│  │ Osc      │  │  │  ●   │  ●   │  ●   │  ●   │    │     │
+│  │ ADSR     │  │  └──────┴──────┴──────┴──────┴────┘     │
+│  │ Filter   │  │  Input ● ─────────────────── ● Output   │
+│  │ LFOs     │  │                                         │
+│  │ Noise    │  │  (click pedal → popover with controls)  │
+│  └──────────┘  │                                         │
+├────────────────┴─────────────────────────────────────────┤
+│ Master Strip: MIDI │ Poly │ Volume │ ──── │ Rec ●        │
+└──────────────────────────────────────────────────────────┘
+```
