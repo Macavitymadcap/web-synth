@@ -53,6 +53,13 @@ describe('SpectrumAnalyserModule (UIConfigService)', () => {
     setupAnimationFrameMocks();
     document.body.innerHTML = '';
 
+    // Add enable toggle
+    const enabledToggle = document.createElement('input');
+    enabledToggle.id = 'spectrum-analyser-enabled';
+    enabledToggle.type = 'checkbox';
+    enabledToggle.checked = false;
+    document.body.appendChild(enabledToggle);
+
     // Optional UI controls for config
     const fftEl = document.createElement('input');
     fftEl.id = 'spectrum-fft-size';
@@ -90,11 +97,19 @@ describe('SpectrumAnalyserModule (UIConfigService)', () => {
     it('reads config from UI via UIConfigService', () => {
       const config = module.getConfig();
       expect(config).toEqual({
+        enabled: false, // <-- Add this
         fftSize: 4096,
         smoothingTimeConstant: 0.6,
         minFreq: 50,
         maxFreq: 8000
       });
+    });
+
+    it('reads enabled state from checkbox', () => {
+      const checkbox = document.getElementById('spectrum-analyser-enabled') as HTMLInputElement;
+      checkbox.checked = true;
+      const config = module.getConfig();
+      expect(config.enabled).toBe(true);
     });
 
     it('returns a copy (not original object)', () => {
@@ -145,11 +160,29 @@ describe('SpectrumAnalyserModule (UIConfigService)', () => {
     });
 
     it('starts visualization after initialization', () => {
+      const checkbox = document.getElementById('spectrum-analyser-enabled') as HTMLInputElement;
+      checkbox.checked = true; // <-- Ensure enabled
       const ctx = createMockAudioCtx();
       const dest = { connect: jest.fn(), disconnect: jest.fn() } as any;
 
       module.initialize(ctx, dest);
 
+      expect(globalThis.requestAnimationFrame).toHaveBeenCalled();
+    });
+
+    it('does not start visualization if enabled is false', () => {
+      const ctx = createMockAudioCtx();
+      const dest = { connect: jest.fn(), disconnect: jest.fn() } as any;
+      module.initialize(ctx, dest);
+      expect(globalThis.requestAnimationFrame).not.toHaveBeenCalled();
+    });
+
+    it('starts visualization if enabled is true', () => {
+      const checkbox = document.getElementById('spectrum-analyser-enabled') as HTMLInputElement;
+      checkbox.checked = true;
+      const ctx = createMockAudioCtx();
+      const dest = { connect: jest.fn(), disconnect: jest.fn() } as any;
+      module.initialize(ctx, dest);
       expect(globalThis.requestAnimationFrame).toHaveBeenCalled();
     });
 
@@ -198,6 +231,8 @@ describe('SpectrumAnalyserModule (UIConfigService)', () => {
     });
 
     it('updates min/max frequency range used in visualization', () => {
+      const checkbox = document.getElementById('spectrum-analyser-enabled') as HTMLInputElement;
+      checkbox.checked = true; // <-- Ensure enabled
       const ctx = createMockAudioCtx();
       const dest = { connect: jest.fn(), disconnect: jest.fn() } as any;
       const mockContext = (canvas as any).__mockContext;
@@ -213,10 +248,11 @@ describe('SpectrumAnalyserModule (UIConfigService)', () => {
       maxInput.dispatchEvent(new Event('input'));
 
       // Trigger the animation frame callback to use updated config
-      const callback = rafCallbacks.values().next().value as FrameRequestCallback;
-      callback(0);
+      const callback = rafCallbacks.values().next().value as FrameRequestCallback | undefined;
+      if (typeof callback === 'function') {
+        callback(0);
+      }
 
-      // Just ensure drawing proceeds; specific bin ranges are derived from config
       expect(mockContext.fillRect).toHaveBeenCalled();
     });
   });
@@ -264,11 +300,13 @@ describe('SpectrumAnalyserModule (UIConfigService)', () => {
 
   describe('stopVisualization', () => {
     it('cancels animation frame', () => {
+      const checkbox = document.getElementById('spectrum-analyser-enabled') as HTMLInputElement;
+      checkbox.checked = true; // <-- Ensure enabled
       const ctx = createMockAudioCtx();
       const dest = { connect: jest.fn(), disconnect: jest.fn() } as any;
 
       module.initialize(ctx, dest);
-      const frameId = (globalThis.requestAnimationFrame as any).mock.results[0].value;
+      const frameId = Array.from(rafCallbacks.keys())[0]; // Get the scheduled frameId
 
       module.stopVisualization();
 
@@ -280,15 +318,37 @@ describe('SpectrumAnalyserModule (UIConfigService)', () => {
     });
 
     it('stops visualization on re-initialization', () => {
+      const checkbox = document.getElementById('spectrum-analyser-enabled') as HTMLInputElement;
+      checkbox.checked = true; // <-- Ensure enabled
       const ctx = createMockAudioCtx();
       const dest = { connect: jest.fn(), disconnect: jest.fn() } as any;
 
       module.initialize(ctx, dest);
-      const firstFrameId = (globalThis.requestAnimationFrame as any).mock.results[0].value;
+      const firstFrameId = Array.from(rafCallbacks.keys())[0];
 
       module.initialize(ctx, dest); // Re-initialize
 
       expect(globalThis.cancelAnimationFrame).toHaveBeenCalledWith(firstFrameId);
+    });
+  });
+
+  describe('enabled toggle', () => {
+    it('toggles visualization on enabled change', () => {
+      const ctx = createMockAudioCtx();
+      const dest = { connect: jest.fn(), disconnect: jest.fn() } as any;
+      module.initialize(ctx, dest);
+
+      const checkbox = document.getElementById('spectrum-analyser-enabled') as HTMLInputElement;
+
+      // Enable visualization
+      checkbox.checked = true;
+      checkbox.dispatchEvent(new Event('change'));
+      expect(globalThis.requestAnimationFrame).toHaveBeenCalled();
+
+      // Disable visualization
+      checkbox.checked = false;
+      checkbox.dispatchEvent(new Event('change'));
+      expect(globalThis.cancelAnimationFrame).toHaveBeenCalled();
     });
   });
 });

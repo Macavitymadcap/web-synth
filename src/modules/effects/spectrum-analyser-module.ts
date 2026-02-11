@@ -2,6 +2,7 @@ import type { BaseEffectModule, EffectNodes } from './base-effect-module';
 import { UIConfigService } from '../../services/ui-config-service';
 
 export type SpectrumAnalyserConfig = {
+  enabled: boolean; // <-- Add this
   fftSize: number;
   smoothingTimeConstant: number;
   minFreq: number;
@@ -17,6 +18,7 @@ export class SpectrumAnalyserModule implements BaseEffectModule {
 
   // UI element IDs (optional controls)
   private readonly elementIds = {
+    enabled: 'spectrum-analyser-enabled', // <-- Add this
     fftSize: 'spectrum-fft-size',
     smoothingTimeConstant: 'spectrum-smoothing',
     minFreq: 'spectrum-min-freq',
@@ -24,6 +26,7 @@ export class SpectrumAnalyserModule implements BaseEffectModule {
   };
 
   private config: SpectrumAnalyserConfig = {
+    enabled: false, // <-- Add this
     fftSize: 2048,
     smoothingTimeConstant: 0.8,
     minFreq: 20,
@@ -36,8 +39,11 @@ export class SpectrumAnalyserModule implements BaseEffectModule {
   }
 
   getConfig(): SpectrumAnalyserConfig {
-    // Try to read from UI; fall back to current config if controls are absent
     try {
+      const enabled = UIConfigService.exists(this.elementIds.enabled)
+        ? UIConfigService.getControl(this.elementIds.enabled).checked
+        : this.config.enabled;
+
       const cfg = UIConfigService.getConfig({
         fftSize: {
           id: this.elementIds.fftSize,
@@ -58,6 +64,7 @@ export class SpectrumAnalyserModule implements BaseEffectModule {
       });
 
       const next: SpectrumAnalyserConfig = {
+        enabled, // <-- Add this
         fftSize: cfg.fftSize,
         smoothingTimeConstant: cfg.smoothingTimeConstant,
         minFreq: cfg.minFreq,
@@ -71,11 +78,9 @@ export class SpectrumAnalyserModule implements BaseEffectModule {
   }
 
   initialize(audioCtx: AudioContext, destination: AudioNode): EffectNodes {
-    // Clean up previous nodes if re-initializing
     this.stopVisualization();
     this.disconnectNodes();
 
-    // Capture config (from UI if present)
     this.config = this.getConfig();
 
     this.inputGain = audioCtx.createGain();
@@ -85,12 +90,13 @@ export class SpectrumAnalyserModule implements BaseEffectModule {
     this.analyserNode.fftSize = this.config.fftSize;
     this.analyserNode.smoothingTimeConstant = this.config.smoothingTimeConstant;
 
-    // Signal flow: input -> analyser -> output -> destination
     this.inputGain.connect(this.analyserNode);
     this.analyserNode.connect(this.outputGain);
     this.outputGain.connect(destination);
 
-    this.startVisualization();
+    if (this.config.enabled) {
+      this.startVisualization();
+    }
 
     return {
       input: this.inputGain,
@@ -111,6 +117,24 @@ export class SpectrumAnalyserModule implements BaseEffectModule {
   }
 
   private setupParameterListeners(): void {
+    // Enable toggle
+    if (UIConfigService.exists(this.elementIds.enabled)) {
+      UIConfigService.onInput(
+        this.elementIds.enabled,
+        (el) => {
+          const enabled = (el).checked;
+          this.config.enabled = enabled;
+          if (enabled && this.isInitialized()) {
+            this.startVisualization();
+          } else {
+            this.stopVisualization();
+            this.clearCanvas();
+          }
+        },
+        'change'
+      );
+    }
+
     // Bind optional UI controls if they exist
     if (UIConfigService.exists(this.elementIds.smoothingTimeConstant)) {
       UIConfigService.onInput(this.elementIds.smoothingTimeConstant, (_el, value) => {
@@ -148,7 +172,7 @@ export class SpectrumAnalyserModule implements BaseEffectModule {
   }
 
   private startVisualization() {
-    if (!this.analyserNode || !this.canvas) return;
+    if (!this.analyserNode || !this.canvas || !this.config.enabled) return;
     const ctx = this.canvas.getContext('2d');
     if (!ctx) return;
 
@@ -211,5 +235,12 @@ export class SpectrumAnalyserModule implements BaseEffectModule {
     if (!Number.isFinite(n) || n <= 0) return 2048;
     const pow2 = Math.pow(2, Math.round(Math.log2(n)));
     return this.clamp(pow2, 32, 32768);
+  }
+
+  private clearCanvas(): void {
+    const ctx = this.canvas?.getContext('2d');
+    if (!ctx || !this.canvas) return;
+    ctx.fillStyle = '#0a0014';
+    ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
   }
 }

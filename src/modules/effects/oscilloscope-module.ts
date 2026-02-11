@@ -15,7 +15,7 @@ export class OscilloscopeModule implements BaseEffectModule {
   private outputGain: GainNode | null = null;
   private animationFrame: number | null = null;
   private readonly canvas: HTMLCanvasElement | null;
-  private canvasCtx: CanvasRenderingContext2D | null = null;
+  private readonly canvasCtx: CanvasRenderingContext2D | null = null;
 
   // UI element IDs
   private readonly elementIds = {
@@ -44,7 +44,7 @@ export class OscilloscopeModule implements BaseEffectModule {
     // Try to read from UI; fall back to current config if controls are absent
     try {
       const enabled = UIConfigService.exists(this.elementIds.enabled)
-        ? (UIConfigService.getControl(this.elementIds.enabled) as HTMLInputElement).checked
+        ? UIConfigService.getControl(this.elementIds.enabled).checked
         : this.config.enabled;
 
       const lineColor = UIConfigService.exists(this.elementIds.lineColor)
@@ -123,7 +123,7 @@ export class OscilloscopeModule implements BaseEffectModule {
       UIConfigService.onInput(
         this.elementIds.enabled,
         (el) => {
-          const enabled = (el as HTMLInputElement).checked;
+          const enabled = (el).checked;
           this.config.enabled = enabled;
           
           if (enabled && this.isInitialized()) {
@@ -211,7 +211,7 @@ export class OscilloscopeModule implements BaseEffectModule {
       let x = 0;
 
       for (let i = 0; i < dataArray.length; i++) {
-        const v = dataArray[i] / 128.0; // Normalize to 0-2
+        const v = dataArray[i] / 128; // Normalize to 0-2
         const y = (v * height) / 2;
 
         if (i === 0) {
