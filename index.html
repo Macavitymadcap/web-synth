@@ -47,14 +47,89 @@
       <lfo-controls></lfo-controls>
 
       <!-- Effects -->
-      <chorus-effect></chorus-effect>
-      <phaser-effect></phaser-effect>
-      <tremolo-effect></tremolo-effect>
-      <flanger-effect></flanger-effect>
-      <delay-effect></delay-effect>
-      <distortion-effect></distortion-effect>
-      <compressor-effect></compressor-effect>
-      <reverb-effect></reverb-effect>
+      <effect-module id="compressor-effect" title="Compressor"
+        description="Controls dynamic range — makes quiet sounds louder and loud sounds quieter.">
+        <effect-param label="Threshold" param-id="compressor-threshold" min="-60" max="0" step="1" value="-24"
+          format="db" description="Level (dB) above which compression starts"></effect-param>
+        <effect-param label="Ratio" param-id="compressor-ratio" min="1" max="20" step="0.1" value="4"
+          description="How much compression is applied above threshold"></effect-param>
+        <effect-param label="Attack" param-id="compressor-attack" min="0.001" max="1" step="0.001" value="0.003"
+          format="seconds" description="How quickly compression starts"></effect-param>
+        <effect-param label="Release" param-id="compressor-release" min="0.01" max="1" step="0.01" value="0.25"
+          format="seconds" description="How quickly compression stops"></effect-param>
+        <effect-param label="Knee" param-id="compressor-knee" min="0" max="40" step="1" value="30" format="db"
+          description="Softness of the threshold curve"></effect-param>
+      </effect-module>
+
+      <effect-module id="chorus-effect" title="Chorus"
+        description="Creates a thicker, richer sound by layering delayed and detuned copies with modulation.">
+        <effect-param label="Rate" param-id="chorus-rate" min="0.1" max="5" step="0.1" value="0.5" format="hz"
+          description="Speed of the modulation LFO (0.1-5 Hz)"></effect-param>
+        <effect-param label="Depth" param-id="chorus-depth" min="0" max="50" step="1" value="20"
+          description="Amount of delay time modulation (0-50 ms)"></effect-param>
+        <effect-param label="Mix" param-id="chorus-mix" min="0" max="1" step="0.01" value="0.3" format="percent"
+          description="Balance between dry and wet signal (0-100%)"></effect-param>
+      </effect-module>
+
+      <effect-module id="phaser-effect" title="Phaser"
+        description="Modulates the phase of the audio signal using allpass filters.">
+        <effect-param label="Rate" param-id="phaser-rate" min="0.01" max="5" step="0.01" value="0.7" format="hz"
+          description="LFO speed for sweeping the notches"></effect-param>
+        <effect-param label="Depth" param-id="phaser-depth" min="50" max="2000" step="1" value="700" format="hz"
+          description="How wide the notches sweep"></effect-param>
+        <effect-param label="Stages" param-id="phaser-stages" min="2" max="8" step="1" value="4"
+          description="Number of allpass filter stages (2-8)"></effect-param>
+        <effect-param label="Feedback" param-id="phaser-feedback" min="0" max="0.9" step="0.01" value="0.3"
+          format="percent" description="Amount of output fed back into input for resonance"></effect-param>
+        <effect-param label="Mix" param-id="phaser-mix" min="0" max="1" step="0.01" value="0.5" format="percent"
+          description="Blend between dry and phased signal"></effect-param>
+      </effect-module>
+
+
+      <effect-module id="tremolo-effect" title="Tremolo"
+        description="Creates rhythmic volume modulation — a pulsating or wobbling amplitude.">
+        <effect-param label="Rate" param-id="tremolo-rate" min="0.1" max="20" step="0.1" value="5" format="hz"
+          description="Speed of volume modulation (0.1-20 Hz)"></effect-param>
+        <effect-param label="Depth" param-id="tremolo-depth" min="0" max="1" step="0.01" value="0.5" format="percent"
+          description="Intensity of volume change (0-100%)"></effect-param>
+      </effect-module>
+
+      <effect-module id="flanger-effect" title="Flanger"
+        description="Creates a sweeping, jet-plane-like effect by mixing the signal with a modulated delayed version.">
+        <effect-param label="Rate" param-id="flanger-rate" min="0.1" max="10" step="0.1" value="0.5" format="hz"
+          description="LFO speed for sweep effect (0.1-10 Hz)"></effect-param>
+        <effect-param label="Depth" param-id="flanger-depth" min="0" max="10" step="0.1" value="2"
+          description="Intensity of delay modulation (0-10 ms)"></effect-param>
+        <effect-param label="Feedback" param-id="flanger-feedback" min="0" max="0.95" step="0.01" value="0.5"
+          format="percent" description="Amount fed back for resonance (0-95%)"></effect-param>
+        <effect-param label="Mix" param-id="flanger-mix" min="0" max="1" step="0.01" value="0.5" format="percent"
+          description="Dry/wet balance (0-100%)"></effect-param>
+      </effect-module>
+
+      <effect-module id="delay-effect" title="Delay" description="Creates echoes of the sound, adding depth and space.">
+        <effect-param label="Time" param-id="delay-time" min="0" max="2" step="0.01" value="0.375" format="seconds"
+          description="Delay time (0-2s)"></effect-param>
+        <effect-param label="Feedback" param-id="delay-feedback" min="0" max="0.95" step="0.01" value="0.3"
+          format="percent" description="How much the delay repeats (0-95%)"></effect-param>
+        <effect-param label="Mix" param-id="delay-mix" min="0" max="1" step="0.01" value="0.2" format="percent"
+          description="Balance between dry and delayed signal"></effect-param>
+      </effect-module>
+
+      <effect-module id="distortion-effect" title="Distortion"
+        description="Adds harmonic distortion for warmth or grit.">
+        <effect-param label="Drive" param-id="distortion-drive" min="0" max="10" step="0.1" value="2"
+          description="Amount of distortion (0-10)"></effect-param>
+        <effect-param label="Blend" param-id="distortion-blend" min="0" max="1" step="0.01" value="0.5" format="percent"
+          description="Wet/dry mix (0-100%)"></effect-param>
+      </effect-module>
+
+      <effect-module id="reverb-effect" title="Reverb"
+        description="Adds realistic room ambience and spatial depth by simulating reflections.">
+        <effect-param label="Decay" param-id="reverb-decay" min="0.1" max="5" step="0.1" value="2" format="seconds"
+          description="Length of reverb tail (0.1-5s). Longer = larger space"></effect-param>
+        <effect-param label="Mix" param-id="reverb-mix" min="0" max="1" step="0.01" value="0.3" format="percent"
+          description="Balance between dry and reverb signal"></effect-param>
+      </effect-module>
     </div>
 
   </main>

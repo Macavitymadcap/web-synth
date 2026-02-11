@@ -1,5 +1,5 @@
 import type { OscillatorBank } from "./oscillator-bank";
-import type { OscillatorSection } from "../components/organisms/oscillator-bank/oscillator-section";
+import type { BankSection } from "../components/molecules/bank-section";
 import type { RangeControl } from "../components/atoms/range-control";
 import {
   SynthSettings,
@@ -19,7 +19,6 @@ import {
 } from "./settings.model";
 import type { PhaserConfig } from "../modules/effects/phaser-module";
 import type { NoiseConfig } from "../modules/noise-module";
-import { LFOSection } from "../components/organisms/lfo-bank/lfo-section";
 
 const STORAGE_KEY = "web-synth-settings";
 const USER_PRESETS_KEY = "web-synth-user-presets";
@@ -58,12 +57,19 @@ export class SettingsManager {
   }
 
   private getOscillatorSettings() {
-    const section = document.querySelector("oscillator-section") as OscillatorSection;
-    if (!section || typeof section.getOscillators !== 'function') {
+    const section = document.querySelector("bank-section[prefix='osc']") as BankSection;
+    if (!section || typeof section.getItems !== 'function') {
       return [{ waveform: "sawtooth" as OscillatorType, detune: 0, level: 1 }];
     }
 
-    const oscillators = section.getOscillators();
+    const items = section.getItems();
+    // Map to properly typed oscillator configs
+    const oscillators = items.map(item => ({
+      waveform: item.waveform as OscillatorType,
+      detune: Number(item.detune),
+      level: Number(item.level)
+    }));
+
     return oscillators.length > 0 ? oscillators : [{ waveform: "sawtooth" as OscillatorType, detune: 0, level: 1 }];
   }
 
@@ -90,12 +96,20 @@ export class SettingsManager {
   }
 
   private getLFOSettings(): LFOSettings[] {
-    const section = document.querySelector("lfo-section") as LFOSection;
-    if (!section || typeof section.getLFOs !== 'function') {
+    const section = document.querySelector("bank-section[prefix='lfo']") as BankSection;
+    if (!section || typeof section.getItems !== 'function') {
       return [{ waveform: "sine" as OscillatorType, rate: 5, toFilter: 0, toPitch: 0 }];
     }
 
-    const lfos = section.getLFOs();
+    const items = section.getItems();
+    // Map to properly typed LFO configs
+    const lfos = items.map(item => ({
+      waveform: item.waveform as OscillatorType,
+      rate: Number(item.rate),
+      toFilter: Number(item['to-filter'] || item.toFilter), // Handle both kebab-case and camelCase
+      toPitch: Number(item['to-pitch'] || item.toPitch)
+    }));
+
     return lfos.length > 0 ? lfos : [{ waveform: "sine" as OscillatorType, rate: 5, toFilter: 0, toPitch: 0 }];
   }
 
@@ -211,28 +225,28 @@ export class SettingsManager {
   }
 
   private applyOscillatorSettings(oscillators: Array<{ waveform: OscillatorType; detune: number; level: number }>): void {
-    const section = document.querySelector("oscillator-section") as OscillatorSection;
+    const section = document.querySelector("bank-section[prefix='osc']") as BankSection;
     if (!section) return;
-
-    // Clear existing oscillators
-    section.clearAll();
 
     // Ensure we have at least one oscillator
     const oscToAdd = oscillators.length > 0 ? oscillators : [{ waveform: "sawtooth" as OscillatorType, detune: 0, level: 1 }];
 
-    // Add new oscillators
-    for (const osc of oscToAdd) {
-      section.addOscillator(osc.waveform, osc.detune, osc.level);
-    }
+    // Replace all items
+    section.setItems(oscToAdd);
   }
 
   private updateOscillatorBank(): void {
     if (this.oscillatorBank) {
       // Give the UI time to update
       setTimeout(() => {
-        const section = document.querySelector("oscillator-section") as OscillatorSection;
-        if (section && typeof section.getOscillators === 'function') {
-          const configs = section.getOscillators();
+        const section = document.querySelector("bank-section[prefix='osc']") as BankSection;
+        if (section && typeof section.getItems === 'function') {
+          const items = section.getItems();
+          const configs = items.map(item => ({
+            waveform: item.waveform as OscillatorType,
+            detune: Number(item.detune),
+            level: Number(item.level)
+          }));
           this.oscillatorBank!.setConfigs(configs);
         }
       }, 0);
@@ -263,19 +277,14 @@ export class SettingsManager {
   }
 
   private applyLFOSettings(lfos: LFOSettings[]): void {
-    const section = document.querySelector("lfo-section") as LFOSection;
+    const section = document.querySelector("bank-section[prefix='lfo']") as BankSection;
     if (!section) return;
-
-    // Clear existing LFOs
-    section.clearAll();
 
     // Ensure we have at least one LFO
     const lfosToAdd = lfos.length > 0 ? lfos : [{ waveform: "sine" as OscillatorType, rate: 5, toFilter: 0, toPitch: 0 }];
 
-    // Add new LFOs
-    for (const lfo of lfosToAdd) {
-      section.addLFO(lfo.waveform, lfo.rate, lfo.toFilter, lfo.toPitch);
-    }
+    // Replace all items
+    section.setItems(lfosToAdd);
   }
 
   private applyChorusSettings(settings: ChorusSettings): void {
