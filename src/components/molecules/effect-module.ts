@@ -95,6 +95,30 @@ function ensureGlobalStyles(): void {
     effect-section {
       display: none;
     }
+    
+    effect-module module-section [slot="content"] {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.25rem;
+      align-items: center;
+      justify-content: space-around;
+      padding: 1rem;
+      background: var(--panel-bg);
+      border-radius: 6px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    effect-module module-section [slot="content"] > * {
+      flex: 0 1 auto;
+      min-width: fit-content;
+    }
+
+    @media (max-width: 640px) {
+      effect-module module-section [slot="content"] {
+        gap: 0.75rem;
+        padding: 0.75rem;
+      }
+    }
   `;
   document.head.appendChild(style);
 }
@@ -225,12 +249,12 @@ function buildControls(configs: ControlConfig[]): string {
         .join("\n            ");
 
       return `${header}
-          <controls-group>
-            ${controls}
-          </controls-group>`;
+          ${controls}`;
     })
     .join("\n");
 }
+
+// ...existing code...
 
 function buildRangeControl(c: ParamConfig): string {
   const attrs = [
@@ -313,7 +337,7 @@ customElements.define("effect-module", EffectModule);
 
 // These are inert elements — they exist only to carry attributes for parsing.
 // They're hidden via CSS and consumed during connectedCallback.
-customElements.define("effect-param", class extends HTMLElement {});
-customElements.define("effect-toggle", class extends HTMLElement {});
-customElements.define("effect-select", class extends HTMLElement {});
-customElements.define("effect-section", class extends HTMLElement {});
+customElements.define("effect-param", class extends HTMLElement { });
+customElements.define("effect-toggle", class extends HTMLElement { });
+customElements.define("effect-select", class extends HTMLElement { });
+customElements.define("effect-section", class extends HTMLElement { });

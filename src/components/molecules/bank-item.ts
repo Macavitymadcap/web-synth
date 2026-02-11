@@ -206,7 +206,7 @@ export class BankItem extends HTMLElement {
 
     const removeBtn = noRemove
       ? ""
-      : `<button class="danger" data-action="remove">Remove</button>`;
+      : `<neon-button variant="danger" data-action="remove">Remove</neon-button>`;
 
     this.innerHTML = `
       <controls-group>

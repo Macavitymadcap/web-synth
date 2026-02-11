@@ -40,6 +40,7 @@ import "./components/atoms/subsection-header";
 import "./components/atoms/neon-label";
 import "./components/atoms/neon-select";
 import type { NeonSelect } from "./components/atoms/neon-select";
+import "./components/atoms/neon-button";
 
 // Molecules
 import "./components/molecules/adsr-controls";

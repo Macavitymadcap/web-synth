@@ -59,6 +59,7 @@
  *   .setItems(configs: Array<Record<string, any>>) — Replace all items
  */
 
+import { NeonButton } from "../atoms/neon-button";
 import type { BankItem } from "./bank-item";
 import type { ControlValue } from "./bank.model";
 
@@ -118,11 +119,11 @@ export class BankSection extends HTMLElement {
 
     this.innerHTML = `
       <div class="bank-list"></div>
-      <button class="secondary bank-add">${addLabel}</button>
+      <neon-button variant="secondary" class="bank-add">${addLabel}</neon-button>
     `;
 
     this.listEl = this.querySelector(".bank-list")!;
-    this.addBtn = this.querySelector(".bank-add")!;
+    this.addBtn = (this.querySelector(".bank-add neon-button, .bank-add") as NeonButton).getButton();
 
     // Add initial items
     for (let i = 0; i < initialCount; i++) {
