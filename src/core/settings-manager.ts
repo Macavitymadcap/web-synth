@@ -19,6 +19,7 @@ import {
 } from "./settings.model";
 import type { PhaserConfig } from "../modules/effects/phaser-module";
 import type { NoiseConfig } from "../modules/noise-module";
+import { ParametricEQConfig } from "../modules/effects/parametric-eq-module";
 
 const STORAGE_KEY = "web-synth-settings";
 const USER_PRESETS_KEY = "web-synth-user-presets";
@@ -46,6 +47,7 @@ export class SettingsManager {
       noise: this.getNoiseSettings(),
       tremolo: this.getTremoloSettings(),
       flanger: this.getFlangerSettings(),
+      eq: this.getEQSettings(),
     };
   }
 
@@ -188,6 +190,42 @@ export class SettingsManager {
     };
   }
 
+  private getEQSettings(): ParametricEQConfig {
+    return {
+      enabled: (document.getElementById('eq-enabled') as HTMLInputElement)?.checked ?? true,
+      lowShelf: {
+        frequency: Number.parseFloat((document.getElementById('eq-low-shelf-freq') as HTMLInputElement)?.value ?? '80'),
+        gain: Number.parseFloat((document.getElementById('eq-low-shelf-gain') as HTMLInputElement)?.value ?? '0'),
+        q: Number.parseFloat((document.getElementById('eq-low-shelf-q') as HTMLInputElement)?.value ?? '1'),
+        type: 'lowshelf'
+      },
+      lowMid: {
+        frequency: Number.parseFloat((document.getElementById('eq-low-mid-freq') as HTMLInputElement)?.value ?? '250'),
+        gain: Number.parseFloat((document.getElementById('eq-low-mid-gain') as HTMLInputElement)?.value ?? '0'),
+        q: Number.parseFloat((document.getElementById('eq-low-mid-q') as HTMLInputElement)?.value ?? '1'),
+        type: 'peaking'
+      },
+      mid: {
+        frequency: Number.parseFloat((document.getElementById('eq-mid-freq') as HTMLInputElement)?.value ?? '1000'),
+        gain: Number.parseFloat((document.getElementById('eq-mid-gain') as HTMLInputElement)?.value ?? '0'),
+        q: Number.parseFloat((document.getElementById('eq-mid-q') as HTMLInputElement)?.value ?? '1'),
+        type: 'peaking'
+      },
+      highMid: {
+        frequency: Number.parseFloat((document.getElementById('eq-high-mid-freq') as HTMLInputElement)?.value ?? '4000'),
+        gain: Number.parseFloat((document.getElementById('eq-high-mid-gain') as HTMLInputElement)?.value ?? '0'),
+        q: Number.parseFloat((document.getElementById('eq-high-mid-q') as HTMLInputElement)?.value ?? '1'),
+        type: 'peaking'
+      },
+      highShelf: {
+        frequency: Number.parseFloat((document.getElementById('eq-high-shelf-freq') as HTMLInputElement)?.value ?? '12000'),
+        gain: Number.parseFloat((document.getElementById('eq-high-shelf-gain') as HTMLInputElement)?.value ?? '0'),
+        q: Number.parseFloat((document.getElementById('eq-high-shelf-q') as HTMLInputElement)?.value ?? '1'),
+        type: 'highshelf'
+      }
+    };
+  }
+
   applySettings(settings: SynthSettings): void {
     this.applyMasterSettings(settings.master);
     this.applyOscillatorSettings(settings.oscillators);
@@ -204,9 +242,11 @@ export class SettingsManager {
     this.applyWaveShaperSettings(settings.distortion);
     this.applyReverbSettings(settings.reverb);
     this.applyFlangerSettings(settings.flanger);
-
     if (settings.noise) {
       this.applyNoiseSettings(settings.noise);
+    }
+    if (settings.eq) {
+      this.applyEQSettings(settings.eq);
     }
   }
 
@@ -375,6 +415,51 @@ export class SettingsManager {
       control.dispatchEvent(new Event("change", { bubbles: true }));
     }
   }
+
+  private applyEQSettings(eq: ParametricEQConfig): void {
+    // Enable/disable
+    const enabledEl = document.getElementById('eq-enabled') as HTMLInputElement;
+    if (enabledEl) {
+      enabledEl.checked = eq.enabled;
+      enabledEl.dispatchEvent(new Event('change', { bubbles: true }));
+    }
+
+    // Helper
+    const set = (id: string, value: number) => {
+      const el = document.getElementById(id) as HTMLInputElement;
+      if (el) {
+        el.value = value.toString();
+        el.dispatchEvent(new Event('input', { bubbles: true }));
+      }
+    };
+
+    // Low Shelf
+    set('eq-low-shelf-freq', eq.lowShelf.frequency);
+    set('eq-low-shelf-gain', eq.lowShelf.gain);
+    set('eq-low-shelf-q', eq.lowShelf.q);
+
+    // Low Mid
+    set('eq-low-mid-freq', eq.lowMid.frequency);
+    set('eq-low-mid-gain', eq.lowMid.gain);
+    set('eq-low-mid-q', eq.lowMid.q);
+
+    // Mid
+    set('eq-mid-freq', eq.mid.frequency);
+    set('eq-mid-gain', eq.mid.gain);
+    set('eq-mid-q', eq.mid.q);
+
+    // High Mid
+    set('eq-high-mid-freq', eq.highMid.frequency);
+    set('eq-high-mid-gain', eq.highMid.gain);
+    set('eq-high-mid-q', eq.highMid.q);
+
+    // High Shelf
+    set('eq-high-shelf-freq', eq.highShelf.frequency);
+    set('eq-high-shelf-gain', eq.highShelf.gain);
+    set('eq-high-shelf-q', eq.highShelf.q);
+  }
+
+
 
   saveToLocalStorage(): void {
     const settings = this.getCurrentSettings();

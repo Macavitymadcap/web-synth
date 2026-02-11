@@ -14,6 +14,7 @@ import { NoiseModule } from "./modules/noise-module";
 
 // Effects
 import { CompressorModule } from "./modules/effects/compressor-module";
+import { ParametricEQModule } from "./modules/effects/parametric-eq-module";
 import { ChorusModule } from "./modules/effects/chorus-module";
 import { PhaserModule } from "./modules/effects/phaser-module";
 import { TremoloModule } from "./modules/effects/tremolo-module";
@@ -72,6 +73,7 @@ import "./components/organisms/spectrum-analyser";
 import type { SpectrumAnalyser } from "./components/organisms/spectrum-analyser";
 import "./components/organisms/oscilloscope-display";
 import type { OscilloscopeDisplay } from "./components/organisms/oscilloscope-display";
+import "./components/organisms/parametric-eq-controls";
 
 // Layout
 import "./components/layout/app-header";
@@ -105,6 +107,7 @@ const noiseModule = new NoiseModule();
 
 // Effects
 const compressorModule = new CompressorModule();
+const parametricEQModule = new ParametricEQModule();
 const chorusModule = new ChorusModule();
 const phaserModule = new PhaserModule();
 const tremoloModule = new TremoloModule();
@@ -124,66 +127,73 @@ effectsManager.register(compressorModule, {
   category: 'dynamics'
 });
 
+effectsManager.register(parametricEQModule, {
+  id: 'parametric-eq',
+  name: 'Parametric EQ',
+  order: 95,
+  category: 'equalization'
+});
+
 effectsManager.register(chorusModule, {
   id: 'chorus',
   name: 'Chorus',
-  order: 95,
+  order: 90,
   category: 'modulation'
 });
 
 effectsManager.register(phaserModule, {
   id: 'phaser',
   name: 'Phaser',
-  order: 90,
+  order: 85,
   category: 'modulation'
 });
 
 effectsManager.register(tremoloModule, {
   id: 'tremolo',
   name: 'Tremolo',
-  order: 85,
+  order: 80,
   category: 'modulation'
 });
 
 effectsManager.register(flangerModule, {
   id: 'flanger',
   name: 'Flanger',
-  order: 80,
+  order: 75,
   category: 'modulation'
 });
 
 effectsManager.register(delayModule, {
   id: 'delay',
   name: 'Delay',
-  order: 75,
+  order: 70,
   category: 'time-based'
 });
 
 effectsManager.register(distortionModule, {
   id: 'distortion',
   name: 'Distortion',
-  order: 70,
+  order: 65,
   category: 'distortion'
 });
 
 effectsManager.register(reverbModule, {
   id: 'reverb',
   name: 'Reverb',
-  order: 65, // Last effect before analyser and oscilloscope, so they can visualize the final output including reverb tail
+  order: 60, // Last effect before analyser and oscilloscope, so they can visualize the final output including reverb tail
   category: 'time-based'
 });
 
 effectsManager.register(spectrumAnalyserModule, {
   id: 'analyser',
   name: 'Spectrum Analyser',
-  order: 60, 
+  order: 55, 
   category: 'utility'
 });
 
 effectsManager.register(oscilloscopeModule, {
   id: 'oscilloscope',
   name: 'Oscilloscope',
-  order: 55,
+  order: 50,
   category: 'utility'
 });
 

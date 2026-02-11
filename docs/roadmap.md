@@ -14,7 +14,7 @@
 
 ## Phase 3
 - [x] Add Oscilloscope
-- [ ] Add Parametric EQ
+- [x] Add Parametric EQ
 - [ ] Arpeggiator
 - [ ] Step Sequencer
 
