@@ -534,6 +534,7 @@ Instead of creating a custom section component, use the generic `bank-section` a
 <!-- filepath: src/components/organisms/my-module-controls.ts -->
 export class MyModuleControls extends HTMLElement {
   connectedCallback() {
+    GlobalStyleService.ensureStyles(styleId, styles);
     this.innerHTML = `
       <module-section id="my-module-controls" title="My Modules">
         <div slot="instructions">
@@ -776,9 +777,18 @@ bun test --watch
 ### Creating Custom Components
 
 ```typescript
+import { GlobalStyleService } from '../../services/global-style-service';
+
+const STYLE_ID = 'my-control-styles';
+const styles = `
+.my-control {
+  display: flex;
+}
+`;
+
 class MyControl extends HTMLElement {
-  constructor() {
-    super();
+  connectedCallback() {
+    GlobalStyleService.ensureStyles(STYLE_ID, styles);
     this.render();
   }
 

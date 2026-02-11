@@ -59,6 +59,7 @@
  *   .setItems(configs: Array<Record<string, any>>) — Replace all items
  */
 
+import { GlobalStyleService } from "../../services/global-style-service";
 import { NeonButton } from "../atoms/neon-button";
 import type { BankItem } from "./bank-item";
 import type { ControlValue } from "./bank.model";
@@ -67,29 +68,22 @@ import type { ControlValue } from "./bank.model";
 
 const STYLE_ID = "bank-section-styles";
 
-function ensureGlobalStyles(): void {
-  if (document.getElementById(STYLE_ID)) return;
-
-  const style = document.createElement("style");
-  style.id = STYLE_ID;
-  style.textContent = `
-    bank-section {
-      display: block;
-    }
-
-    bank-section .bank-list {
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-      margin-bottom: 1rem;
-    }
-
-    bank-item-template {
-      display: none;
-    }
-  `;
-  document.head.appendChild(style);
+const styles = `
+bank-section {
+  display: block;
 }
+
+bank-section .bank-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+bank-item-template {
+  display: none;
+}
+`;
 
 // ─── Component ──────────────────────────────────────────────────────────
 
@@ -105,7 +99,7 @@ export class BankSection extends HTMLElement {
   private addBtn!: HTMLButtonElement;
 
   connectedCallback() {
-    ensureGlobalStyles();
+    GlobalStyleService.ensureStyles(STYLE_ID, styles);
 
     this.itemPrefix = this.getAttribute("prefix") || "bank";
     this.maxItems = Number.parseInt(this.getAttribute("max-items") || "4");

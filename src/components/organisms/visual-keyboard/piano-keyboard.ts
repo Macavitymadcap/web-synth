@@ -1,155 +1,150 @@
+import { GlobalStyleService } from "../../../services/global-style-service";
+
 const STYLE_ID = "piano-keyboard-styles";
 
-function ensureGlobalStyles() {
-  if (document.getElementById(STYLE_ID)) return;
-  const style = document.createElement('style');
-  style.id = STYLE_ID;
-  style.textContent = `
-      .keyboard {
-        position: relative;
-        width: 100%;
-        display: flex;
-        gap: 6px;
-        height: 120px;
-        margin-bottom: 18px;
-      }
-
-      .key {
-        touch-action: none;
-        -webkit-tap-highlight-color: transparent;
-      }
-
-      .key.white {
-        flex: 1 1 0;
-        background: linear-gradient(180deg, #ffffff 0%, #f0f0f0 100%);
-        border: 2px solid var(--neon-cyan);
-        border-radius: 6px;
-        box-shadow: 
-          0 0 10px rgba(0, 255, 255, 0.3),
-          0 6px 0 rgba(0, 0, 0, 0.1);
-        display: flex;
-        flex-direction: column;
-        justify-content: flex-end;
-        align-items: center;
-        padding: 8px 4px;
-        position: relative;
-        z-index: 1;
-        user-select: none;
-        transition: all 0.05s ease;
-        touch-action: none;
-        -webkit-tap-highlight-color: transparent;
-      }
-
-      .key.white:hover {
-        box-shadow: 
-          0 0 20px rgba(0, 255, 255, 0.6),
-          0 6px 0 rgba(0, 0, 0, 0.1);
-      }
-
-      .key.white .k-label {
-        font-weight: 700;
-        font-size: 12px;
-      }
-
-      .key.white .k-note {
-        font-size: 12px;
-        opacity: 0.85;
-        margin-bottom: 4px;
-      }
-
-      /* black row overlay container - positioned absolute on top of white keys */
-      .black-row {
-        position: absolute;
-        left: 0;
-        right: 0;
-        top: 0;
-        height: 70px;
-        display: flex;
-        gap: 6px;
-        padding: 0 3px;
-        pointer-events: none;
-        /* so pointer goes to whites unless black is present */
-        z-index: 2;
-      }
-
-      /* placeholder in black row where no black key exists */
-      .black-placeholder {
-        flex: 1 1 0;
-      }
-
-      /* black key styling */
-      .key.black {
-        width: calc(100% / 10);
-        margin-left: -8px;
-        margin-right: -8px;
-        background: linear-gradient(180deg, #1a0033 0%, #0a0015 100%);
-        color: var(--neon-pink);
-        border: 2px solid var(--neon-pink);
-        border-radius: 6px;
-        box-shadow: 
-          0 0 15px rgba(255, 0, 255, 0.5),
-          inset 0 0 10px rgba(255, 0, 255, 0.2);
-        display: flex;
-        flex-direction: column;
-        justify-content: flex-start;
-        align-items: center;
-        padding-top: 6px;
-        pointer-events: auto;
-        transition: all 0.05s ease;
-        touch-action: none;
-        -webkit-tap-highlight-color: transparent;
-        text-shadow: 0 0 5px var(--neon-pink);
-      }
-
-      .key.black:hover {
-        box-shadow: 
-          0 0 25px rgba(255, 0, 255, 0.8),
-          inset 0 0 15px rgba(255, 0, 255, 0.3);
-      }
-
-      .key.black .k-note {
-        font-size: 9px;
-        opacity: 0.85;
-        margin-bottom: 4px;
-        text-align: center;
-        line-height: 1.2;
-      }
-
-      .key.black .k-label {
-        font-weight: 700;
-        font-size: 11px;
-      }
-
-      /* active states */
-      .key.active.white {
-        background: #f5f5f5;
-        box-shadow: 0 2px 0 rgba(0, 0, 0, 0.08) inset;
-        transform: translateY(4px);
-        transition: transform 0.05s ease, box-shadow 0.05s ease;
-      }
-
-      .key.black.active {
-        background: linear-gradient(#2b2b2b, #101010);
-        transform: translateY(2px);
-        transition: transform 0.05s ease;
-      }
-
-      .keyboard-keys {
-        position: relative;
-        width: 100%;
-        display: flex;
-        gap: 6px;
-        height: 120px;
-        margin-bottom: 18px;
-      }
-    `;
-    
-  document.head.appendChild(style);
+const styles = `
+.keyboard {
+  position: relative;
+  width: 100%;
+  display: flex;
+  gap: 6px;
+  height: 120px;
+  margin-bottom: 18px;
 }
+
+.key {
+  touch-action: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.key.white {
+  flex: 1 1 0;
+  background: linear-gradient(180deg, #ffffff 0%, #f0f0f0 100%);
+  border: 2px solid var(--neon-cyan);
+  border-radius: 6px;
+  box-shadow: 
+    0 0 10px rgba(0, 255, 255, 0.3),
+    0 6px 0 rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+  padding: 8px 4px;
+  position: relative;
+  z-index: 1;
+  user-select: none;
+  transition: all 0.05s ease;
+  touch-action: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.key.white:hover {
+  box-shadow: 
+    0 0 20px rgba(0, 255, 255, 0.6),
+    0 6px 0 rgba(0, 0, 0, 0.1);
+}
+
+.key.white .k-label {
+  font-weight: 700;
+  font-size: 12px;
+}
+
+.key.white .k-note {
+  font-size: 12px;
+  opacity: 0.85;
+  margin-bottom: 4px;
+}
+
+/* black row overlay container - positioned absolute on top of white keys */
+.black-row {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 70px;
+  display: flex;
+  gap: 6px;
+  padding: 0 3px;
+  pointer-events: none;
+  /* so pointer goes to whites unless black is present */
+  z-index: 2;
+}
+
+/* placeholder in black row where no black key exists */
+.black-placeholder {
+  flex: 1 1 0;
+}
+
+/* black key styling */
+.key.black {
+  width: calc(100% / 10);
+  margin-left: -8px;
+  margin-right: -8px;
+  background: linear-gradient(180deg, #1a0033 0%, #0a0015 100%);
+  color: var(--neon-pink);
+  border: 2px solid var(--neon-pink);
+  border-radius: 6px;
+  box-shadow: 
+    0 0 15px rgba(255, 0, 255, 0.5),
+    inset 0 0 10px rgba(255, 0, 255, 0.2);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  padding-top: 6px;
+  pointer-events: auto;
+  transition: all 0.05s ease;
+  touch-action: none;
+  -webkit-tap-highlight-color: transparent;
+  text-shadow: 0 0 5px var(--neon-pink);
+}
+
+.key.black:hover {
+  box-shadow: 
+    0 0 25px rgba(255, 0, 255, 0.8),
+    inset 0 0 15px rgba(255, 0, 255, 0.3);
+}
+
+.key.black .k-note {
+  font-size: 9px;
+  opacity: 0.85;
+  margin-bottom: 4px;
+  text-align: center;
+  line-height: 1.2;
+}
+
+.key.black .k-label {
+  font-weight: 700;
+  font-size: 11px;
+}
+
+/* active states */
+.key.active.white {
+  background: #f5f5f5;
+  box-shadow: 0 2px 0 rgba(0, 0, 0, 0.08) inset;
+  transform: translateY(4px);
+  transition: transform 0.05s ease, box-shadow 0.05s ease;
+}
+
+.key.black.active {
+  background: linear-gradient(#2b2b2b, #101010);
+  transform: translateY(2px);
+  transition: transform 0.05s ease;
+}
+
+.keyboard-keys {
+  position: relative;
+  width: 100%;
+  display: flex;
+  gap: 6px;
+  height: 120px;
+  margin-bottom: 18px;
+}
+`;
 
 export class PianoKeyboard extends HTMLElement {
   connectedCallback() {
-    ensureGlobalStyles();
+    GlobalStyleService.ensureStyles(STYLE_ID, styles);
     const octave = this.getAttribute("octave") || "4";
     const keys = this.getAttribute("keys") || "zxcvbnm,sdghj";
     

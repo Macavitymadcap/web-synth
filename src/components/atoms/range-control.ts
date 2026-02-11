@@ -29,6 +29,8 @@
  *   .setValue(value: string | number): void
  */
 
+import { GlobalStyleService } from "../../services/global-style-service";
+
 type FormatterName =
   | "percent"
   | "percentage"
@@ -74,99 +76,92 @@ const FORMATTERS: Record<string, FormatterFn> = {
 // Shared styles injected once
 const STYLE_ID = "range-control-styles";
 
-function ensureGlobalStyles(): void {
-  if (document.getElementById(STYLE_ID)) return;
-
-  const style = document.createElement("style");
-  style.id = STYLE_ID;
-  style.textContent = `
-    range-control {
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
-    }
-
-    range-control label {
-      display: flex;
-      flex-direction: column;
-      font-size: 0.75rem;
-      color: var(--text-secondary);
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      font-weight: 600;
-      gap: 0.5rem;
-      text-shadow: 0 0 5px var(--text-secondary);
-    }
-
-    range-control input[type="range"] {
-      width: 100px;
-      height: 6px;
-      background: rgba(10, 0, 21, 0.8);
-      border: 2px solid var(--neon-cyan);
-      border-radius: 3px;
-      outline: none;
-      cursor: pointer;
-      -webkit-appearance: none;
-      box-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
-    }
-
-    range-control input[type="range"]::-webkit-slider-thumb {
-      -webkit-appearance: none;
-      width: 20px;
-      height: 20px;
-      background: linear-gradient(145deg, var(--neon-cyan), var(--accent-blue));
-      border: 2px solid var(--neon-cyan);
-      border-radius: 50%;
-      cursor: pointer;
-      box-shadow:
-        0 0 15px var(--neon-cyan),
-        0 2px 4px rgba(0, 0, 0, 0.5),
-        inset 0 1px 0 rgba(255, 255, 255, 0.3);
-      transition: all 0.1s ease;
-    }
-
-    range-control input[type="range"]::-webkit-slider-thumb:hover {
-      background: linear-gradient(145deg, #00ffff, #00d4ff);
-      box-shadow:
-        0 0 25px var(--neon-cyan),
-        0 3px 6px rgba(0, 255, 255, 0.5);
-      transform: scale(1.1);
-    }
-
-    range-control input[type="range"]::-webkit-slider-thumb:active {
-      background: linear-gradient(145deg, var(--accent-blue), #0099cc);
-      transform: scale(0.95);
-    }
-
-    range-control input[type="range"]::-moz-range-thumb {
-      width: 20px;
-      height: 20px;
-      background: linear-gradient(145deg, var(--neon-cyan), var(--accent-blue));
-      border: 2px solid var(--neon-cyan);
-      border-radius: 50%;
-      cursor: pointer;
-      box-shadow:
-        0 0 15px var(--neon-cyan),
-        0 2px 4px rgba(0, 0, 0, 0.5),
-        inset 0 1px 0 rgba(255, 255, 255, 0.3);
-    }
-
-    range-control .range-value {
-      font-size: 0.85rem;
-      color: var(--neon-cyan);
-      font-weight: 700;
-      text-align: center;
-      padding: 0.25rem 0.5rem;
-      background: rgba(0, 255, 255, 0.1);
-      border: 1px solid var(--neon-cyan);
-      border-radius: 3px;
-      min-width: 60px;
-      box-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
-      text-shadow: 0 0 10px var(--neon-cyan);
-    }
-  `;
-  document.head.appendChild(style);
+const styles = `
+range-control {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
 }
+
+range-control label {
+  display: flex;
+  flex-direction: column;
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 600;
+  gap: 0.5rem;
+  text-shadow: 0 0 5px var(--text-secondary);
+}
+
+range-control input[type="range"] {
+  width: 100px;
+  height: 6px;
+  background: rgba(10, 0, 21, 0.8);
+  border: 2px solid var(--neon-cyan);
+  border-radius: 3px;
+  outline: none;
+  cursor: pointer;
+  -webkit-appearance: none;
+  box-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
+}
+
+range-control input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 20px;
+  height: 20px;
+  background: linear-gradient(145deg, var(--neon-cyan), var(--accent-blue));
+  border: 2px solid var(--neon-cyan);
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow:
+    0 0 15px var(--neon-cyan),
+    0 2px 4px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  transition: all 0.1s ease;
+}
+
+range-control input[type="range"]::-webkit-slider-thumb:hover {
+  background: linear-gradient(145deg, #00ffff, #00d4ff);
+  box-shadow:
+    0 0 25px var(--neon-cyan),
+    0 3px 6px rgba(0, 255, 255, 0.5);
+  transform: scale(1.1);
+}
+
+range-control input[type="range"]::-webkit-slider-thumb:active {
+  background: linear-gradient(145deg, var(--accent-blue), #0099cc);
+  transform: scale(0.95);
+}
+
+range-control input[type="range"]::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  background: linear-gradient(145deg, var(--neon-cyan), var(--accent-blue));
+  border: 2px solid var(--neon-cyan);
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow:
+    0 0 15px var(--neon-cyan),
+    0 2px 4px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+range-control .range-value {
+  font-size: 0.85rem;
+  color: var(--neon-cyan);
+  font-weight: 700;
+  text-align: center;
+  padding: 0.25rem 0.5rem;
+  background: rgba(0, 255, 255, 0.1);
+  border: 1px solid var(--neon-cyan);
+  border-radius: 3px;
+  min-width: 60px;
+  box-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
+  text-shadow: 0 0 10px var(--neon-cyan);
+}
+`;
 
 export class RangeControl extends HTMLElement {
   private input!: HTMLInputElement;
@@ -176,7 +171,7 @@ export class RangeControl extends HTMLElement {
   private unitSuffix: string = "";
 
   connectedCallback() {
-    ensureGlobalStyles();
+    GlobalStyleService.ensureStyles(STYLE_ID, styles);
 
     const label = this.getAttribute("label") || "";
     const id = this.getAttribute("id") || "";

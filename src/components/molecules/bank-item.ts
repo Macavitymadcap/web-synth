@@ -47,29 +47,24 @@
 import type { RangeControl } from "../atoms/range-control";
 import type { NeonSelect } from "../atoms/neon-select";
 import type { BankControlConfig, ControlValue, RangeConfig, SelectConfig, ToggleConfig } from "./bank.model";
+import { GlobalStyleService } from "../../services/global-style-service";
 
 // ─── Style injection ────────────────────────────────────────────────────
 
 const STYLE_ID = "bank-item-styles";
 
-function ensureGlobalStyles(): void {
-  if (document.getElementById(STYLE_ID)) return;
-
-  const style = document.createElement("style");
-  style.id = STYLE_ID;
-  style.textContent = `
-    bank-item {
-      display: block;
-    }
-
-    bank-select,
-    bank-range,
-    bank-toggle {
-      display: none;
-    }
-  `;
-  document.head.appendChild(style);
+const styles = `
+bank-item {
+  display: block;
 }
+
+bank-select,
+bank-range,
+bank-toggle {
+  display: none;
+}
+`;
+
 
 // ─── Parsing ────────────────────────────────────────────────────────────
 
@@ -191,7 +186,7 @@ export class BankItem extends HTMLElement {
   private configs: BankControlConfig[] = [];
 
   connectedCallback() {
-    ensureGlobalStyles();
+    GlobalStyleService.ensureStyles(STYLE_ID, styles);
 
     const prefix = this.getAttribute("prefix") || "bank";
     const instanceId = this.dataset.id || "1";

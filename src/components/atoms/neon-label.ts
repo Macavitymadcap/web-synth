@@ -16,32 +16,25 @@
  * the element's text content. Attribute takes priority.
  */
 
+import { GlobalStyleService } from "../../services/global-style-service";
+
 const STYLE_ID = "neon-label-styles";
-
-function ensureGlobalStyles(): void {
-  if (document.getElementById(STYLE_ID)) return;
-
-  const style = document.createElement("style");
-  style.id = STYLE_ID;
-  style.textContent = `
-    neon-label {
-      display: block;
-      font-size: 0.75rem;
-      color: var(--text-secondary);
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      font-weight: 600;
-      text-shadow: 0 0 5px var(--text-secondary);
-      line-height: 1.4;
-    }
-  `;
-  document.head.appendChild(style);
+const styles = `
+neon-label {
+  display: block;
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 600;
+  text-shadow: 0 0 5px var(--text-secondary);
+  line-height: 1.4;
 }
+`;
 
 export class NeonLabel extends HTMLElement {
   connectedCallback() {
-    ensureGlobalStyles();
-
+    GlobalStyleService.ensureStyles(STYLE_ID, styles);
     const text = this.getAttribute("text");
     if (text) {
       this.textContent = text;

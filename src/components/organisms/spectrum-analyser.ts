@@ -1,29 +1,23 @@
+import { GlobalStyleService } from "../../services/global-style-service";
+
 const STYLE_ID = "spectrum-analyser-styles";
-
-function ensureGlobalStyles() {
-  if (document.getElementById(STYLE_ID)) return;
-  const style = document.createElement('style');
-  style.id = STYLE_ID;
-  style.textContent = `
-      .analyser-canvas {
-      width: stretch;
-      height: 120px;
-      background: #0a0015;
-      border-radius: 8px;
-      border: 2px solid var(--neon-cyan);
-      box-shadow: 0 0 20px rgba(0,255,255,0.3);
-      display: block;
-    }
-  `;
-
-  document.head.appendChild(style);
+const styles = `
+.analyser-canvas {
+  width: stretch;
+  height: 120px;
+  background: #0a0015;
+  border-radius: 8px;
+  border: 2px solid var(--neon-cyan);
+  box-shadow: 0 0 20px rgba(0,255,255,0.3);
+  display: block;
 }
+`;
 
 export class SpectrumAnalyser extends HTMLElement {
   private canvas!: HTMLCanvasElement;
 
   connectedCallback() {
-    ensureGlobalStyles();
+    GlobalStyleService.ensureStyles(STYLE_ID, styles);
     this.innerHTML = `
       <module-section id="spectrum-analyser" title="Analyser">
         <div slot="instructions">

@@ -1,84 +1,77 @@
 import { SettingsManager } from "../../core/settings-manager";
 import { FACTORY_PRESETS } from "../../core/factory-presets";
+import { GlobalStyleService } from "../../services/global-style-service";
 
 const STYLE_ID = "preset-selector-styles";
 
-function ensureGlobalStyles() {
-  if (document.getElementById(STYLE_ID)) return;
-
-  const style = document.createElement("style");
-  style.id = STYLE_ID;
-  style.textContent = `
-    .preset-controls {
-      display: flex;
-      gap: 0.5rem;
-      flex-wrap: wrap;
-      align-items: center;
-    }
-
-    .preset-select {
-      flex: 2 1 300px;
-      padding: 0.5rem;
-      border: 2px solid var(--neon-cyan);
-      border-radius: 4px;
-      background: rgba(10, 0, 21, 0.8);
-      color: var(--text-primary);
-      font-size: 0.9rem;
-      box-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
-      text-shadow: 0 0 5px var(--text-primary);
-      transition: all 0.2s ease;
-    }
-    
-    .preset-select:hover {
-      border-color: var(--neon-pink);
-      box-shadow: 0 0 15px rgba(255, 0, 255, 0.5);
-    }
-    
-    .preset-select:focus {
-      outline: none;
-      border-color: var(--neon-pink);
-      box-shadow: 0 0 20px rgba(255, 0, 255, 0.6);
-    }
-    
-    .preset-select option,
-    .preset-select optgroup {
-      background: #0a0015;
-      color: var(--text-primary);
-    }
-
-    .preset-buttons {
-      display: flex;
-      gap: 0.5rem;
-      flex-wrap: wrap;
-      flex: 1 1 400px;
-      min-width: 0;
-    }
-
-    .preset-buttons button {
-      flex: 1 1 auto;
-      min-width: fit-content;
-    }
-
-    @media (max-width: 640px) {
-      .preset-select {
-        width: 100%;
-        flex: 1 1 100%;
-      }
-      
-      .preset-buttons {
-        width: 100%;
-      }
-    }
-  `;
-  
-  document.head.appendChild(style);
+const styles = `
+.preset-controls {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  align-items: center;
 }
+
+.preset-select {
+  flex: 2 1 300px;
+  padding: 0.5rem;
+  border: 2px solid var(--neon-cyan);
+  border-radius: 4px;
+  background: rgba(10, 0, 21, 0.8);
+  color: var(--text-primary);
+  font-size: 0.9rem;
+  box-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
+  text-shadow: 0 0 5px var(--text-primary);
+  transition: all 0.2s ease;
+}
+
+.preset-select:hover {
+  border-color: var(--neon-pink);
+  box-shadow: 0 0 15px rgba(255, 0, 255, 0.5);
+}
+
+.preset-select:focus {
+  outline: none;
+  border-color: var(--neon-pink);
+  box-shadow: 0 0 20px rgba(255, 0, 255, 0.6);
+}
+
+.preset-select option,
+.preset-select optgroup {
+  background: #0a0015;
+  color: var(--text-primary);
+}
+
+.preset-buttons {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  flex: 1 1 400px;
+  min-width: 0;
+}
+
+.preset-buttons button {
+  flex: 1 1 auto;
+  min-width: fit-content;
+}
+
+@media (max-width: 640px) {
+  .preset-select {
+    width: 100%;
+    flex: 1 1 100%;
+  }
+  
+  .preset-buttons {
+    width: 100%;
+  }
+}
+`;
 
 export class PresetSelector extends HTMLElement {
   private settingsManager?: SettingsManager;
 
   connectedCallback() {
-    ensureGlobalStyles();
+    GlobalStyleService.ensureStyles(STYLE_ID, styles);
     this.render();
     this.setupEventListeners();
   }

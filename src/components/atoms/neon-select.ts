@@ -31,6 +31,8 @@
  *   .value (get/set)
  */
 
+import { GlobalStyleService } from "../../services/global-style-service";
+
 const PRESET_OPTIONS: Record<string, Array<{ value: string; label: string }>> = {
   waveform: [
     { value: "sine", label: "Sine" },
@@ -57,70 +59,63 @@ const PRESET_OPTIONS: Record<string, Array<{ value: string; label: string }>> = 
 
 // Shared styles injected once into the document
 const STYLE_ID = "neon-select-styles";
-
-function ensureGlobalStyles(): void {
-  if (document.getElementById(STYLE_ID)) return;
-
-  const style = document.createElement("style");
-  style.id = STYLE_ID;
-  style.textContent = `
-    neon-select {
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
-    }
-
-    neon-select .neon-select-label {
-      font-size: 0.75rem;
-      color: var(--text-secondary);
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      font-weight: 600;
-      text-shadow: 0 0 5px var(--text-secondary);
-    }
-
-    neon-select select {
-      padding: 0.5rem;
-      background: rgba(10, 0, 21, 0.8);
-      color: var(--text-primary);
-      border: 2px solid var(--neon-cyan);
-      border-radius: 4px;
-      font-size: 0.9rem;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      min-width: 80px;
-      box-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
-      text-shadow: 0 0 5px var(--text-primary);
-      font-family: inherit;
-    }
-
-    neon-select select:hover {
-      border-color: var(--neon-pink);
-      background: rgba(26, 0, 51, 0.9);
-      box-shadow: 0 0 15px rgba(255, 0, 255, 0.5);
-    }
-
-    neon-select select:focus {
-      outline: none;
-      border-color: var(--neon-pink);
-      box-shadow: 0 0 20px rgba(255, 0, 255, 0.6);
-    }
-
-    neon-select select option {
-      background: #0a0015;
-      color: var(--text-primary);
-      padding: 0.5rem;
-    }
-  `;
-  document.head.appendChild(style);
+const styles = `
+neon-select {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
 }
+
+neon-select .neon-select-label {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 600;
+  text-shadow: 0 0 5px var(--text-secondary);
+}
+
+neon-select select {
+  padding: 0.5rem;
+  background: rgba(10, 0, 21, 0.8);
+  color: var(--text-primary);
+  border: 2px solid var(--neon-cyan);
+  border-radius: 4px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 80px;
+  box-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
+  text-shadow: 0 0 5px var(--text-primary);
+  font-family: inherit;
+}
+
+neon-select select:hover {
+  border-color: var(--neon-pink);
+  background: rgba(26, 0, 51, 0.9);
+  box-shadow: 0 0 15px rgba(255, 0, 255, 0.5);
+}
+
+neon-select select:focus {
+  outline: none;
+  border-color: var(--neon-pink);
+  box-shadow: 0 0 20px rgba(255, 0, 255, 0.6);
+}
+
+neon-select select option {
+  background: #0a0015;
+  color: var(--text-primary);
+  padding: 0.5rem;
+}
+`;
+
 
 export class NeonSelect extends HTMLElement {
   private select!: HTMLSelectElement;
   private customOptions: string = "";
 
   connectedCallback() {
-    ensureGlobalStyles();
+    GlobalStyleService.ensureStyles(STYLE_ID, styles);
 
     // Capture child <option> elements before we clear innerHTML
     this.customOptions = this.captureChildOptions();

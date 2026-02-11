@@ -33,6 +33,8 @@
  *   Params dispatch native input/change events as normal — no special handling.
  */
 
+import { GlobalStyleService } from "../../services/global-style-service";
+
 // ─── Config types parsed from child elements ────────────────────────────
 
 type ParamConfig = {
@@ -79,49 +81,43 @@ type ControlConfig = ParamConfig | ToggleConfig | SelectConfig | SectionConfig;
 
 const STYLE_ID = "effect-module-styles";
 
-function ensureGlobalStyles(): void {
-  if (document.getElementById(STYLE_ID)) return;
-
-  const style = document.createElement("style");
-  style.id = STYLE_ID;
-  style.textContent = `
-    effect-module {
-      display: contents;
-    }
-
-    effect-param,
-    effect-toggle,
-    effect-select,
-    effect-section {
-      display: none;
-    }
-    
-    effect-module module-section [slot="content"] {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 1.25rem;
-      align-items: center;
-      justify-content: space-around;
-      padding: 1rem;
-      background: var(--panel-bg);
-      border-radius: 6px;
-      border: 1px solid rgba(255, 255, 255, 0.05);
-    }
-
-    effect-module module-section [slot="content"] > * {
-      flex: 0 1 auto;
-      min-width: fit-content;
-    }
-
-    @media (max-width: 640px) {
-      effect-module module-section [slot="content"] {
-        gap: 0.75rem;
-        padding: 0.75rem;
-      }
-    }
-  `;
-  document.head.appendChild(style);
+const styles = `
+effect-module {
+  display: contents;
 }
+
+effect-param,
+effect-toggle,
+effect-select,
+effect-section {
+  display: none;
+}
+
+effect-module module-section [slot="content"] {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.25rem;
+  align-items: center;
+  justify-content: space-around;
+  padding: 1rem;
+  background: var(--panel-bg);
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+effect-module module-section [slot="content"] > * {
+  flex: 0 1 auto;
+  min-width: fit-content;
+}
+
+@media (max-width: 640px) {
+  effect-module module-section [slot="content"] {
+    gap: 0.75rem;
+    padding: 0.75rem;
+  }
+}
+`;
+
 
 // ─── Helper: parse child elements into config ───────────────────────────
 
@@ -307,7 +303,7 @@ function buildNeonSelect(c: SelectConfig): string {
 
 export class EffectModule extends HTMLElement {
   connectedCallback() {
-    ensureGlobalStyles();
+    GlobalStyleService.ensureStyles(STYLE_ID, styles);
 
     const id = this.getAttribute("id") || "";
     const title = this.getAttribute("title") || "Effect";

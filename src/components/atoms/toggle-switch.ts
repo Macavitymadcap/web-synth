@@ -25,124 +25,120 @@
  *   .checked (get/set)
  */
 
+import { GlobalStyleService } from "../../services/global-style-service";
+
 const STYLE_ID = "toggle-switch-styles";
 
-function ensureGlobalStyles(): void {
-  if (document.getElementById(STYLE_ID)) return;
-
-  const style = document.createElement("style");
-  style.id = STYLE_ID;
-  style.textContent = `
-    toggle-switch {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      user-select: none;
-    }
-
-    toggle-switch .toggle-container {
-      position: relative;
-      width: 56px;
-      height: 28px;
-      cursor: pointer;
-    }
-
-    toggle-switch input[type="checkbox"] {
-      opacity: 0;
-      width: 0;
-      height: 0;
-      position: absolute;
-    }
-
-    toggle-switch .toggle-track {
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(135deg, #1a0033 0%, #0a0015 100%);
-      border: 2px solid rgba(255, 0, 255, 0.4);
-      border-radius: 14px;
-      transition: all 0.3s ease;
-      box-shadow:
-        inset 0 2px 8px rgba(0, 0, 0, 0.8),
-        0 0 10px rgba(255, 0, 255, 0.3);
-    }
-
-    toggle-switch input:checked + .toggle-track {
-      background: linear-gradient(135deg, rgba(0, 255, 136, 0.3) 0%, rgba(0, 204, 109, 0.3) 100%);
-      border-color: var(--accent-green);
-      box-shadow:
-        inset 0 2px 8px rgba(0, 0, 0, 0.5),
-        0 0 20px rgba(0, 255, 136, 0.6),
-        0 0 30px rgba(0, 255, 136, 0.4);
-    }
-
-    toggle-switch .toggle-thumb {
-      position: absolute;
-      top: 2px;
-      left: 2px;
-      width: 20px;
-      height: 20px;
-      background: linear-gradient(145deg, var(--neon-pink), #cc00cc);
-      border: 1px solid var(--neon-pink);
-      border-radius: 50%;
-      transition: all 0.3s ease;
-      box-shadow:
-        0 0 15px rgba(255, 0, 255, 0.8),
-        0 2px 6px rgba(0, 0, 0, 0.5),
-        inset 0 1px 2px rgba(255, 255, 255, 0.3);
-    }
-
-    toggle-switch input:checked + .toggle-track .toggle-thumb {
-      transform: translateX(28px);
-      background: linear-gradient(145deg, var(--accent-green), #00cc6d);
-      border-color: var(--accent-green);
-      box-shadow:
-        0 0 20px rgba(0, 255, 136, 1),
-        0 0 30px rgba(0, 255, 136, 0.6),
-        0 2px 8px rgba(0, 0, 0, 0.6),
-        inset 0 1px 2px rgba(255, 255, 255, 0.4);
-    }
-
-    toggle-switch .toggle-track:hover {
-      border-color: var(--neon-cyan);
-      box-shadow:
-        inset 0 2px 8px rgba(0, 0, 0, 0.8),
-        0 0 15px rgba(0, 255, 255, 0.5);
-    }
-
-    toggle-switch input:checked + .toggle-track:hover {
-      border-color: var(--neon-cyan);
-      box-shadow:
-        inset 0 2px 8px rgba(0, 0, 0, 0.5),
-        0 0 25px rgba(0, 255, 136, 0.8),
-        0 0 40px rgba(0, 255, 255, 0.4);
-    }
-
-    toggle-switch input:focus + .toggle-track {
-      border-color: var(--neon-cyan);
-      box-shadow:
-        inset 0 2px 8px rgba(0, 0, 0, 0.8),
-        0 0 20px rgba(0, 255, 255, 0.8);
-    }
-
-    toggle-switch .toggle-label {
-      font-size: 0.85rem;
-      color: var(--text-secondary);
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      font-weight: 600;
-      transition: all 0.3s ease;
-      text-shadow: 0 0 5px var(--text-secondary);
-    }
-
-    toggle-switch input:checked ~ .toggle-label {
-      color: var(--accent-green);
-      text-shadow:
-        0 0 10px var(--accent-green),
-        0 0 20px rgba(0, 255, 136, 0.5);
-    }
-  `;
-  document.head.appendChild(style);
+const styles = `
+toggle-switch {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  user-select: none;
 }
+
+toggle-switch .toggle-container {
+  position: relative;
+  width: 56px;
+  height: 28px;
+  cursor: pointer;
+}
+
+toggle-switch input[type="checkbox"] {
+  opacity: 0;
+  width: 0;
+  height: 0;
+  position: absolute;
+}
+
+toggle-switch .toggle-track {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, #1a0033 0%, #0a0015 100%);
+  border: 2px solid rgba(255, 0, 255, 0.4);
+  border-radius: 14px;
+  transition: all 0.3s ease;
+  box-shadow:
+    inset 0 2px 8px rgba(0, 0, 0, 0.8),
+    0 0 10px rgba(255, 0, 255, 0.3);
+}
+
+toggle-switch input:checked + .toggle-track {
+  background: linear-gradient(135deg, rgba(0, 255, 136, 0.3) 0%, rgba(0, 204, 109, 0.3) 100%);
+  border-color: var(--accent-green);
+  box-shadow:
+    inset 0 2px 8px rgba(0, 0, 0, 0.5),
+    0 0 20px rgba(0, 255, 136, 0.6),
+    0 0 30px rgba(0, 255, 136, 0.4);
+}
+
+toggle-switch .toggle-thumb {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 20px;
+  height: 20px;
+  background: linear-gradient(145deg, var(--neon-pink), #cc00cc);
+  border: 1px solid var(--neon-pink);
+  border-radius: 50%;
+  transition: all 0.3s ease;
+  box-shadow:
+    0 0 15px rgba(255, 0, 255, 0.8),
+    0 2px 6px rgba(0, 0, 0, 0.5),
+    inset 0 1px 2px rgba(255, 255, 255, 0.3);
+}
+
+toggle-switch input:checked + .toggle-track .toggle-thumb {
+  transform: translateX(28px);
+  background: linear-gradient(145deg, var(--accent-green), #00cc6d);
+  border-color: var(--accent-green);
+  box-shadow:
+    0 0 20px rgba(0, 255, 136, 1),
+    0 0 30px rgba(0, 255, 136, 0.6),
+    0 2px 8px rgba(0, 0, 0, 0.6),
+    inset 0 1px 2px rgba(255, 255, 255, 0.4);
+}
+
+toggle-switch .toggle-track:hover {
+  border-color: var(--neon-cyan);
+  box-shadow:
+    inset 0 2px 8px rgba(0, 0, 0, 0.8),
+    0 0 15px rgba(0, 255, 255, 0.5);
+}
+
+toggle-switch input:checked + .toggle-track:hover {
+  border-color: var(--neon-cyan);
+  box-shadow:
+    inset 0 2px 8px rgba(0, 0, 0, 0.5),
+    0 0 25px rgba(0, 255, 136, 0.8),
+    0 0 40px rgba(0, 255, 255, 0.4);
+}
+
+toggle-switch input:focus + .toggle-track {
+  border-color: var(--neon-cyan);
+  box-shadow:
+    inset 0 2px 8px rgba(0, 0, 0, 0.8),
+    0 0 20px rgba(0, 255, 255, 0.8);
+}
+
+toggle-switch .toggle-label {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  text-shadow: 0 0 5px var(--text-secondary);
+}
+
+toggle-switch input:checked ~ .toggle-label {
+  color: var(--accent-green);
+  text-shadow:
+    0 0 10px var(--accent-green),
+    0 0 20px rgba(0, 255, 136, 0.5);
+}
+`;
+
 
 type LabelConfig =
   | { mode: "static"; text: string }
@@ -154,7 +150,7 @@ export class ToggleSwitch extends HTMLElement {
   private labelConfig!: LabelConfig;
 
   connectedCallback() {
-    ensureGlobalStyles();
+    GlobalStyleService.ensureStyles(STYLE_ID, styles);
 
     const id = this.getAttribute("id") || "";
     const isChecked = this.hasAttribute("checked");

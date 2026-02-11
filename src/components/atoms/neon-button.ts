@@ -49,6 +49,8 @@
  *   .disabled (get/set)
  */
 
+import { GlobalStyleService } from "../../services/global-style-service";
+
 // ─── Variant colour maps ────────────────────────────────────
 
 type Variant = "primary" | "secondary" | "danger" | "close" | "record";
@@ -63,226 +65,218 @@ const SIZE_MAP: Record<IconSize, string> = {
 // ─── Global styles ──────────────────────────────────────────
 
 const STYLE_ID = "neon-button-styles";
-
-function ensureGlobalStyles(): void {
-  if (document.getElementById(STYLE_ID)) return;
-
-  const style = document.createElement("style");
-  style.id = STYLE_ID;
-  style.textContent = `
-    neon-button {
-      display: inline-flex;
-    }
-
-    /* ── Base button reset ──────────────────────────────── */
-
-    neon-button button {
-      font-family: inherit;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 1.5px;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      border: 2px solid;
-      white-space: nowrap;
-      min-width: 0;
-      line-height: 1;
-    }
-
-    /* ── Text mode (rectangular) ────────────────────────── */
-
-    neon-button button.nb-text {
-      padding: 0.5rem 1.25rem;
-      border-radius: 4px;
-      font-size: 0.9rem;
-    }
-
-    /* ── Icon mode (round) ──────────────────────────────── */
-
-    neon-button button.nb-icon {
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 0;
-      margin: 0;
-      font-weight: bold;
-      line-height: 0;
-      flex-shrink: 0;
-    }
-
-    neon-button button.nb-icon.nb-sm  { width: 1.75rem; height: 1.75rem; min-width: 1.75rem; min-height: 1.75rem; font-size: 1rem; }
-    neon-button button.nb-icon.nb-md  { width: 2rem;    height: 2rem;    min-width: 2rem;    min-height: 2rem;    font-size: 1.5rem; }
-    neon-button button.nb-icon.nb-lg  { width: 2.5rem;  height: 2.5rem;  min-width: 2.5rem;  min-height: 2.5rem;  font-size: 1.5rem; }
-
-    /* ── Primary (cyan) ─────────────────────────────────── */
-
-    neon-button button.nb-primary {
-      background: rgba(0, 212, 255, 0.2);
-      color: var(--accent-blue, #00d4ff);
-      border-color: var(--accent-blue, #00d4ff);
-      box-shadow:
-        0 0 10px rgba(0, 212, 255, 0.5),
-        0 2px 8px rgba(0, 212, 255, 0.3);
-      text-shadow: 0 0 5px var(--accent-blue, #00d4ff);
-    }
-
-    neon-button button.nb-primary.nb-icon {
-      background: linear-gradient(135deg, rgba(0, 212, 255, 0.3) 0%, rgba(0, 150, 200, 0.5) 100%);
-      color: var(--neon-cyan, #00ffff);
-      border-color: var(--neon-cyan, #00ffff);
-      box-shadow:
-        0 0 10px rgba(0, 255, 255, 0.5),
-        0 2px 4px rgba(0, 0, 0, 0.3),
-        inset 0 1px 2px rgba(255, 255, 255, 0.2),
-        inset 0 -2px 4px rgba(0, 0, 0, 0.3);
-      text-shadow: 0 0 5px var(--neon-cyan, #00ffff);
-    }
-
-    neon-button button.nb-primary:hover:not(:disabled) {
-      background: rgba(0, 212, 255, 0.4);
-      box-shadow:
-        0 0 20px rgba(0, 212, 255, 0.8),
-        0 4px 12px rgba(0, 212, 255, 0.5);
-      transform: translateY(-1px);
-    }
-
-    neon-button button.nb-primary.nb-icon:hover:not(:disabled) {
-      background: linear-gradient(135deg, rgba(0, 212, 255, 0.5) 0%, rgba(0, 180, 230, 0.7) 100%);
-      box-shadow:
-        0 0 20px rgba(0, 255, 255, 0.8),
-        0 2px 6px rgba(0, 0, 0, 0.4),
-        inset 0 1px 3px rgba(255, 255, 255, 0.3),
-        inset 0 -2px 5px rgba(0, 0, 0, 0.4);
-      transform: scale(1.1);
-    }
-
-    /* ── Secondary (green) ──────────────────────────────── */
-
-    neon-button button.nb-secondary {
-      background: rgba(0, 255, 136, 0.2);
-      color: var(--accent-green, #00ff88);
-      border-color: var(--accent-green, #00ff88);
-      box-shadow:
-        0 0 10px rgba(0, 255, 136, 0.5),
-        0 2px 8px rgba(0, 255, 136, 0.3);
-      text-shadow: 0 0 5px var(--accent-green, #00ff88);
-    }
-
-    neon-button button.nb-secondary:hover:not(:disabled) {
-      background: rgba(0, 255, 136, 0.4);
-      box-shadow:
-        0 0 20px rgba(0, 255, 136, 0.8),
-        0 4px 12px rgba(0, 255, 136, 0.5);
-      transform: translateY(-1px);
-    }
-
-    /* ── Danger (pink/red) ──────────────────────────────── */
-
-    neon-button button.nb-danger {
-      background: rgba(255, 0, 102, 0.2);
-      color: #ff0066;
-      border-color: #ff0066;
-      box-shadow:
-        0 0 10px rgba(255, 0, 102, 0.5),
-        0 2px 4px rgba(255, 0, 102, 0.3);
-      text-shadow: 0 0 5px #ff0066;
-    }
-
-    neon-button button.nb-danger:hover:not(:disabled) {
-      background: rgba(255, 0, 102, 0.4);
-      box-shadow:
-        0 0 20px rgba(255, 0, 102, 0.8),
-        0 3px 6px rgba(255, 0, 102, 0.5);
-      transform: translateY(-1px);
-    }
-
-    /* ── Close (alias for danger icon — popover close buttons) ── */
-
-    neon-button button.nb-close {
-      background: linear-gradient(135deg, rgba(255, 0, 102, 0.3) 0%, rgba(200, 0, 80, 0.5) 100%);
-      color: #ff0066;
-      border-color: #ff0066;
-      box-shadow:
-        0 0 10px rgba(255, 0, 102, 0.5),
-        0 2px 4px rgba(0, 0, 0, 0.3),
-        inset 0 1px 2px rgba(255, 255, 255, 0.2),
-        inset 0 -2px 4px rgba(0, 0, 0, 0.3);
-      text-shadow: 0 0 5px #ff0066;
-    }
-
-    neon-button button.nb-close:hover:not(:disabled) {
-      background: linear-gradient(135deg, rgba(255, 0, 102, 0.5) 0%, rgba(230, 0, 100, 0.7) 100%);
-      box-shadow:
-        0 0 20px rgba(255, 0, 102, 0.8),
-        0 2px 6px rgba(0, 0, 0, 0.4),
-        inset 0 1px 3px rgba(255, 255, 255, 0.3),
-        inset 0 -2px 5px rgba(0, 0, 0, 0.4);
-      transform: scale(1.1);
-    }
-
-    /* ── Record (orange/red gradient) ───────────────────── */
-
-    neon-button button.nb-record {
-      background: linear-gradient(135deg, var(--accent-orange, #ff3366) 0%, #cc0044 100%);
-      color: white;
-      border-color: var(--accent-orange, #ff3366);
-      box-shadow:
-        0 0 20px rgba(255, 51, 102, 0.6),
-        0 4px 15px rgba(255, 51, 102, 0.4);
-      text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
-    }
-
-    neon-button button.nb-record:hover:not(:disabled) {
-      background: linear-gradient(135deg, #ff4477 0%, #ff0055 100%);
-      box-shadow:
-        0 0 30px rgba(255, 51, 102, 0.8),
-        0 6px 20px rgba(255, 51, 102, 0.6);
-      transform: translateY(-2px);
-    }
-
-    /* ── Shared states ──────────────────────────────────── */
-
-    neon-button button:active:not(:disabled) {
-      transform: translateY(0) !important;
-    }
-
-    neon-button button.nb-icon:active:not(:disabled) {
-      transform: scale(0.95) !important;
-    }
-
-    neon-button button:disabled {
-      opacity: 0.3;
-      cursor: not-allowed;
-      transform: none !important;
-      box-shadow: none !important;
-    }
-
-    neon-button button:focus-visible {
-      outline: 2px solid var(--neon-cyan, #00ffff);
-      outline-offset: 2px;
-    }
-
-    /* ── Responsive ─────────────────────────────────────── */
-
-    @media (max-width: 768px) {
-      neon-button button.nb-text {
-        padding: 0.4rem 0.8rem;
-        font-size: 0.8rem;
-        letter-spacing: 1px;
-      }
-    }
-
-    @media (max-width: 480px) {
-      neon-button button.nb-text {
-        padding: 0.35rem 0.6rem;
-        font-size: 0.75rem;
-        letter-spacing: 0.8px;
-      }
-    }
-  `;
-  document.head.appendChild(style);
+const styles = `
+neon-button {
+  display: inline-flex;
 }
+
+/* ── Base button reset ──────────────────────────────── */
+
+neon-button button {
+  font-family: inherit;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: 2px solid;
+  white-space: nowrap;
+  min-width: 0;
+  line-height: 1;
+}
+
+/* ── Text mode (rectangular) ────────────────────────── */
+
+neon-button button.nb-text {
+  padding: 0.5rem 1.25rem;
+  border-radius: 4px;
+  font-size: 0.9rem;
+}
+
+/* ── Icon mode (round) ──────────────────────────────── */
+
+neon-button button.nb-icon {
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  margin: 0;
+  font-weight: bold;
+  line-height: 0;
+  flex-shrink: 0;
+}
+
+neon-button button.nb-icon.nb-sm  { width: 1.75rem; height: 1.75rem; min-width: 1.75rem; min-height: 1.75rem; font-size: 1rem; }
+neon-button button.nb-icon.nb-md  { width: 2rem;    height: 2rem;    min-width: 2rem;    min-height: 2rem;    font-size: 1.5rem; }
+neon-button button.nb-icon.nb-lg  { width: 2.5rem;  height: 2.5rem;  min-width: 2.5rem;  min-height: 2.5rem;  font-size: 1.5rem; }
+
+/* ── Primary (cyan) ─────────────────────────────────── */
+
+neon-button button.nb-primary {
+  background: rgba(0, 212, 255, 0.2);
+  color: var(--accent-blue, #00d4ff);
+  border-color: var(--accent-blue, #00d4ff);
+  box-shadow:
+    0 0 10px rgba(0, 212, 255, 0.5),
+    0 2px 8px rgba(0, 212, 255, 0.3);
+  text-shadow: 0 0 5px var(--accent-blue, #00d4ff);
+}
+
+neon-button button.nb-primary.nb-icon {
+  background: linear-gradient(135deg, rgba(0, 212, 255, 0.3) 0%, rgba(0, 150, 200, 0.5) 100%);
+  color: var(--neon-cyan, #00ffff);
+  border-color: var(--neon-cyan, #00ffff);
+  box-shadow:
+    0 0 10px rgba(0, 255, 255, 0.5),
+    0 2px 4px rgba(0, 0, 0, 0.3),
+    inset 0 1px 2px rgba(255, 255, 255, 0.2),
+    inset 0 -2px 4px rgba(0, 0, 0, 0.3);
+  text-shadow: 0 0 5px var(--neon-cyan, #00ffff);
+}
+
+neon-button button.nb-primary:hover:not(:disabled) {
+  background: rgba(0, 212, 255, 0.4);
+  box-shadow:
+    0 0 20px rgba(0, 212, 255, 0.8),
+    0 4px 12px rgba(0, 212, 255, 0.5);
+  transform: translateY(-1px);
+}
+
+neon-button button.nb-primary.nb-icon:hover:not(:disabled) {
+  background: linear-gradient(135deg, rgba(0, 212, 255, 0.5) 0%, rgba(0, 180, 230, 0.7) 100%);
+  box-shadow:
+    0 0 20px rgba(0, 255, 255, 0.8),
+    0 2px 6px rgba(0, 0, 0, 0.4),
+    inset 0 1px 3px rgba(255, 255, 255, 0.3),
+    inset 0 -2px 5px rgba(0, 0, 0, 0.4);
+  transform: scale(1.1);
+}
+
+/* ── Secondary (green) ──────────────────────────────── */
+
+neon-button button.nb-secondary {
+  background: rgba(0, 255, 136, 0.2);
+  color: var(--accent-green, #00ff88);
+  border-color: var(--accent-green, #00ff88);
+  box-shadow:
+    0 0 10px rgba(0, 255, 136, 0.5),
+    0 2px 8px rgba(0, 255, 136, 0.3);
+  text-shadow: 0 0 5px var(--accent-green, #00ff88);
+}
+
+neon-button button.nb-secondary:hover:not(:disabled) {
+  background: rgba(0, 255, 136, 0.4);
+  box-shadow:
+    0 0 20px rgba(0, 255, 136, 0.8),
+    0 4px 12px rgba(0, 255, 136, 0.5);
+  transform: translateY(-1px);
+}
+
+/* ── Danger (pink/red) ──────────────────────────────── */
+
+neon-button button.nb-danger {
+  background: rgba(255, 0, 102, 0.2);
+  color: #ff0066;
+  border-color: #ff0066;
+  box-shadow:
+    0 0 10px rgba(255, 0, 102, 0.5),
+    0 2px 4px rgba(255, 0, 102, 0.3);
+  text-shadow: 0 0 5px #ff0066;
+}
+
+neon-button button.nb-danger:hover:not(:disabled) {
+  background: rgba(255, 0, 102, 0.4);
+  box-shadow:
+    0 0 20px rgba(255, 0, 102, 0.8),
+    0 3px 6px rgba(255, 0, 102, 0.5);
+  transform: translateY(-1px);
+}
+
+/* ── Close (alias for danger icon — popover close buttons) ── */
+
+neon-button button.nb-close {
+  background: linear-gradient(135deg, rgba(255, 0, 102, 0.3) 0%, rgba(200, 0, 80, 0.5) 100%);
+  color: #ff0066;
+  border-color: #ff0066;
+  box-shadow:
+    0 0 10px rgba(255, 0, 102, 0.5),
+    0 2px 4px rgba(0, 0, 0, 0.3),
+    inset 0 1px 2px rgba(255, 255, 255, 0.2),
+    inset 0 -2px 4px rgba(0, 0, 0, 0.3);
+  text-shadow: 0 0 5px #ff0066;
+}
+
+neon-button button.nb-close:hover:not(:disabled) {
+  background: linear-gradient(135deg, rgba(255, 0, 102, 0.5) 0%, rgba(230, 0, 100, 0.7) 100%);
+  box-shadow:
+    0 0 20px rgba(255, 0, 102, 0.8),
+    0 2px 6px rgba(0, 0, 0, 0.4),
+    inset 0 1px 3px rgba(255, 255, 255, 0.3),
+    inset 0 -2px 5px rgba(0, 0, 0, 0.4);
+  transform: scale(1.1);
+}
+
+/* ── Record (orange/red gradient) ───────────────────── */
+
+neon-button button.nb-record {
+  background: linear-gradient(135deg, var(--accent-orange, #ff3366) 0%, #cc0044 100%);
+  color: white;
+  border-color: var(--accent-orange, #ff3366);
+  box-shadow:
+    0 0 20px rgba(255, 51, 102, 0.6),
+    0 4px 15px rgba(255, 51, 102, 0.4);
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+}
+
+neon-button button.nb-record:hover:not(:disabled) {
+  background: linear-gradient(135deg, #ff4477 0%, #ff0055 100%);
+  box-shadow:
+    0 0 30px rgba(255, 51, 102, 0.8),
+    0 6px 20px rgba(255, 51, 102, 0.6);
+  transform: translateY(-2px);
+}
+
+/* ── Shared states ──────────────────────────────────── */
+
+neon-button button:active:not(:disabled) {
+  transform: translateY(0) !important;
+}
+
+neon-button button.nb-icon:active:not(:disabled) {
+  transform: scale(0.95) !important;
+}
+
+neon-button button:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+neon-button button:focus-visible {
+  outline: 2px solid var(--neon-cyan, #00ffff);
+  outline-offset: 2px;
+}
+
+/* ── Responsive ─────────────────────────────────────── */
+
+@media (max-width: 768px) {
+  neon-button button.nb-text {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.8rem;
+    letter-spacing: 1px;
+  }
+}
+
+@media (max-width: 480px) {
+  neon-button button.nb-text {
+    padding: 0.35rem 0.6rem;
+    font-size: 0.75rem;
+    letter-spacing: 0.8px;
+  }
+}
+`;
 
 // ─── Forwarded attributes ───────────────────────────────────
 
@@ -305,7 +299,7 @@ export class NeonButton extends HTMLElement {
   private button!: HTMLButtonElement;
 
   connectedCallback() {
-    ensureGlobalStyles();
+    GlobalStyleService.ensureStyles(STYLE_ID, styles);
 
     const isIcon = this.hasAttribute("icon");
     const variant = (this.getAttribute("variant") || "primary") as Variant;
