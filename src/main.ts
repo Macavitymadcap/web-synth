@@ -10,6 +10,7 @@ import { EnvelopeModule } from "./modules/envelope-module";
 import { FilterModule } from "./modules/filter-module";
 import { LFOModule } from "./modules/lfo-module";
 import { EffectsManager } from "./core/effects-manager";
+import { NoiseModule } from "./modules/noise-module";
 
 // Effects
 import { CompressorModule } from "./modules/effects/compressor-module";
@@ -31,67 +32,61 @@ import { createOscillatorManager } from "./handlers/oscillator-management";
 import { createLFOManager } from "./handlers/lfo-management";
 
 // Components
-import "./components/atoms/filter-type-picker";
+
+// Atoms
 import "./components/atoms/range-control";
 import "./components/atoms/toggle-switch";
-import "./components/atoms/waveform-picker";
-import "./components/atoms/octave-picker";
 import "./components/atoms/subsection-header";
+import "./components/atoms/neon-label";
+import "./components/atoms/neon-select";
+import type { NeonSelect } from "./components/atoms/neon-select";
+import "./components/atoms/neon-button";
+import type { NeonButton } from "./components/atoms/neon-button";
 
-import "./components/layout/app-header";
-import "./components/layout/help-popover";
-
+// Molecules
 import "./components/molecules/adsr-controls";
+import "./components/molecules/bank-item";
+import "./components/molecules/bank-section";
+import type { BankSection } from "./components/molecules/bank-section";
 import "./components/molecules/controls-group";
+import "./components/molecules/effect-module";
 import "./components/molecules/instructions-list";
-
-import "./components/organisms/oscillator-bank/oscillator-control";
-import "./components/organisms/visual-keyboard/dual-keyboard";
 import "./components/molecules/keyboard-mapping-info";
-import "./components/organisms/module-section";
-import "./components/organisms/oscillator-bank/oscillator-section";
+
+// Organisms
+import "./components/organisms/visual-keyboard/dual-keyboard";
 import "./components/organisms/visual-keyboard/piano-keyboard";
 import type { PianoKeyboard } from "./components/organisms/visual-keyboard/piano-keyboard";
+import "./components/organisms/visual-keyboard/visual-keyboard";
+import "./components/organisms/module-section";
 import "./components/organisms/preset-selector";
 import type { PresetSelector } from "./components/organisms/preset-selector";
 import "./components/organisms/master-controls";
 import "./components/organisms/presets-controls";
-import "./components/organisms/oscillator-bank/oscillator-controls";
-import "./components/organisms/visual-keyboard/visual-keyboard";
+import "./components/organisms/oscillator-controls";
+import "./components/organisms/lfo-controls";
 import "./components/organisms/adsr-module";
 import "./components/organisms/filter-module-controls";
-import "./components/organisms/lfo-bank/lfo-module-controls";
-
-import "./components/organisms/chorus-effect";
-import "./components/organisms/phaser-effect";
-import "./components/organisms/flanger-effect";
-import "./components/organisms/tremolo-effect";
-import "./components/organisms/reverb-effect";
-import "./components/organisms/compressor-effect";
-import "./components/organisms/delay-effect";
-import "./components/organisms/distortion-effect";
 import "./components/organisms/spectrum-analyser";
-import "./components/organisms/noise-generator";
 import type { SpectrumAnalyser } from "./components/organisms/spectrum-analyser";
-import { NoiseModule } from "./modules/noise-module";
-import "./components/organisms/lfo-bank/lfo-section";
-import "./components/organisms/lfo-bank/lfo-control";
-import "./components/organisms/lfo-bank/lfo-controls";
-import type { LFOSection } from "./components/organisms/lfo-bank/lfo-section";
+
+// Layout
+import "./components/layout/app-header";
+import "./components/layout/help-popover";
 
 // Keyboard and MIDI controls
-const octaveUpper = document.getElementById("octave-upper") as HTMLSelectElement;
-const octaveLower = document.getElementById("octave-lower") as HTMLSelectElement;
+const octaveUpper = document.getElementById("octave-upper") as NeonSelect;
+const octaveLower = document.getElementById("octave-lower") as NeonSelect;
 const keyboardUpper = document.getElementById("keyboard-upper") as PianoKeyboard;
 const keyboardLower = document.getElementById("keyboard-lower") as PianoKeyboard;
 const midiToggle = document.getElementById("midi-enabled") as HTMLInputElement;
 
 // Record controls
-const recordBtn = document.getElementById("record") as HTMLButtonElement;
+const recordBtn = document.getElementById("record") as NeonButton;
 
 // Oscillator controls
 const oscillatorList = document.getElementById("oscillator-list") as HTMLElement;
-const addOscBtn = document.getElementById("add-oscillator") as HTMLButtonElement;
+const addOscBtn = document.getElementById("add-oscillator") as NeonButton;
 
 // Analyser controls
 const spectrumAnalyserEl = document.querySelector('spectrum-analyser') as SpectrumAnalyser;
@@ -182,7 +177,8 @@ effectsManager.register(spectrumAnalyserModule, {
 });
 
 // LFO management
-const lfoSection = document.querySelector("lfo-section") as LFOSection;
+const lfoControls = document.querySelector("lfo-controls");
+const lfoSection = lfoControls?.querySelector("bank-section") as BankSection;
 let lfoModules: LFOModule[] = [];
 
 // ✅ Don't pass callback yet - we'll handle updates after synth is created
@@ -246,10 +242,12 @@ const octaveChangeHandler = createOctaveChangeHandler(
   keyboardLower
 );
 const midiToggleHandler = createMidiToggleHandler(synth, midiToggle);
+const oscillatorControls = document.querySelector("oscillator-controls");
+const oscillatorSection = oscillatorControls?.querySelector("bank-section") as BankSection;
+
 const oscillatorManager = createOscillatorManager(
-  oscillatorBank,
-  oscillatorList,
-  addOscBtn
+  oscillatorSection,
+  oscillatorBank
 );
 
 // Initialize oscillator management

@@ -413,27 +413,33 @@ export class MyEffectModule implements BaseEffectModule {
 }
 ```
 
-### Step 2: Add HTML Controls
+### Step 2: Use effect-module Molecule
+
+Instead of manual HTML controls, use the declarative `effect-module`:
 
 ```html
-<range-control
-  id="my-effect-param1"
-  label="Parameter 1"
-  min="0"
-  max="100"
-  value="50"
-  step="1"
-></range-control>
-
-<range-control
-  id="my-effect-param2"
-  label="Parameter 2"
-  min="0"
-  max="1000"
-  value="500"
-  step="10"
-></range-control>
+<effect-module id="my-effect" title="My Effect"
+  description="Creates amazing audio effects with these parameters.">
+  <effect-param label="Mix" param-id="my-effect-param1" min="0" max="1" step="0.01" value="0.5" format="percent"
+    description="Balance between dry and wet signal (0-100%)"></effect-param>
+  <effect-param label="Frequency" param-id="my-effect-param2" min="20" max="20000" step="10" value="1000" format="hz"
+    description="Center frequency of the effect"></effect-param>
+  <effect-select param-id="my-effect-type" label="Type" value="default"
+    description="Effect processing mode">
+    <option value="default">Default</option>
+    <option value="advanced">Advanced</option>
+  </effect-select>
+  <effect-toggle param-id="my-effect-enabled" label="Enabled"
+    description="Toggle effect on/off"></effect-toggle>
+</effect-module>
 ```
+
+The `effect-module` automatically:
+- Creates a `module-section` with instructions
+- Builds the instruction list from param descriptions
+- Wraps controls in `controls-group`
+- Preserves your `param-id` values for UIConfigService bindings
+
 
 ### Step 3: Register in main.ts
 
@@ -458,6 +464,32 @@ const chainInput = effectsManager.initialize(audioCtx, masterGain);
 ```
 
 ---
+
+### Effect Module Advanced Features
+
+The `effect-module` molecule supports subsections and mixed control types:
+
+```html
+<effect-module id="advanced-effect" title="Advanced Effect">
+  <!-- First group of parameters -->
+  <effect-param label="Drive" param-id="adv-drive" min="0" max="10" step="0.1" value="5"></effect-param>
+  <effect-param label="Mix" param-id="adv-mix" min="0" max="1" step="0.01" value="0.5" format="percent"></effect-param>
+  
+  <!-- Subsection with its own controls-group -->
+  <effect-section title="Modulation">
+    <effect-param label="Rate" param-id="adv-mod-rate" min="0.1" max="20" step="0.1" value="5" format="hz"></effect-param>
+    <effect-param label="Depth" param-id="adv-mod-depth" min="0" max="1" step="0.01" value="0.5" format="percent"></effect-param>
+  </effect-section>
+  
+  <!-- Another subsection -->
+  <effect-section title="Output">
+    <effect-param label="Level" param-id="adv-level" min="0" max="2" step="0.01" value="1" format="percent"></effect-param>
+    <effect-toggle param-id="adv-enabled" label="Enabled"></effect-toggle>
+  </effect-section>
+</effect-module>
+```
+
+Each `<effect-section>` creates a `subsection-header` and its own `controls-group`.
 
 ## Adding Dynamic Module Banks (LFO Pattern)
 
@@ -494,62 +526,76 @@ export class MyModule {
 }
 ```
 
-### Step 2: Create Section Component
+### Step 2: Use bank-section and bank-item Molecules
 
-```typescript
-// filepath: src/components/organisms/my-module-section.ts
-export class MyModuleSection extends HTMLElement {
-  private modules: MyModuleConfig[] = [];
+Instead of creating a custom section component, use the generic `bank-section` and `bank-item` molecules:
 
-  addModule() {
-    const id = this.modules.length + 1;
-    this.modules.push({ id, /* default config */ });
-    this.render();
-    this.dispatchEvent(new CustomEvent('modules-changed'));
-  }
-
-  removeModule(id: number) {
-    this.modules = this.modules.filter(m => m.id !== id);
-    this.render();
-    this.dispatchEvent(new CustomEvent('modules-changed'));
-  }
-
-  getModules() {
-    return this.modules;
+```html
+<!-- filepath: src/components/organisms/my-module-controls.ts -->
+export class MyModuleControls extends HTMLElement {
+  connectedCallback() {
+    GlobalStyleService.ensureStyles(styleId, styles);
+    this.innerHTML = `
+      <module-section id="my-module-controls" title="My Modules">
+        <div slot="instructions">
+          <p>Description of your module bank.</p>
+          <instruction-list>
+            <instruction-item label="Param1">Description of param1</instruction-item>
+            <instruction-item label="Param2">Description of param2</instruction-item>
+          </instruction-list>
+        </div>
+        <div slot="content">
+          <bank-section
+            prefix="my-module"
+            max-items="4"
+            min-items="1"
+            add-label="Add Module"
+            event-name="modules-changed"
+          >
+            <bank-item-template>
+              <bank-select param="type" type="waveform" value="sine"></bank-select>
+              <bank-range param="param1" label="Param 1" min="0" max="100" step="1" value="50"></bank-range>
+              <bank-range param="param2" label="Param 2" min="0" max="1" step="0.01" value="0.5" format="percent"></bank-range>
+            </bank-item-template>
+          </bank-section>
+        </div>
+      </module-section>
+    `;
   }
 }
+customElements.define('my-module-controls', MyModuleControls);
 ```
 
-### Step 3: Create Manager Handler
+### Step 3: Update Manager Handler
+
+Simplify the handler to work with `BankSection`:
 
 ```typescript
 // filepath: src/handlers/my-module-management.ts
+import type { BankSection } from "../components/molecules/bank-section";
+import { MyModule } from "../modules/my-module";
+
 export function createMyModuleManager(
-  section: MyModuleSection,
+  section: BankSection,
   modules: MyModule[],
   onModulesChange: (modules: MyModule[]) => void
 ) {
-  const moduleMap = new Map<number, MyModule>();
-
   function syncModules() {
-    const configs = section.getModules();
-    moduleMap.clear();
+    const configs = section.getItems();
     
+    // Clear and rebuild module array
+    modules.length = 0;
     configs.forEach((_, index) => {
       const id = (index + 1).toString();
-      moduleMap.set(index + 1, new MyModule(id));
+      modules.push(new MyModule(id));
     });
     
-    modules.length = 0;
-    modules.push(...Array.from(moduleMap.values()));
     onModulesChange(modules);
   }
 
   function initialize() {
     syncModules();
-    section.addEventListener('modules-changed', () => {
-      syncModules();
-    });
+    section.addEventListener('modules-changed', () => syncModules());
   }
 
   return { initialize, getModules: () => modules };
@@ -559,34 +605,30 @@ export function createMyModuleManager(
 ### Step 4: Wire Up in main.ts
 
 ```typescript
-const section = document.querySelector("my-module-section") as MyModuleSection;
-let modules: MyModule[] = [];
+import type { BankSection } from "./components/molecules/bank-section";
+import { createMyModuleManager } from "./handlers/my-module-management";
 
-const manager = createMyModuleManager(
-  section,
-  modules,
-  () => {} // Callback after synth exists
+const myModuleControls = document.querySelector("my-module-controls");
+const myModuleSection = myModuleControls?.querySelector("bank-section") as BankSection;
+let myModules: MyModule[] = [];
+
+const myModuleManager = createMyModuleManager(
+  myModuleSection,
+  myModules,
+  (modules) => {
+    // Handle module updates
+    console.log('Modules updated:', modules);
+  }
 );
 
-manager.initialize();
+myModuleManager.initialize();
 
-// After modules array populated and synth created
-section.addEventListener('modules-changed', () => {
-  // Handle module changes (e.g., recreate voice manager)
-  synth.updateModules(modules);
+// Listen for changes
+myModuleSection.addEventListener('modules-changed', () => {
+  // Modules array was mutated in place
+  // Update any dependent systems here
 });
 ```
-
----
-
-## Testing Strategy
-
-### Philosophy
-
-- **Test business logic, not audio output**: Verify config, node creation, routing
-- **Mock Web Audio API**: Use test fixtures
-- **Test parameter updates**: Trigger events, assert node state
-- **Use UIConfigService**: Create DOM elements in tests, no fixtures needed
 
 ### Testing with UIConfigService
 
@@ -599,48 +641,49 @@ describe('MyEffectModule (UIConfigService)', () => {
   beforeEach(() => {
     document.body.innerHTML = '';
 
-    // Create required elements
-    const param1 = document.createElement('input');
-    param1.id = 'my-effect-param1';
-    param1.type = 'number';
-    param1.value = '50';
-    document.body.appendChild(param1);
+    // Create neon-select (discovers inner <select> by id)
+    const typeSelect = document.createElement('neon-select');
+    typeSelect.setAttribute('id', 'my-effect-type');
+    typeSelect.setAttribute('type', 'filter');
+    document.body.appendChild(typeSelect);
+    typeSelect.connectedCallback(); // Trigger render
 
-    const param2 = document.createElement('input');
-    param2.id = 'my-effect-param2';
-    param2.type = 'number';
-    param2.value = '500';
-    document.body.appendChild(param2);
+    // Create range-control (discovers inner <input> by id)
+    const mixControl = document.createElement('range-control');
+    mixControl.setAttribute('id', 'my-effect-mix');
+    mixControl.setAttribute('formatter', 'percent');
+    mixControl.setAttribute('value', '0.5');
+    document.body.appendChild(mixControl);
+    mixControl.connectedCallback();
+
+    // Create toggle-switch
+    const toggle = document.createElement('toggle-switch');
+    toggle.setAttribute('id', 'my-effect-enabled');
+    document.body.appendChild(toggle);
+    toggle.connectedCallback();
   });
 
-  it('reads config from UI via UIConfigService', () => {
+  it('reads config from atoms via UIConfigService', () => {
     const module = new MyEffectModule();
-    expect(module.getConfig()).toEqual({ param1: 50, param2: 0.5 });
+    const config = module.getConfig();
+    
+    expect(config.type).toBe('lowpass'); // neon-select default
+    expect(config.mix).toBe(0.5);        // range-control
+    expect(config.enabled).toBe(false);  // toggle-switch
   });
 
-  it('initializes nodes and connects them', () => {
+  it('updates on native input events', () => {
     const ctx = createMockAudioCtx();
-    const dest = { connect: jest.fn(), disconnect: jest.fn() } as any;
     const module = new MyEffectModule();
+    module.initialize(ctx, ctx.destination);
 
-    const nodes = module.initialize(ctx, dest);
+    // range-control dispatches native 'input'
+    const mixInput = document.querySelector('#my-effect-mix range-control')!
+      .querySelector('input')!;
+    mixInput.value = '0.75';
+    mixInput.dispatchEvent(new Event('input'));
 
-    expect(nodes.input).toBeDefined();
-    expect(nodes.output).toBeDefined();
-    expect(ctx.createGain).toHaveBeenCalled();
-  });
-
-  it('updates parameters on input change', () => {
-    const ctx = createMockAudioCtx();
-    const dest = { connect: jest.fn(), disconnect: jest.fn() } as any;
-    const module = new MyEffectModule();
-    module.initialize(ctx, dest);
-
-    const input = document.getElementById('my-effect-param1') as HTMLInputElement;
-    input.value = '75';
-    input.dispatchEvent(new Event('input'));
-
-    expect(module['effectNode']!.param1.value).toBe(75);
+    expect(module['wetGain']!.gain.value).toBe(0.75);
   });
 });
 ```
@@ -734,9 +777,18 @@ bun test --watch
 ### Creating Custom Components
 
 ```typescript
+import { GlobalStyleService } from '../../services/global-style-service';
+
+const STYLE_ID = 'my-control-styles';
+const styles = `
+.my-control {
+  display: flex;
+}
+`;
+
 class MyControl extends HTMLElement {
-  constructor() {
-    super();
+  connectedCallback() {
+    GlobalStyleService.ensureStyles(STYLE_ID, styles);
     this.render();
   }
 
@@ -847,6 +899,16 @@ graph TD
 5. **Clean up on re-initialization**: Call `disconnect()` before creating new nodes
 6. **Guard updates**: Check `isInitialized()` in parameter listeners
 7. **Dynamic IDs for multi-instance**: Pass ID parameter for modules supporting multiple instances
+
+### Component Design
+
+1. **Use atomic components**: Prefer `neon-select`, `neon-label`, `range-control`, `toggle-switch`
+2. **Consistent formatters**: Use normalized names (`percent`, `hz`, `seconds`, `db`)
+3. **Native events**: All atoms dispatch `input` and `change` events
+4. **Type safety**: `neon-select` provides preset types (`waveform`, `filter`, `octave`, `noise`)
+5. **Style deduplication**: Atoms use shared global styles (inject once)
+6. **Use molecules for repeated patterns**: Prefer `effect-module` for effects, `bank-section`/`bank-item` for dynamic banks
+7. **Declarative over imperative**: Define controls in HTML attributes rather than TypeScript when possible
 
 ### Parameter Handling
 
@@ -973,6 +1035,35 @@ for (let i = 0; i < stages; i++) {
 }
 ```
 
+### Pattern 10: Using Atoms Consistently
+
+```typescript
+// neon-select with preset types
+UIConfigService.onSelect('filter-type', (el, value) => {
+  if (this.filter) {
+    this.filter.type = value as BiquadFilterType;
+  }
+});
+
+// range-control with normalized formatters
+// Use "percent" not "%" or "percentage"
+// Use "hz" not "hertz"
+// Use "seconds" not "s"
+UIConfigService.bindAudioParams([
+  { elementId: 'chorus-mix', audioParam: () => this.wetGain?.gain },  // formatter="percent"
+  { elementId: 'chorus-rate', audioParam: () => this.lfo?.frequency }  // formatter="hz"
+]);
+
+// toggle-switch with native events (no more 'togglechange')
+UIConfigService.onInput('noise-enabled', (el, value) => {
+  // Checkbox value comes as string "true"/"false" or checked property
+  const enabled = (el as HTMLInputElement).checked;
+  if (this.noiseNode) {
+    this.noiseNode.gain.value = enabled ? 0.3 : 0;
+  }
+});
+```
+
 ---
 
 ## Preset System
@@ -1073,6 +1164,14 @@ Presets can configure:
 4. **Check mocks**: Verify `createMockAudioCtx()` has required factories
 5. **Check dynamic IDs**: Create elements for each ID in multi-instance tests
 
+### Atom Issues
+
+1. **neon-select not found**: Ensure `id` is on `<neon-select>`, not inner `<select>`
+2. **Formatter not working**: Check spelling (`percent` not `percentage`, `hz` not `hertz`)
+3. **Events not firing**: Atoms dispatch native `input`/`change`, not custom events
+4. **Toggle value wrong**: Use `.checked` property, not `.value`
+5. **Options not showing**: For `neon-select`, check `type` attribute or provide `<option>` children
+
 ---
 
 ## Resources
@@ -1081,7 +1180,6 @@ Presets can configure:
 - [Web Components](https://developer.mozilla.org/en-US/docs/Web/Web_Components)
 - [TypeScript Handbook](https://www.typescriptlang.org/docs/handbook/intro.html)
 - [Bun Test Runner](https://bun.sh/docs/cli/test)
-- **[UIConfigService Integration Guide](./synth-0017.md)** - Detailed migration patterns
 
 ---
 

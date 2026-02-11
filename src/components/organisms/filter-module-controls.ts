@@ -22,7 +22,7 @@ export class FilterModuleControls extends HTMLElement {
 
         <div slot="content">
           <controls-group>
-            <filter-type-picker id="filter-type" label="Filter Type" value="lowpass"></filter-type-picker>
+           <neon-select id="filter-type" label="Filter Type" type="filter" value="lowpass"></neon-select> 
             <range-control label="Cutoff" id="filter-cutoff" min="20" max="20000" step="1" value="2000"></range-control>
             <range-control label="Resonance" id="filter-resonance" min="0.1" max="30" step="0.1"
               value="1"></range-control>
