@@ -18,17 +18,36 @@ import {
   FlangerSettings
 } from "./settings.model";
 import type { PhaserConfig } from "../modules/effects/phaser-module";
-import type { NoiseConfig } from "../modules/noise-module";
+import type { NoiseConfig, NoiseModule } from "../modules/noise-module";
 import { ParametricEQConfig } from "../modules/effects/parametric-eq-module";
+import { EnvelopeModule } from "../modules/envelope-module";
+import { FilterModule } from "../modules/filter-module";
+import { MasterModule } from "../modules/master-module";
+import { EffectsManager } from "./effects-manager";
+import { UIConfigService } from "../services/ui-config-service";
 
 const STORAGE_KEY = "web-synth-settings";
 const USER_PRESETS_KEY = "web-synth-user-presets";
 
 export class SettingsManager {
   private oscillatorBank?: OscillatorBank;
+  private effectsManager?: EffectsManager;
+  private ampEnvelope?: EnvelopeModule;
+  private filterModule?: FilterModule;
+  private filterEnvelope?: EnvelopeModule;
+  private noiseModule?: NoiseModule;
+  private masterModule?: MasterModule;
 
-  setOscillatorBank(bank: OscillatorBank): void {
-    this.oscillatorBank = bank;
+  configure(deps: {
+    oscillatorBank: OscillatorBank;
+    effectsManager: EffectsManager;
+    ampEnvelope: EnvelopeModule;
+    filterModule: FilterModule;
+    filterEnvelope: EnvelopeModule;
+    noiseModule: NoiseModule;
+    masterModule: MasterModule;
+  }): void {
+    Object.assign(this, deps);
   }
 
   getCurrentSettings(): SynthSettings {
@@ -39,7 +58,7 @@ export class SettingsManager {
       filter: this.getFilterSettings(),
       lfos: this.getLFOSettings(),
       chorus: this.getChorusSettings(),
-      distortion: this.getWaveShaperSettings(),
+      distortion: this.getDistortionSettings(),
       compressor: this.getCompressorSettings(),
       reverb: this.getReverbSettings(),
       delay: this.getDelaySettings(),
@@ -51,10 +70,17 @@ export class SettingsManager {
     };
   }
 
+  private getEffectConfig<T>(id: string, fallback: T): T {
+    const module = this.effectsManager?.getEffect(id);
+    return (module?.getConfig() as T) ?? fallback;
+  }
+
   private getMasterSettings(): MasterSettings {
+    const volume = this.masterModule?.getConfig().volume ?? 0.5;
+    const polyEl = UIConfigService.tryGetControl<HTMLInputElement>("poly");
     return {
-      polyphonic: (document.getElementById("poly") as HTMLInputElement)?.checked ?? true,
-      masterVolume: Number.parseFloat((document.getElementById("master-volume") as HTMLInputElement)?.value ?? "0.3"),
+      polyphonic: polyEl?.checked ?? true,
+      masterVolume: volume,
     };
   }
 
@@ -76,24 +102,24 @@ export class SettingsManager {
   }
 
   private getEnvelopeSettings(): EnvelopeSettings {
-    return {
-      attack: Number.parseFloat((document.getElementById("attack") as HTMLInputElement)?.value ?? "0.01"),
-      decay: Number.parseFloat((document.getElementById("decay") as HTMLInputElement)?.value ?? "0.01"),
-      sustain: Number.parseFloat((document.getElementById("sustain") as HTMLInputElement)?.value ?? "0.7"),
-      release: Number.parseFloat((document.getElementById("release") as HTMLInputElement)?.value ?? "0.5"),
+    return this.ampEnvelope?.getConfig() ?? {
+      attack: 0.01, decay: 0.01, sustain: 0.7, release: 0.5
     };
   }
 
   private getFilterSettings(): FilterSettings {
+    const filter = this.filterModule?.getConfig() ?? {
+      type: "lowpass" as FilterType, cutoff: 2000, resonance: 1, envelopeAmount: 2000
+    };
+    const env = this.filterEnvelope?.getConfig() ?? {
+      attack: 0.1, decay: 0.3, sustain: 0.5, release: 0.5
+    };
     return {
-      type: ((document.getElementById("filter-type") as HTMLSelectElement)?.value ?? "lowpass") as FilterType,
-      cutoff: Number.parseFloat((document.getElementById("filter-cutoff") as HTMLInputElement)?.value ?? "2000"),
-      resonance: Number.parseFloat((document.getElementById("filter-resonance") as HTMLInputElement)?.value ?? "1"),
-      envAmount: Number.parseFloat((document.getElementById("filter-env-amount") as HTMLInputElement)?.value ?? "2000"),
-      attack: Number.parseFloat((document.getElementById("filter-attack") as HTMLInputElement)?.value ?? "0.1"),
-      decay: Number.parseFloat((document.getElementById("filter-decay") as HTMLInputElement)?.value ?? "0.3"),
-      sustain: Number.parseFloat((document.getElementById("filter-sustain") as HTMLInputElement)?.value ?? "0.5"),
-      release: Number.parseFloat((document.getElementById("filter-release") as HTMLInputElement)?.value ?? "0.5"),
+      type: filter.type as FilterType,
+      cutoff: filter.cutoff,
+      resonance: filter.resonance,
+      envAmount: filter.envelopeAmount,
+      ...env,
     };
   }
 
@@ -116,113 +142,53 @@ export class SettingsManager {
   }
 
   private getChorusSettings(): ChorusSettings {
-    return {
-      rate: Number.parseFloat((document.getElementById("chorus-rate") as HTMLInputElement)?.value ?? "1.5"),
-      depth: Number.parseFloat((document.getElementById("chorus-depth") as HTMLInputElement)?.value ?? "0.5"),
-      mix: Number.parseFloat((document.getElementById("chorus-mix") as HTMLInputElement)?.value ?? "0.5"),
-    }
+    return this.getEffectConfig('chorus', { rate: 1.5, depth: 0.5, mix: 0.5 });
   }
 
-  private getWaveShaperSettings(): WaveShaperSettings {
-    return {
-      drive: Number.parseFloat((document.getElementById("distortion-drive") as HTMLInputElement)?.value ?? "0"),
-      blend: Number.parseFloat((document.getElementById("distortion-blend") as HTMLInputElement)?.value ?? "0"),
-    };
+  private getDistortionSettings(): WaveShaperSettings {
+    return this.getEffectConfig('distortion', { drive: 0, blend: 0 });
   }
 
   private getReverbSettings(): ReverbSettings {
-    return {
-      decay: Number.parseFloat((document.getElementById("reverb-decay") as HTMLInputElement)?.value ?? "1.5"),
-      reverbMix: Number.parseFloat((document.getElementById("reverb-mix") as HTMLInputElement)?.value ?? "0.2"),
-    };
+    return this.getEffectConfig('reverb', { decay: 1.5, mix: 0.2 })
   }
 
   private getCompressorSettings(): CompressorSettings {
-    return {
-      threshold: Number.parseFloat((document.getElementById("compressor-threshold") as HTMLInputElement)?.value ?? "-24"),
-      ratio: Number.parseFloat((document.getElementById("compressor-ratio") as HTMLInputElement)?.value ?? "4"),
-      attack: Number.parseFloat((document.getElementById("compressor-attack") as HTMLInputElement)?.value ?? "0.003"),
-      release: Number.parseFloat((document.getElementById("compressor-release") as HTMLInputElement)?.value ?? "0.25"),
-      knee: Number.parseFloat((document.getElementById("compressor-knee") as HTMLInputElement)?.value ?? "30"),
-    };
+    return this.getEffectConfig('compressor', {
+      threshold: -24, ratio: 4, attack: 0.003, release: 0.25, knee: 30
+    });
   }
 
   private getDelaySettings(): DelaySettings {
-    return {
-      time: Number.parseFloat((document.getElementById("delay-time") as HTMLInputElement)?.value ?? "0.375"),
-      feedback: Number.parseFloat((document.getElementById("delay-feedback") as HTMLInputElement)?.value ?? "0.3"),
-      mix: Number.parseFloat((document.getElementById("delay-mix") as HTMLInputElement)?.value ?? "0.2")
-    };
+    return this.getEffectConfig('delay', { time: 0.375, feedback: 0.3, mix: 0.2 });
   }
 
   private getPhaserSettings(): PhaserConfig {
-    return {
-      rate: Number.parseFloat((document.getElementById("phaser-rate") as HTMLInputElement)?.value ?? "0.7"),
-      depth: Number.parseFloat((document.getElementById("phaser-depth") as HTMLInputElement)?.value ?? "700"),
-      stages: Number.parseInt((document.getElementById("phaser-stages") as HTMLInputElement)?.value ?? "4"),
-      feedback: Number.parseFloat((document.getElementById("phaser-feedback") as HTMLInputElement)?.value ?? "0.3"),
-      mix: Number.parseFloat((document.getElementById("phaser-mix") as HTMLInputElement)?.value ?? "0.5"),
-    };
+    return this.getEffectConfig('phaser', {
+      rate: 0.7, depth: 700, stages: 4, feedback: 0.3, mix: 0.5
+    });
   }
 
   private getTremoloSettings(): TremoloSettings {
-    return {
-      rate: Number.parseFloat((document.getElementById("tremolo-rate") as HTMLInputElement)?.value ?? "5"),
-      depth: Number.parseFloat((document.getElementById("tremolo-depth") as HTMLInputElement)?.value ?? "0.5"),
-    };
+    return this.getEffectConfig('tremolo', { rate: 5, depth: 0.5 });
   }
 
   private getFlangerSettings(): FlangerSettings {
-    return {
-      rate: Number.parseFloat((document.getElementById("flanger-rate") as HTMLInputElement)?.value ?? "0.5"),
-      depth: Number.parseFloat((document.getElementById("flanger-depth") as HTMLInputElement)?.value ?? "2"),
-      feedback: Number.parseFloat((document.getElementById("flanger-feedback") as HTMLInputElement)?.value ?? "0.5"),
-      mix: Number.parseFloat((document.getElementById("flanger-mix") as HTMLInputElement)?.value ?? "0.5"),
-    };
+    return this.getEffectConfig('flanger', { rate: 0.5, depth: 2, feedback: 0.5, mix: 0.5 });
   }
 
-  // Add this method
   private getNoiseSettings(): NoiseConfig {
-    return {
-      type: ((document.getElementById("noise-type") as HTMLSelectElement)?.value ?? "white") as "white" | "pink" | "brown",
-      level: Number.parseFloat((document.getElementById("noise-level") as HTMLInputElement)?.value ?? "0.3"),
-      enabled: (document.getElementById("noise-enabled") as HTMLInputElement)?.checked ?? false,
-    };
+    return this.noiseModule?.getConfig() ?? { type: 'white', level: 0.3, enabled: false };
   }
 
   private getEQSettings(): ParametricEQConfig {
-    return {
-      lowShelf: {
-        frequency: Number.parseFloat((document.getElementById('eq-low-shelf-freq') as HTMLInputElement)?.value ?? '80'),
-        gain: Number.parseFloat((document.getElementById('eq-low-shelf-gain') as HTMLInputElement)?.value ?? '0'),
-        q: Number.parseFloat((document.getElementById('eq-low-shelf-q') as HTMLInputElement)?.value ?? '1'),
-        type: 'lowshelf'
-      },
-      lowMid: {
-        frequency: Number.parseFloat((document.getElementById('eq-low-mid-freq') as HTMLInputElement)?.value ?? '250'),
-        gain: Number.parseFloat((document.getElementById('eq-low-mid-gain') as HTMLInputElement)?.value ?? '0'),
-        q: Number.parseFloat((document.getElementById('eq-low-mid-q') as HTMLInputElement)?.value ?? '1'),
-        type: 'peaking'
-      },
-      mid: {
-        frequency: Number.parseFloat((document.getElementById('eq-mid-freq') as HTMLInputElement)?.value ?? '1000'),
-        gain: Number.parseFloat((document.getElementById('eq-mid-gain') as HTMLInputElement)?.value ?? '0'),
-        q: Number.parseFloat((document.getElementById('eq-mid-q') as HTMLInputElement)?.value ?? '1'),
-        type: 'peaking'
-      },
-      highMid: {
-        frequency: Number.parseFloat((document.getElementById('eq-high-mid-freq') as HTMLInputElement)?.value ?? '4000'),
-        gain: Number.parseFloat((document.getElementById('eq-high-mid-gain') as HTMLInputElement)?.value ?? '0'),
-        q: Number.parseFloat((document.getElementById('eq-high-mid-q') as HTMLInputElement)?.value ?? '1'),
-        type: 'peaking'
-      },
-      highShelf: {
-        frequency: Number.parseFloat((document.getElementById('eq-high-shelf-freq') as HTMLInputElement)?.value ?? '12000'),
-        gain: Number.parseFloat((document.getElementById('eq-high-shelf-gain') as HTMLInputElement)?.value ?? '0'),
-        q: Number.parseFloat((document.getElementById('eq-high-shelf-q') as HTMLInputElement)?.value ?? '1'),
-        type: 'highshelf'
-      }
-    };
+    return this.getEffectConfig('parametric-eq', {
+      lowShelf: { frequency: 80, gain: 0, q: 1, type: 'lowshelf' as BiquadFilterType },
+      lowMid: { frequency: 250, gain: 0, q: 1, type: 'peaking' as BiquadFilterType },
+      mid: { frequency: 1000, gain: 0, q: 1, type: 'peaking' as BiquadFilterType },
+      highMid: { frequency: 4000, gain: 0, q: 1, type: 'peaking' as BiquadFilterType },
+      highShelf: { frequency: 12000, gain: 0, q: 1, type: 'highshelf' as BiquadFilterType },
+    });
   }
 
   applySettings(settings: SynthSettings): void {
@@ -339,7 +305,7 @@ export class SettingsManager {
 
   private applyReverbSettings(settings: ReverbSettings): void {
     this.setControlValue("reverb-decay", settings.decay);
-    this.setControlValue("reverb-mix", settings.reverbMix);
+    this.setControlValue("reverb-mix", settings.mix);
   }
 
   private applyCompressorSettings(settings: CompressorSettings): void {

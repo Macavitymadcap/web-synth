@@ -88,7 +88,7 @@ export type WaveShaperSettings = {
 
 export type ReverbSettings = {
   decay: number;
-  reverbMix: number;
+  mix: number;
 };
 
 export interface SynthSettings {

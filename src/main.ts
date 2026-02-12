@@ -247,7 +247,16 @@ lfoSection.addEventListener('lfos-changed', () => {
 
 // Initialize settings manager and connect it to oscillator bank
 const settingsManager = new SettingsManager();
-settingsManager.setOscillatorBank(oscillatorBank);
+settingsManager.configure({
+  oscillatorBank,
+  effectsManager,
+  ampEnvelope,
+  filterModule,
+  filterEnvelope,
+  noiseModule,
+  masterModule
+});
+
 
 const presetSelector = document.querySelector("preset-selector") as PresetSelector;
 if (presetSelector) {
