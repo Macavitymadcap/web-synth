@@ -9,11 +9,7 @@ import { GlobalStyleService } from "../../services/global-style-service";
 
 const STYLE_ID = "parametric-eq-controls-styles";
 
-const styles = `
-parametric-eq-controls {
-  display: block;
-}
-
+const styles = /* css */`
 .eq-bands-container {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -47,7 +43,7 @@ parametric-eq-controls {
 .eq-band-title {
   font-size: 0.7rem;
   color: var(--neon-pink);
-  text-transform: uppercase;
+  text-transform: lowercase;
   letter-spacing: 1px;
   font-weight: 700;
   text-align: center;
@@ -122,7 +118,7 @@ export class ParametricEQControls extends HTMLElement {
   connectedCallback() {
     GlobalStyleService.ensureStyles(STYLE_ID, styles);
 
-    this.innerHTML = `
+    this.innerHTML = /* html */`
       <module-section id="parametric-eq" title="Parametric EQ">
         <div slot="instructions">
           <p>5-band parametric equalizer for precise frequency shaping. Low Shelf and High Shelf have wide, gentle slopes. The three mid bands are bell filters for surgical control.</p>
@@ -138,7 +134,6 @@ export class ParametricEQControls extends HTMLElement {
         </div>
         <div slot="content">
           <div class="eq-bands-container">
-            
             <!-- Low Shelf Band -->
             <div class="eq-band">
               <div class="eq-band-title">
@@ -218,11 +213,6 @@ export class ParametricEQControls extends HTMLElement {
                   min="0.1" max="2" step="0.1" value="1"></range-control>
               </div>
             </div>
-
-          </div>
-          
-          <div class="eq-master-controls">
-            <toggle-switch id="eq-enabled" label="Enabled"></toggle-switch>
           </div>
         </div>
       </module-section>

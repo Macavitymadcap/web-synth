@@ -29,7 +29,14 @@ export const FACTORY_PRESETS: Preset[] = [
       },
       phaser: { rate: 0.7, depth: 700, stages: 4, feedback: 0.3, mix: 0.5 },
       noise: { enabled: false, type: "white", level: 0.1 },
-      flanger: { rate: 0.2, depth: 2, feedback: 0.2, mix: 0.15 }
+      flanger: { rate: 0.2, depth: 2, feedback: 0.2, mix: 0.15 },
+      eq: {
+        lowShelf: { frequency: 90, gain: 0, q: 0.9, type: 'lowshelf' },
+        lowMid: { frequency: 320, gain: 1, q: 1.2, type: 'peaking' },
+        mid: { frequency: 1200, gain: 0.5, q: 1.1, type: 'peaking' },
+        highMid: { frequency: 3500, gain: 1, q: 0.8, type: 'peaking' },
+        highShelf: { frequency: 11000, gain: 2, q: 0.7, type: 'highshelf' }
+      }
     }
   },
   {
@@ -59,7 +66,14 @@ export const FACTORY_PRESETS: Preset[] = [
       },
       phaser: { rate: 0.5, depth: 200, stages: 2, feedback: 0.1, mix: 0 },
       noise: { enabled: false, type: "white", level: 0.1 },
-      flanger: { rate: 0.1, depth: 0, feedback: 0, mix: 0 }
+      flanger: { rate: 0.1, depth: 0, feedback: 0, mix: 0 },
+      eq: {
+        lowShelf: { frequency: 50, gain: 4, q: 0.7, type: 'lowshelf' },
+        lowMid: { frequency: 180, gain: 2, q: 1.4, type: 'peaking' },
+        mid: { frequency: 600, gain: -2, q: 1.2, type: 'peaking' },
+        highMid: { frequency: 2200, gain: -4, q: 1.1, type: 'peaking' },
+        highShelf: { frequency: 9000, gain: -6, q: 0.8, type: 'highshelf' }
+      }
     }
   },
   {
@@ -89,7 +103,14 @@ export const FACTORY_PRESETS: Preset[] = [
       },
       phaser: { rate: 1.2, depth: 900, stages: 4, feedback: 0.4, mix: 0.35 },
       noise: { enabled: false, type: "white", level: 0.1 },
-      flanger: { rate: 0.7, depth: 3, feedback: 0.14, mix: 0.018 }
+      flanger: { rate: 0.7, depth: 3, feedback: 0.14, mix: 0.018 },
+      eq: {
+        lowShelf: { frequency: 120, gain: -2, q: 1.1, type: 'lowshelf' },
+        lowMid: { frequency: 400, gain: -1, q: 1.3, type: 'peaking' },
+        mid: { frequency: 1800, gain: 1, q: 0.9, type: 'peaking' },
+        highMid: { frequency: 5200, gain: 3, q: 1.2, type: 'peaking' },
+        highShelf: { frequency: 14000, gain: 4, q: 0.7, type: 'highshelf' }
+      }
     }
   },
   {
@@ -119,7 +140,14 @@ export const FACTORY_PRESETS: Preset[] = [
       },
       phaser: { rate: 0.8, depth: 400, stages: 2, feedback: 0.2, mix: 0.15 },
       noise: { enabled: false, type: "white", level: 0.1 },
-      flanger: { rate: 0.2, depth: 0, feedback: 0, mix: 0 }
+      flanger: { rate: 0.2, depth: 0, feedback: 0, mix: 0 },
+      eq: {
+        lowShelf: { frequency: 70, gain: 3, q: 0.8, type: 'lowshelf' },
+        lowMid: { frequency: 250, gain: 1, q: 1.5, type: 'peaking' },
+        mid: { frequency: 900, gain: -1, q: 1.1, type: 'peaking' },
+        highMid: { frequency: 3000, gain: -2, q: 1.3, type: 'peaking' },
+        highShelf: { frequency: 10000, gain: -3, q: 0.9, type: 'highshelf' }
+      }
     }
   },
   {
@@ -148,7 +176,14 @@ export const FACTORY_PRESETS: Preset[] = [
       },
       phaser: { rate: 1.5, depth: 1200, stages: 4, feedback: 0.5, mix: 0.25 },
       noise: { enabled: false, type: "white", level: 0.1 },
-      flanger: { rate: 0.2, depth: 0, feedback: 0, mix: 0 }
+      flanger: { rate: 0.2, depth: 0, feedback: 0, mix: 0 },
+      eq: {
+        lowShelf: { frequency: 60, gain: 5, q: 0.7, type: 'lowshelf' },
+        lowMid: { frequency: 200, gain: 2, q: 1.6, type: 'peaking' },
+        mid: { frequency: 700, gain: -2, q: 1.2, type: 'peaking' },
+        highMid: { frequency: 1800, gain: -4, q: 1.1, type: 'peaking' },
+        highShelf: { frequency: 8000, gain: -8, q: 0.8, type: 'highshelf' }
+      }
     }
   },
   {
@@ -178,7 +213,14 @@ export const FACTORY_PRESETS: Preset[] = [
       },
       phaser: { rate: 0.4, depth: 350, stages: 3, feedback: 0.15, mix: 0.18 },
       noise: { enabled: false, type: "white", level: 0.1 },
-      flanger: { rate: 0.3, depth: 2, feedback: 0.18, mix: 0.12 }
+      flanger: { rate: 0.3, depth: 2, feedback: 0.18, mix: 0.12 },
+      eq: {
+        lowShelf: { frequency: 100, gain: 1, q: 1.2, type: 'lowshelf' },
+        lowMid: { frequency: 350, gain: 0, q: 1.1, type: 'peaking' },
+        mid: { frequency: 1500, gain: 1, q: 1.3, type: 'peaking' },
+        highMid: { frequency: 4200, gain: 2, q: 0.9, type: 'peaking' },
+        highShelf: { frequency: 12000, gain: 3, q: 0.7, type: 'highshelf' }
+      }
     }
   },
   {
@@ -209,7 +251,14 @@ export const FACTORY_PRESETS: Preset[] = [
       },
       phaser: { rate: 0.3, depth: 200, stages: 4, feedback: 0.2, mix: 0.12 },
       noise: { enabled: false, type: "white", level: 0.1 },
-      flanger: { rate: 0.5, depth: 3, feedback: 0.22, mix: 0.18 }
+      flanger: { rate: 0.5, depth: 3, feedback: 0.22, mix: 0.18 },
+      eq: {
+        lowShelf: { frequency: 110, gain: 0, q: 1.1, type: 'lowshelf' },
+        lowMid: { frequency: 600, gain: 1, q: 1.2, type: 'peaking' },
+        mid: { frequency: 1800, gain: 2, q: 1.1, type: 'peaking' },
+        highMid: { frequency: 3200, gain: 2, q: 1, type: 'peaking' },
+        highShelf: { frequency: 9000, gain: 2, q: 0.8, type: 'highshelf' }
+      }
     }
   },
   {
@@ -240,7 +289,14 @@ export const FACTORY_PRESETS: Preset[] = [
       },
       phaser: { rate: 0.5, depth: 600, stages: 4, feedback: 0.25, mix: 0.22 },
       noise: { enabled: true, type: "brown", level: 0.04 },
-      flanger: { rate: 0.2, depth: 1.5, feedback: 0.1, mix: 0.05 }
+      flanger: { rate: 0.2, depth: 1.5, feedback: 0.1, mix: 0.05 },
+      eq: {
+        lowShelf: { frequency: 85, gain: 2, q: 1, type: 'lowshelf' },
+        lowMid: { frequency: 400, gain: 1, q: 1.3, type: 'peaking' },
+        mid: { frequency: 1200, gain: 2, q: 1.2, type: 'peaking' },
+        highMid: { frequency: 3500, gain: 3, q: 0.9, type: 'peaking' },
+        highShelf: { frequency: 11000, gain: 4, q: 0.7, type: 'highshelf' }
+      }
     }
   },
   {
@@ -271,7 +327,14 @@ export const FACTORY_PRESETS: Preset[] = [
       },
       phaser: { rate: 0.7, depth: 400, stages: 3, feedback: 0.18, mix: 0.13 },
       noise: { enabled: true, type: "pink", level: 0.06 },
-      flanger: { rate: 0.4, depth: 2, feedback: 0.15, mix: 0.05 }
+      flanger: { rate: 0.4, depth: 2, feedback: 0.15, mix: 0.05 },
+      eq: {
+        lowShelf: { frequency: 120, gain: 1, q: 1.1, type: 'lowshelf' },
+        lowMid: { frequency: 500, gain: 2, q: 1.4, type: 'peaking' },
+        mid: { frequency: 1600, gain: 2, q: 1, type: 'peaking' },
+        highMid: { frequency: 4200, gain: 3, q: 1.2, type: 'peaking' },
+        highShelf: { frequency: 13000, gain: 5, q: 0.8, type: 'highshelf' }
+      }
     }
   },
   {
@@ -300,7 +363,14 @@ export const FACTORY_PRESETS: Preset[] = [
       },
       phaser: { rate: 0.2, depth: 150, stages: 2, feedback: 0.1, mix: 0.08 },
       noise: { enabled: true, type: "pink", level: 0.03 },
-      flanger: { rate: 0.3, depth: 1, feedback: 0.1, mix: 0.05 }
+      flanger: { rate: 0.3, depth: 1, feedback: 0.1, mix: 0.05 },
+      eq: {
+        lowShelf: { frequency: 120, gain: -2, q: 1.2, type: 'lowshelf' },
+        lowMid: { frequency: 400, gain: -1, q: 1.1, type: 'peaking' },
+        mid: { frequency: 1800, gain: 1, q: 1.3, type: 'peaking' },
+        highMid: { frequency: 5200, gain: 3, q: 1, type: 'peaking' },
+        highShelf: { frequency: 14000, gain: 6, q: 0.7, type: 'highshelf' }
+      }
     }
   },
   {
@@ -330,7 +400,14 @@ export const FACTORY_PRESETS: Preset[] = [
       },
       phaser: { rate: 1.1, depth: 800, stages: 3, feedback: 0.3, mix: 0.2 },
       noise: { enabled: false, type: "white", level: 0.1 },
-      flanger: { rate: 0.2, depth: 0, feedback: 0, mix: 0 }
+      flanger: { rate: 0.2, depth: 0, feedback: 0, mix: 0 },
+      eq: {
+        lowShelf: { frequency: 110, gain: -1, q: 1, type: 'lowshelf' },
+        lowMid: { frequency: 350, gain: -1, q: 1.2, type: 'peaking' },
+        mid: { frequency: 1600, gain: 1, q: 1.1, type: 'peaking' },
+        highMid: { frequency: 4200, gain: 2, q: 1.3, type: 'peaking' },
+        highShelf: { frequency: 12000, gain: 4, q: 0.8, type: 'highshelf' }
+      }
     }
   },
   {
@@ -361,7 +438,14 @@ export const FACTORY_PRESETS: Preset[] = [
       },
       phaser: { rate: 0.9, depth: 1000, stages: 4, feedback: 0.35, mix: 0.28 },
       noise: { enabled: true, type: "white", level: 0.03 },
-      flanger: { rate: 0.5, depth: 2, feedback: 0.18, mix: 0.12 }
+      flanger: { rate: 0.5, depth: 2, feedback: 0.18, mix: 0.12 },
+      eq: {
+        lowShelf: { frequency: 130, gain: -3, q: 1.3, type: 'lowshelf' },
+        lowMid: { frequency: 600, gain: -2, q: 1.2, type: 'peaking' },
+        mid: { frequency: 2200, gain: 2, q: 1, type: 'peaking' },
+        highMid: { frequency: 6500, gain: 4, q: 0.9, type: 'peaking' },
+        highShelf: { frequency: 15000, gain: 6, q: 0.7, type: 'highshelf' }
+      }
     }
   },
   {
@@ -391,7 +475,14 @@ export const FACTORY_PRESETS: Preset[] = [
       },
       phaser: { rate: 1.7, depth: 1200, stages: 4, feedback: 0.5, mix: 0.3 },
       noise: { enabled: false, type: "white", level: 0.1 },
-      flanger: { rate: 0.7, depth: 4, feedback: 0.3, mix: 0.18 }
+      flanger: { rate: 0.7, depth: 4, feedback: 0.3, mix: 0.18 },
+      eq: {
+        lowShelf: { frequency: 100, gain: -4, q: 1.1, type: 'lowshelf' },
+        lowMid: { frequency: 400, gain: -2, q: 1.3, type: 'peaking' },
+        mid: { frequency: 1800, gain: 2, q: 1.2, type: 'peaking' },
+        highMid: { frequency: 5200, gain: 5, q: 1, type: 'peaking' },
+        highShelf: { frequency: 14000, gain: 7, q: 0.8, type: 'highshelf' }
+      }
     }
   },
   {
@@ -421,7 +512,14 @@ export const FACTORY_PRESETS: Preset[] = [
       },
       phaser: { rate: 0.6, depth: 400, stages: 2, feedback: 0.18, mix: 0.12 },
       noise: { enabled: true, type: "pink", level: 0.12 },
-      flanger: { rate: 0.2, depth: 1, feedback: 0.1, mix: 0.08 }
+      flanger: { rate: 0.2, depth: 1, feedback: 0.1, mix: 0.08 },
+      eq: {
+        lowShelf: { frequency: 90, gain: -2, q: 1.2, type: 'lowshelf' },
+        lowMid: { frequency: 300, gain: 0, q: 1.4, type: 'peaking' },
+        mid: { frequency: 1100, gain: 2, q: 1.1, type: 'peaking' },
+        highMid: { frequency: 3200, gain: 3, q: 1.3, type: 'peaking' },
+        highShelf: { frequency: 9000, gain: 2, q: 0.9, type: 'highshelf' }
+      }
     }
   },
   {
@@ -450,7 +548,14 @@ export const FACTORY_PRESETS: Preset[] = [
       },
       phaser: { rate: 0.2, depth: 800, stages: 8, feedback: 0.5, mix: 0.5 },
       noise: { enabled: true, type: "pink", level: 0.95 },
-      flanger: { rate: 0.15, depth: 5, feedback: 0.25, mix: 0.25 }
+      flanger: { rate: 0.15, depth: 5, feedback: 0.25, mix: 0.25 },
+      eq: {
+        lowShelf: { frequency: 70, gain: -6, q: 1, type: 'lowshelf' },
+        lowMid: { frequency: 220, gain: -4, q: 1.5, type: 'peaking' },
+        mid: { frequency: 900, gain: 0, q: 1.2, type: 'peaking' },
+        highMid: { frequency: 3500, gain: 2, q: 1.1, type: 'peaking' },
+        highShelf: { frequency: 12000, gain: 6, q: 0.8, type: 'highshelf' }
+      }
     }
   },
   {
@@ -481,7 +586,14 @@ export const FACTORY_PRESETS: Preset[] = [
       },
       phaser: { rate: 0.4, depth: 500, stages: 4, feedback: 0.25, mix: 0.3 },
       noise: { enabled: false, type: "white", level: 0.1 },
-      flanger: { rate: 0.18, depth: 3, feedback: 0.18, mix: 0.12 }
+      flanger: { rate: 0.18, depth: 3, feedback: 0.18, mix: 0.12 },
+      eq: {
+        lowShelf: { frequency: 100, gain: 1, q: 1.1, type: 'lowshelf' },
+        lowMid: { frequency: 400, gain: 1, q: 1.3, type: 'peaking' },
+        mid: { frequency: 1200, gain: 1, q: 1.2, type: 'peaking' },
+        highMid: { frequency: 3500, gain: 2, q: 1, type: 'peaking' },
+        highShelf: { frequency: 11000, gain: 3, q: 0.7, type: 'highshelf' }
+      }
     }
   },
   {
@@ -511,7 +623,14 @@ export const FACTORY_PRESETS: Preset[] = [
       },
       phaser: { rate: 0.8, depth: 300, stages: 2, feedback: 0.15, mix: 0.1 },
       noise: { enabled: false, type: "white", level: 0.1 },
-      flanger: { rate: 0.2, depth: 0, feedback: 0, mix: 0 }
+      flanger: { rate: 0.2, depth: 0, feedback: 0, mix: 0 },
+      eq: {
+        lowShelf: { frequency: 60, gain: 4, q: 0.8, type: 'lowshelf' },
+        lowMid: { frequency: 180, gain: 2, q: 1.4, type: 'peaking' },
+        mid: { frequency: 600, gain: -2, q: 1.2, type: 'peaking' },
+        highMid: { frequency: 2200, gain: -4, q: 1.1, type: 'peaking' },
+        highShelf: { frequency: 9000, gain: -6, q: 0.8, type: 'highshelf' }
+      }
     }
   },
   {
@@ -542,7 +661,14 @@ export const FACTORY_PRESETS: Preset[] = [
       },
       phaser: { rate: 0.5, depth: 400, stages: 3, feedback: 0.2, mix: 0.15 },
       noise: { enabled: true, type: "pink", level: 0.04 },
-      flanger: { rate: 0.3, depth: 2, feedback: 0.15, mix: 0.1 }
+      flanger: { rate: 0.3, depth: 2, feedback: 0.15, mix: 0.1 },
+      eq: {
+        lowShelf: { frequency: 110, gain: 1, q: 1.2, type: 'lowshelf' },
+        lowMid: { frequency: 350, gain: 0, q: 1.1, type: 'peaking' },
+        mid: { frequency: 1500, gain: 1, q: 1.3, type: 'peaking' },
+        highMid: { frequency: 4200, gain: 2, q: 0.9, type: 'peaking' },
+        highShelf: { frequency: 12000, gain: 3, q: 0.7, type: 'highshelf' }
+      }
     }
   },
   {
@@ -573,7 +699,14 @@ export const FACTORY_PRESETS: Preset[] = [
       },
       phaser: { rate: 0.7, depth: 800, stages: 4, feedback: 0.3, mix: 0.25 },
       noise: { enabled: true, type: "white", level: 0.02 },
-      flanger: { rate: 0.5, depth: 2, feedback: 0.18, mix: 0.12 }
+      flanger: { rate: 0.5, depth: 2, feedback: 0.18, mix: 0.12 },
+      eq: {
+        lowShelf: { frequency: 130, gain: -4, q: 1.3, type: 'lowshelf' },
+        lowMid: { frequency: 600, gain: -2, q: 1.2, type: 'peaking' },
+        mid: { frequency: 2200, gain: 1, q: 1, type: 'peaking' },
+        highMid: { frequency: 6500, gain: 3, q: 0.9, type: 'peaking' },
+        highShelf: { frequency: 15000, gain: 7, q: 0.7, type: 'highshelf' }
+      }
     }
   },
   {
@@ -605,7 +738,14 @@ export const FACTORY_PRESETS: Preset[] = [
       },
       phaser: { rate: 0.7, depth: 700, stages: 4, feedback: 0.3, mix: 0.5 },
       noise: { enabled: false, type: "white", level: 0.1 },
-      flanger: { rate: 0.2, depth: 3, feedback: 0.18, mix: 0.12 }
+      flanger: { rate: 0.2, depth: 3, feedback: 0.18, mix: 0.12 },
+      eq: {
+        lowShelf: { frequency: 90, gain: 0, q: 0.9, type: 'lowshelf' },
+        lowMid: { frequency: 320, gain: 1, q: 1.2, type: 'peaking' },
+        mid: { frequency: 1200, gain: 2, q: 1.1, type: 'peaking' },
+        highMid: { frequency: 3500, gain: 2, q: 0.8, type: 'peaking' },
+        highShelf: { frequency: 11000, gain: 3, q: 0.7, type: 'highshelf' }
+      }
     }
   },
 ];

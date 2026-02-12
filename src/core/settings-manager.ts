@@ -192,7 +192,6 @@ export class SettingsManager {
 
   private getEQSettings(): ParametricEQConfig {
     return {
-      enabled: (document.getElementById('eq-enabled') as HTMLInputElement)?.checked ?? true,
       lowShelf: {
         frequency: Number.parseFloat((document.getElementById('eq-low-shelf-freq') as HTMLInputElement)?.value ?? '80'),
         gain: Number.parseFloat((document.getElementById('eq-low-shelf-gain') as HTMLInputElement)?.value ?? '0'),
@@ -417,47 +416,40 @@ export class SettingsManager {
   }
 
   private applyEQSettings(eq: ParametricEQConfig): void {
-    // Enable/disable
-    const enabledEl = document.getElementById('eq-enabled') as HTMLInputElement;
-    if (enabledEl) {
-      enabledEl.checked = eq.enabled;
-      enabledEl.dispatchEvent(new Event('change', { bubbles: true }));
-    }
+    this.setParametricEq('eq-low-shelf-freq', eq.lowShelf.frequency);
+    this.setParametricEq('eq-low-shelf-gain', eq.lowShelf.gain);
+    this.setParametricEq('eq-low-shelf-q', eq.lowShelf.q);
 
-    // Helper
-    const set = (id: string, value: number) => {
-      const el = document.getElementById(id) as HTMLInputElement;
-      if (el) {
-        el.value = value.toString();
-        el.dispatchEvent(new Event('input', { bubbles: true }));
-      }
-    };
+    this.setParametricEq('eq-low-mid-freq', eq.lowMid.frequency);
+    this.setParametricEq('eq-low-mid-gain', eq.lowMid.gain);
+    this.setParametricEq('eq-low-mid-q', eq.lowMid.q);
 
-    // Low Shelf
-    set('eq-low-shelf-freq', eq.lowShelf.frequency);
-    set('eq-low-shelf-gain', eq.lowShelf.gain);
-    set('eq-low-shelf-q', eq.lowShelf.q);
+    this.setParametricEq('eq-mid-freq', eq.mid.frequency);
+    this.setParametricEq('eq-mid-gain', eq.mid.gain);
+    this.setParametricEq('eq-mid-q', eq.mid.q);
 
-    // Low Mid
-    set('eq-low-mid-freq', eq.lowMid.frequency);
-    set('eq-low-mid-gain', eq.lowMid.gain);
-    set('eq-low-mid-q', eq.lowMid.q);
+    this.setParametricEq('eq-high-mid-freq', eq.highMid.frequency);
+    this.setParametricEq('eq-high-mid-gain', eq.highMid.gain);
+    this.setParametricEq('eq-high-mid-q', eq.highMid.q);
 
-    // Mid
-    set('eq-mid-freq', eq.mid.frequency);
-    set('eq-mid-gain', eq.mid.gain);
-    set('eq-mid-q', eq.mid.q);
-
-    // High Mid
-    set('eq-high-mid-freq', eq.highMid.frequency);
-    set('eq-high-mid-gain', eq.highMid.gain);
-    set('eq-high-mid-q', eq.highMid.q);
-
-    // High Shelf
-    set('eq-high-shelf-freq', eq.highShelf.frequency);
-    set('eq-high-shelf-gain', eq.highShelf.gain);
-    set('eq-high-shelf-q', eq.highShelf.q);
+    this.setParametricEq('eq-high-shelf-freq', eq.highShelf.frequency);
+    this.setParametricEq('eq-high-shelf-gain', eq.highShelf.gain);
+    this.setParametricEq('eq-high-shelf-q', eq.highShelf.q);
   }
+
+  private setParametricEq(id: string, value: number) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    // If it's a custom element with setValue, use it
+    if ((el as any).setValue) {
+      (el as any).setValue(value);
+    } else {
+      // Otherwise set value and dispatch both events
+      (el as HTMLInputElement).value = value.toString();
+      el.dispatchEvent(new Event('input', { bubbles: true }));
+      el.dispatchEvent(new Event('change', { bubbles: true }));
+    }
+  };
 
 
 

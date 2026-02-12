@@ -9,7 +9,6 @@ export type EQBand = {
 };
 
 export type ParametricEQConfig = {
-  enabled: boolean;
   lowShelf: EQBand;
   lowMid: EQBand;
   mid: EQBand;
@@ -63,12 +62,7 @@ export class ParametricEQModule implements BaseEffectModule {
   };
 
   getConfig(): ParametricEQConfig {
-    const enabled = UIConfigService.exists(this.elementIds.enabled)
-      ? UIConfigService.getControl(this.elementIds.enabled).checked
-      : true;
-
     return {
-      enabled,
       lowShelf: {
         frequency: this.getParam(this.elementIds.lowShelfFreq, 80),
         gain: this.getParam(this.elementIds.lowShelfGain, 0),

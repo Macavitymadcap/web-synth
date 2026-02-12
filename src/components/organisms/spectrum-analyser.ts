@@ -28,9 +28,6 @@ export class SpectrumAnalyser extends HTMLElement {
           </instructions-list>
         </div>
         <div slot="content">
-          <controls-group>
-            <toggle-switch id="spectrum-analyser-enabled" label="Enable"></toggle-switch>
-          </controls-group>
           <canvas class="analyser-canvas"></canvas>
         </div>
       </module-section>

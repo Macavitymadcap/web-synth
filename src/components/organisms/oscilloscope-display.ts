@@ -29,9 +29,6 @@ export class OscilloscopeDisplay extends HTMLElement {
           </instructions-list>
         </div>
         <div slot="content">
-          <controls-group>
-            <toggle-switch id="oscilloscope-enabled" label="Enable"></toggle-switch>
-          </controls-group>
           <canvas class="oscilloscope-canvas"></canvas>
         </div>
       </module-section>
