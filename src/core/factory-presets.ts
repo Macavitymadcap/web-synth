@@ -21,7 +21,7 @@ export const FACTORY_PRESETS: Preset[] = [
       ],
       chorus: { rate: 0.3, depth: 20, mix: 0.4 },
       tremolo: { rate: 0.4, depth: 0.15 },
-      reverb: { decay: 3.5, reverbMix: 0.45 },
+      reverb: { decay: 3.5, mix: 0.45 },
       delay: { time: 0.5, feedback: 0.25, mix: 0.15 },
       distortion: { drive: 0.5, blend: 0.15 },
       compressor: {
@@ -58,7 +58,7 @@ export const FACTORY_PRESETS: Preset[] = [
       ],
       chorus: { rate: 0.5, depth: 0, mix: 0 },
       tremolo: { rate: 0, depth: 0 },
-      reverb: { decay: 0.3, reverbMix: 0.05 },
+      reverb: { decay: 0.3, mix: 0.05 },
       delay: { time: 0.375, feedback: 0.2, mix: 0 },
       distortion: { drive: 0.2, blend: 0.1 },
       compressor: {
@@ -95,7 +95,7 @@ export const FACTORY_PRESETS: Preset[] = [
       ],
       chorus: { rate: 0.5, depth: 12, mix: 0.25 },
       tremolo: { rate: 0, depth: 0 },
-      reverb: { decay: 1.2, reverbMix: 0.2 },
+      reverb: { decay: 1.2, mix: 0.2 },
       delay: { time: 0.375, feedback: 0.3, mix: 0.15 },
       distortion: { drive: 2.5, blend: 0.3 },
       compressor: {
@@ -132,7 +132,7 @@ export const FACTORY_PRESETS: Preset[] = [
       ],
       chorus: { rate: 0.5, depth: 0, mix: 0 },
       tremolo: { rate: 0, depth: 0 },
-      reverb: { decay: 0.5, reverbMix: 0.1 },
+      reverb: { decay: 0.5, mix: 0.1 },
       delay: { time: 0.375, feedback: 0.2, mix: 0 },
       distortion: { drive: 1.5, blend: 0.25 },
       compressor: {
@@ -168,7 +168,7 @@ export const FACTORY_PRESETS: Preset[] = [
       ],
       chorus: { rate: 0.5, depth: 0, mix: 0 },
       tremolo: { rate: 0, depth: 0 },
-      reverb: { decay: 0.3, reverbMix: 0.05 },
+      reverb: { decay: 0.3, mix: 0.05 },
       delay: { time: 0.375, feedback: 0.2, mix: 0 },
       distortion: { drive: 2.2, blend: 0.35 },
       compressor: {
@@ -205,7 +205,7 @@ export const FACTORY_PRESETS: Preset[] = [
       ],
       chorus: { rate: 0.3, depth: 18, mix: 0.35 },
       tremolo: { rate: 6.5, depth: 0.25 },
-      reverb: { decay: 1.8, reverbMix: 0.25 },
+      reverb: { decay: 1.8, mix: 0.25 },
       delay: { time: 0.25, feedback: 0.15, mix: 0.1 },
       distortion: { drive: 0.01, blend: 0.1 },
       compressor: {
@@ -243,7 +243,7 @@ export const FACTORY_PRESETS: Preset[] = [
       ],
       chorus: { rate: 0.5, depth: 25, mix: 0.5 },
       tremolo: { rate: 0, depth: 0 },
-      reverb: { decay: 2.5, reverbMix: 0.3 },
+      reverb: { decay: 2.5, mix: 0.3 },
       delay: { time: 0.375, feedback: 0.2, mix: 0 },
       distortion: { drive: 0, blend: 0 },
       compressor: {
@@ -281,7 +281,7 @@ export const FACTORY_PRESETS: Preset[] = [
       ],
       chorus: { rate: 0.3, depth: 22, mix: 0.5 },
       tremolo: { rate: 0.35, depth: 0.12 },
-      reverb: { decay: 3.5, reverbMix: 0.5 },
+      reverb: { decay: 3.5, mix: 0.5 },
       delay: { time: 0.5, feedback: 0.25, mix: 0.2 },
       distortion: { drive: 0.3, blend: 0.1 },
       compressor: {
@@ -319,7 +319,7 @@ export const FACTORY_PRESETS: Preset[] = [
       ],
       chorus: { rate: 0.4, depth: 15, mix: 0.3 },
       tremolo: { rate: 0, depth: 0 },
-      reverb: { decay: 1.8, reverbMix: 0.25 },
+      reverb: { decay: 1.8, mix: 0.25 },
       delay: { time: 0.375, feedback: 0.2, mix: 0 },
       distortion: { drive: 1.2, blend: 0.18 },
       compressor: {
@@ -355,7 +355,7 @@ export const FACTORY_PRESETS: Preset[] = [
       ],
       chorus: { rate: 0.4, depth: 10, mix: 0.2 },
       tremolo: { rate: 4.2, depth: 0.18 },
-      reverb: { decay: 2.2, reverbMix: 0.35 },
+      reverb: { decay: 2.2, mix: 0.35 },
       delay: { time: 0.375, feedback: 0.25, mix: 0.1 },
       distortion: { drive: 0, blend: 0 },
       compressor: {
@@ -392,7 +392,7 @@ export const FACTORY_PRESETS: Preset[] = [
       ],
       chorus: { rate: 0.6, depth: 15, mix: 0.3 },
       tremolo: { rate: 0, depth: 0 },
-      reverb: { decay: 1.5, reverbMix: 0.3 },
+      reverb: { decay: 1.5, mix: 0.3 },
       delay: { time: 0.1875, feedback: 0.4, mix: 0.3 },
       distortion: { drive: 0.8, blend: 0.2 },
       compressor: {
@@ -430,7 +430,7 @@ export const FACTORY_PRESETS: Preset[] = [
       ],
       chorus: { rate: 0.5, depth: 12, mix: 0.25 },
       tremolo: { rate: 0, depth: 0 },
-      reverb: { decay: 3, reverbMix: 0.4 },
+      reverb: { decay: 3, mix: 0.4 },
       delay: { time: 0.25, feedback: 0.35, mix: 0.25 },
       distortion: { drive: 0.2, blend: 0.1 },
       compressor: {
@@ -467,7 +467,7 @@ export const FACTORY_PRESETS: Preset[] = [
       ],
       chorus: { rate: 0.3, depth: 10, mix: 0.18 },
       tremolo: { rate: 0, depth: 0 },
-      reverb: { decay: 0.7, reverbMix: 0.18 },
+      reverb: { decay: 0.7, mix: 0.18 },
       delay: { time: 0.18, feedback: 0.22, mix: 0.12 },
       distortion: { drive: 6, blend: 0.7 },
       compressor: {
@@ -504,7 +504,7 @@ export const FACTORY_PRESETS: Preset[] = [
       ],
       chorus: { rate: 0.2, depth: 6, mix: 0.1 },
       tremolo: { rate: 0, depth: 0 },
-      reverb: { decay: 0.5, reverbMix: 0.08 },
+      reverb: { decay: 0.5, mix: 0.08 },
       delay: { time: 0.12, feedback: 0.18, mix: 0.08 },
       distortion: { drive: 8, blend: 0.6 },
       compressor: {
@@ -540,7 +540,7 @@ export const FACTORY_PRESETS: Preset[] = [
       ],
       chorus: { rate: 0.4, depth: 40, mix: 0.7 },
       tremolo: { rate: 0.3, depth: 0.2 },
-      reverb: { decay: 5, reverbMix: 0.75 },
+      reverb: { decay: 5, mix: 0.75 },
       delay: { time: 1, feedback: 0.5, mix: 0.4 },
       distortion: { drive: 0, blend: 0 },
       compressor: {
@@ -578,7 +578,7 @@ export const FACTORY_PRESETS: Preset[] = [
       ],
       chorus: { rate: 0.3, depth: 25, mix: 0.45 },
       tremolo: { rate: 0.6, depth: 0.4 },
-      reverb: { decay: 4, reverbMix: 0.5 },
+      reverb: { decay: 4, mix: 0.5 },
       delay: { time: 0.75, feedback: 0.3, mix: 0.25 },
       distortion: { drive: 0.3, blend: 0.1 },
       compressor: {
@@ -615,7 +615,7 @@ export const FACTORY_PRESETS: Preset[] = [
       ],
       chorus: { rate: 0.5, depth: 0, mix: 0 },
       tremolo: { rate: 12, depth: 0.75 },
-      reverb: { decay: 0.4, reverbMix: 0.08 },
+      reverb: { decay: 0.4, mix: 0.08 },
       delay: { time: 0.125, feedback: 0.3, mix: 0.15 },
       distortion: { drive: 2.5, blend: 0.3 },
       compressor: {
@@ -653,7 +653,7 @@ export const FACTORY_PRESETS: Preset[] = [
       ],
       chorus: { rate: 0.4, depth: 20, mix: 0.4 },
       tremolo: { rate: 5.5, depth: 0.5 },
-      reverb: { decay: 2, reverbMix: 0.28 },
+      reverb: { decay: 2, mix: 0.28 },
       delay: { time: 0.375, feedback: 0.2, mix: 0.12 },
       distortion: { drive: 0.8, blend: 0.15 },
       compressor: {
@@ -691,7 +691,7 @@ export const FACTORY_PRESETS: Preset[] = [
       ],
       chorus: { rate: 0.6, depth: 15, mix: 0.35 },
       tremolo: { rate: 4.8, depth: 0.45 },
-      reverb: { decay: 3.5, reverbMix: 0.55 },
+      reverb: { decay: 3.5, mix: 0.55 },
       delay: { time: 0.5, feedback: 0.4, mix: 0.35 },
       distortion: { drive: 0.1, blend: 0.05 },
       compressor: {
@@ -730,7 +730,7 @@ export const FACTORY_PRESETS: Preset[] = [
       ],
       chorus: { rate: 0.3, depth: 20, mix: 0.4 },
       tremolo: { rate: 0.4, depth: 0.15 },
-      reverb: { decay: 3.5, reverbMix: 0.45 },
+      reverb: { decay: 3.5, mix: 0.45 },
       delay: { time: 0.5, feedback: 0.25, mix: 0.15 },
       distortion: { drive: 0.5, blend: 0.15 },
       compressor: {
