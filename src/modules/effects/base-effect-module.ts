@@ -55,7 +55,7 @@ export interface EffectMetadata {
   order: number;
   
   /** Category for grouping */
-  category: 'modulation' | 'dynamics' | 'time-based' | 'filter' | 'distortion' | 'utility';
+  category: 'modulation' | 'dynamics' | 'time-based' | 'filter' | 'distortion' | 'utility' | 'equalization';
   
   /** Whether the effect is enabled by default */
   enabledByDefault?: boolean;

@@ -818,65 +818,75 @@ customElements.define('my-control', MyControl);
 
 ## Signal Flow
 
-filepath: /Users/dank/Code/personal/web/web-synth/docs/architecture.md
 ```mermaid
 graph TD
-    A[User Input] --> B[Synth.playFrequency]
-    B --> C[VoiceManager]
-    
+  A[User Input] --> B[Synth.playFrequency]
+  B --> C[VoiceManager]
+
+  %% Voice Section
+  subgraph VS["Voice Section"]
     C --> D[Voice Creation]
     D --> E[OscillatorBank]
     D --> F[FilterModule]
-    D --> G[Amplitude Envelope]
+    D --> G[Amp Envelope]
     D --> H[LFO Modules]
     D --> I[Noise Module]
-    
     H --> F
     H --> E
     I --> F
     E --> F
-    F --> J[EffectsManager Input]
+    F --> J[Voice Output]
     G --> J
-    
-    subgraph EM["Effects Manager"]
-        J --> K[Compressor]
-        K --> L[Chorus]
-        L --> M[Phaser]
-        M --> N[Tremolo]
-        N --> O[Flanger]
-        O --> P[Delay]
-        P --> Q[Distortion]
-        Q --> R[Reverb]
-        R --> S[Spectrum Analyser]
-        S --> T[EffectsManager Output]
-    end
-    
-    T --> U[Master Volume]
-    U --> V[AudioContext.destination]
-    
-    style A fill:#0a0015,stroke:#00ffff,stroke-width:3px,color:#00ffff
-    style B fill:#0a0015,stroke:#00d4ff,stroke-width:2px,color:#00d4ff
-    style C fill:#0a0015,stroke:#00d4ff,stroke-width:2px,color:#00d4ff
-    style D fill:#0a0015,stroke:#00d4ff,stroke-width:2px,color:#00d4ff
-    style E fill:#0a0015,stroke:#00ff88,stroke-width:2px,color:#00ff88
-    style F fill:#0a0015,stroke:#00ff88,stroke-width:2px,color:#00ff88
-    style G fill:#0a0015,stroke:#00ff88,stroke-width:2px,color:#00ff88
-    style H fill:#0a0015,stroke:#b800ff,stroke-width:3px,color:#b800ff
-    style I fill:#0a0015,stroke:#00ff88,stroke-width:2px,color:#00ff88
-    style J fill:#0a0015,stroke:#ffff00,stroke-width:3px,color:#ffff00
-    style K fill:#0a0015,stroke:#ff00ff,stroke-width:2px,color:#ff00ff
-    style L fill:#0a0015,stroke:#ff00ff,stroke-width:2px,color:#ff00ff
-    style M fill:#0a0015,stroke:#ff00ff,stroke-width:2px,color:#ff00ff
-    style N fill:#0a0015,stroke:#ff00ff,stroke-width:2px,color:#ff00ff
-    style O fill:#0a0015,stroke:#ff00ff,stroke-width:2px,color:#ff00ff
-    style P fill:#0a0015,stroke:#ff00ff,stroke-width:2px,color:#ff00ff
-    style Q fill:#0a0015,stroke:#ff00ff,stroke-width:2px,color:#ff00ff
-    style R fill:#0a0015,stroke:#ff00ff,stroke-width:2px,color:#ff00ff
-    style S fill:#0a0015,stroke:#ff00ff,stroke-width:2px,color:#ff00ff
-    style T fill:#0a0015,stroke:#ffff00,stroke-width:3px,color:#ffff00
-    style U fill:#0a0015,stroke:#00d4ff,stroke-width:2px,color:#00d4ff
-    style V fill:#0a0015,stroke:#ff3366,stroke-width:3px,color:#ff3366
-    style EM fill:#1a0033,stroke:#ff00ff,stroke-width:3px,color:#00ffff
+  end
+
+  %% Effects Chain
+  J --> EM
+
+  subgraph EM["Effects Manager"]
+    direction LR
+    J --> K[Compressor]
+    K --> L[Parametric EQ]
+    L --> M[Chorus]
+    M --> N[Phaser]
+    N --> O[Tremolo]
+    O --> P[Flanger]
+    P --> Q[Delay]
+    Q --> R[Distortion]
+    R --> S[Reverb]
+    S --> T1[Spectrum Analyser]
+    S --> T2[Oscilloscope]
+    T1 --> U[Master Volume]
+    T2 --> U
+  end
+
+  U --> V[AudioContext.destination]
+
+  %% Node styles
+  style A fill:#0a0015,stroke:#00ffff,stroke-width:3px,color:#00ffff
+  style B fill:#0a0015,stroke:#00d4ff,stroke-width:2px,color:#00d4ff
+  style C fill:#0a0015,stroke:#00d4ff,stroke-width:2px,color:#00d4ff
+  style VS fill:#1a0033,stroke:#00ff88,stroke-width:3px,color:#00ff88
+  style D fill:#0a0015,stroke:#00d4ff,stroke-width:2px,color:#00d4ff
+  style E fill:#0a0015,stroke:#00ff88,stroke-width:2px,color:#00ff88
+  style F fill:#0a0015,stroke:#00ff88,stroke-width:2px,color:#00ff88
+  style G fill:#0a0015,stroke:#00ff88,stroke-width:2px,color:#00ff88
+  style H fill:#0a0015,stroke:#b800ff,stroke-width:3px,color:#b800ff
+  style I fill:#0a0015,stroke:#00ff88,stroke-width:2px,color:#00ff88
+  style J fill:#0a0015,stroke:#ffff00,stroke-width:3px,color:#ffff00
+  style EM fill:#1a0033,stroke:#ff00ff,stroke-width:3px,color:#00ffff
+  style K fill:#0a0015,stroke:#ff00ff,stroke-width:2px,color:#ff00ff
+  style L fill:#0a0015,stroke:#ff00ff,stroke-width:2px,color:#ff00ff
+  style M fill:#0a0015,stroke:#ff00ff,stroke-width:2px,color:#ff00ff
+  style N fill:#0a0015,stroke:#ff00ff,stroke-width:2px,color:#ff00ff
+  style O fill:#0a0015,stroke:#ff00ff,stroke-width:2px,color:#ff00ff
+  style P fill:#0a0015,stroke:#ff00ff,stroke-width:2px,color:#ff00ff
+  style Q fill:#0a0015,stroke:#ff00ff,stroke-width:2px,color:#ff00ff
+  style R fill:#0a0015,stroke:#ff00ff,stroke-width:2px,color:#ff00ff
+  style S fill:#0a0015,stroke:#ff00ff,stroke-width:2px,color:#ff00ff
+  style T1 fill:#0a0015,stroke:#ffff00,stroke-width:3px,color:#ffff00
+  style T2 fill:#0a0015,stroke:#ffff00,stroke-width:3px,color:#ffff00
+  style U fill:#0a0015,stroke:#ff3366,stroke-width:3px,color:#ff3366
+  style V fill:#0a0015,stroke:#ffffff,stroke-width:3px,color:#ffffff
 ```
 
 **Key points:**
@@ -884,7 +894,7 @@ graph TD
 - Each effect's output connects to next effect's input
 - LFO modules provide modulation to filter and pitch
 - Voices connect to EffectsManager input
-- Analyser is passive (lowest order)
+- Analyser and oscilloscope are passive (lowest order)
 
 ---
 

@@ -1,3 +1,4 @@
+import { ParametricEQConfig } from '../modules/effects/parametric-eq-module';
 import type { NoiseConfig } from '../modules/noise-module';
 
 export type OscillatorType = "sine" | "square" | "sawtooth" | "triangle" | "custom";
@@ -106,6 +107,7 @@ export interface SynthSettings {
   delay: DelaySettings;
   distortion: WaveShaperSettings;
   reverb: ReverbSettings;
+  eq: ParametricEQConfig;
 }
 
 export interface Preset {

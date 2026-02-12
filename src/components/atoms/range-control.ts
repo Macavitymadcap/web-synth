@@ -95,8 +95,22 @@ range-control label {
   text-shadow: 0 0 5px var(--text-secondary);
 }
 
+range-control .range-label {
+  display: block;
+  text-align: center;
+  width: 100%;
+}
+
+/* NEW: Stack input and value together */
+range-control .range-stack {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: 0.25rem;
+}
+
 range-control input[type="range"] {
-  width: 100px;
+  width: 100%;
   height: 6px;
   background: rgba(10, 0, 21, 0.8);
   border: 2px solid var(--neon-cyan);
@@ -105,6 +119,7 @@ range-control input[type="range"] {
   cursor: pointer;
   -webkit-appearance: none;
   box-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
+  box-sizing: border-box; /* Ensure box model matches span */
 }
 
 range-control input[type="range"]::-webkit-slider-thumb {
@@ -157,7 +172,8 @@ range-control .range-value {
   background: rgba(0, 255, 255, 0.1);
   border: 1px solid var(--neon-cyan);
   border-radius: 3px;
-  min-width: 60px;
+  width: 100%;
+  box-sizing: border-box;
   box-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
   text-shadow: 0 0 10px var(--neon-cyan);
 }
@@ -196,9 +212,11 @@ export class RangeControl extends HTMLElement {
 
     this.innerHTML = `
       <label>
-        ${label}
-        <input type="range" id="${id}" min="${min}" max="${max}" step="${step}" value="${value}">
-        <span class="range-value"></span>
+        <span class="range-label">${label}</span>
+        <div class="range-stack">
+          <input type="range" id="${id}" min="${min}" max="${max}" step="${step}" value="${value}">
+          <span class="range-value"></span>
+        </div>
       </label>
     `;
 

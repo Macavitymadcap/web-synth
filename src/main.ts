@@ -14,6 +14,7 @@ import { NoiseModule } from "./modules/noise-module";
 
 // Effects
 import { CompressorModule } from "./modules/effects/compressor-module";
+import { ParametricEQModule } from "./modules/effects/parametric-eq-module";
 import { ChorusModule } from "./modules/effects/chorus-module";
 import { PhaserModule } from "./modules/effects/phaser-module";
 import { TremoloModule } from "./modules/effects/tremolo-module";
@@ -22,6 +23,7 @@ import { DelayModule } from "./modules/effects/delay-module";
 import { DistortionModule } from "./modules/effects/distortion-module";
 import { ReverbModule } from "./modules/effects/reverb-module";
 import { SpectrumAnalyserModule } from "./modules/effects/spectrum-analyser-module";
+import { OscilloscopeModule } from "./modules/effects/oscilloscope-module";
 
 // Handlers
 import { createKeyboardHandlers } from "./handlers/keyboard-handlers";
@@ -69,6 +71,9 @@ import "./components/organisms/adsr-module";
 import "./components/organisms/filter-module-controls";
 import "./components/organisms/spectrum-analyser";
 import type { SpectrumAnalyser } from "./components/organisms/spectrum-analyser";
+import "./components/organisms/oscilloscope-display";
+import type { OscilloscopeDisplay } from "./components/organisms/oscilloscope-display";
+import "./components/organisms/parametric-eq-controls";
 
 // Layout
 import "./components/layout/app-header";
@@ -84,13 +89,13 @@ const midiToggle = document.getElementById("midi-enabled") as HTMLInputElement;
 // Record controls
 const recordBtn = document.getElementById("record") as NeonButton;
 
-// Oscillator controls
-const oscillatorList = document.getElementById("oscillator-list") as HTMLElement;
-const addOscBtn = document.getElementById("add-oscillator") as NeonButton;
-
 // Analyser controls
 const spectrumAnalyserEl = document.querySelector('spectrum-analyser') as SpectrumAnalyser;
 const spectrumCanvas = spectrumAnalyserEl?.getCanvas();
+
+// Oscilloscope controls
+const oscilloscopeEl = document.querySelector('oscilloscope-display') as OscilloscopeDisplay;
+const oscilloscopeCanvas = oscilloscopeEl?.getCanvas();
 
 // Initialize modules
 const oscillatorBank = new OscillatorBank();
@@ -102,6 +107,7 @@ const noiseModule = new NoiseModule();
 
 // Effects
 const compressorModule = new CompressorModule();
+const parametricEQModule = new ParametricEQModule();
 const chorusModule = new ChorusModule();
 const phaserModule = new PhaserModule();
 const tremoloModule = new TremoloModule();
@@ -110,6 +116,7 @@ const delayModule = new DelayModule();
 const distortionModule = new DistortionModule();
 const reverbModule = new ReverbModule();
 const spectrumAnalyserModule = new SpectrumAnalyserModule(spectrumCanvas);
+const oscilloscopeModule = new OscilloscopeModule(oscilloscopeCanvas);
 
 // Effects Manager
 const effectsManager = new EffectsManager();
@@ -120,61 +127,77 @@ effectsManager.register(compressorModule, {
   category: 'dynamics'
 });
 
+effectsManager.register(parametricEQModule, {
+  id: 'parametric-eq',
+  name: 'Parametric EQ',
+  order: 95,
+  category: 'equalization'
+});
+
 effectsManager.register(chorusModule, {
   id: 'chorus',
   name: 'Chorus',
-  order: 95,
+  order: 90,
   category: 'modulation'
 });
 
 effectsManager.register(phaserModule, {
   id: 'phaser',
   name: 'Phaser',
-  order: 90,
+  order: 85,
   category: 'modulation'
 });
 
 effectsManager.register(tremoloModule, {
   id: 'tremolo',
   name: 'Tremolo',
-  order: 85,
+  order: 80,
   category: 'modulation'
 });
 
 effectsManager.register(flangerModule, {
   id: 'flanger',
   name: 'Flanger',
-  order: 80,
+  order: 75,
   category: 'modulation'
 });
 
 effectsManager.register(delayModule, {
   id: 'delay',
   name: 'Delay',
-  order: 75,
+  order: 70,
   category: 'time-based'
 });
 
 effectsManager.register(distortionModule, {
   id: 'distortion',
   name: 'Distortion',
-  order: 70,
+  order: 65,
   category: 'distortion'
 });
 
 effectsManager.register(reverbModule, {
   id: 'reverb',
   name: 'Reverb',
-  order: 65, // Last effect before analyser
+  order: 60, // Last effect before analyser and oscilloscope, so they can visualize the final output including reverb tail
   category: 'time-based'
 });
 
 effectsManager.register(spectrumAnalyserModule, {
   id: 'analyser',
   name: 'Spectrum Analyser',
-  order: 60, // Always last in chain
+  order: 55, 
   category: 'utility'
 });
+
+effectsManager.register(oscilloscopeModule, {
+  id: 'oscilloscope',
+  name: 'Oscilloscope',
+  order: 50,
+  category: 'utility'
+});
+
+
 
 // LFO management
 const lfoControls = document.querySelector("lfo-controls");

@@ -36,7 +36,6 @@ export class SpectrumAnalyserModule implements BaseEffectModule {
   }
 
   getConfig(): SpectrumAnalyserConfig {
-    // Try to read from UI; fall back to current config if controls are absent
     try {
       const cfg = UIConfigService.getConfig({
         fftSize: {
@@ -71,11 +70,9 @@ export class SpectrumAnalyserModule implements BaseEffectModule {
   }
 
   initialize(audioCtx: AudioContext, destination: AudioNode): EffectNodes {
-    // Clean up previous nodes if re-initializing
     this.stopVisualization();
     this.disconnectNodes();
 
-    // Capture config (from UI if present)
     this.config = this.getConfig();
 
     this.inputGain = audioCtx.createGain();
@@ -85,7 +82,6 @@ export class SpectrumAnalyserModule implements BaseEffectModule {
     this.analyserNode.fftSize = this.config.fftSize;
     this.analyserNode.smoothingTimeConstant = this.config.smoothingTimeConstant;
 
-    // Signal flow: input -> analyser -> output -> destination
     this.inputGain.connect(this.analyserNode);
     this.analyserNode.connect(this.outputGain);
     this.outputGain.connect(destination);
@@ -211,5 +207,12 @@ export class SpectrumAnalyserModule implements BaseEffectModule {
     if (!Number.isFinite(n) || n <= 0) return 2048;
     const pow2 = Math.pow(2, Math.round(Math.log2(n)));
     return this.clamp(pow2, 32, 32768);
+  }
+
+  private clearCanvas(): void {
+    const ctx = this.canvas?.getContext('2d');
+    if (!ctx || !this.canvas) return;
+    ctx.fillStyle = '#0a0014';
+    ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
   }
 }
