@@ -1,64 +1,59 @@
 # Web Synth
 
-A feature-rich, browser-based polyphonic synthesiser built with the Web Audio
-API and TypeScript. Create and shape sounds using multiple oscillators, filters, 
-envelopes, LFO modulation, and delay effects.
+A modern, browser-based polyphonic synthesiser built with the Web Audio API, TypeScript, and native Web Components. Create and shape sounds using a modular, testable architecture with multiple oscillators, filters, envelopes, LFOs, and a full suite of effects.
+
+---
 
 ## Features
 
 ### Sound Generation
 
-* **Multiple Oscillators**: Layer up to multiple oscillators with independent waveform, detune, and level controls
-* **Waveforms**: Sine, Square, Sawtooth, and Triangle waves
-* **Polyphonic/Monophonic Modes**: Play multiple notes simultaneously or one at a time
-* **Detune Control**: Fine-tune each oscillator from -1200 to +1200 cents for chorus and unison effects
+- **Multiple Oscillators**: Layer up to 4 oscillators, each with independent waveform, detune, and level.
+- **Waveforms**: Sine, Square, Sawtooth, Triangle.
+- **Polyphonic/Monophonic**: Play chords or leads.
+- **Detune Control**: Fine-tune oscillators for rich, wide sounds.
 
 ### Sound Shaping
 
-* **Amplitude Envelope (ADSR)**: Control attack, decay, sustain, and release of note volume
-* **Lowpass Filter**: Shape tone with adjustable cutoff (20Hz-20kHz) and resonance (0.1-30)
-* **Filter Envelope**: Independent ADSR envelope for dynamic filter modulation
-* **LFO Modulation**: Add vibrato (pitch) and wobble (filter) effects with adjustable rate and depth
+- **Amplitude Envelope (ADSR)**: Attack, Decay, Sustain, Release controls.
+- **Lowpass Filter**: Adjustable cutoff (20Hz–20kHz) and resonance.
+- **Filter Envelope**: Separate ADSR for dynamic filter sweeps.
+- **LFO Modulation**: Vibrato (pitch), filter wobble, and more.
 
 ### Effects
 
-* **Chorus**: Thicken sounds with multiple modulated delay lines creating a rich, wide stereo effect
-* **Reverb**: Simulate room acoustics with adjustable decay and wet/dry mix for spatial effects
-* **Delay**: Configurable delay time, feedback, and wet/dry mix for spatial effects
-* **Master Volume**: Global output level control
+- **Chorus, Phaser, Flanger, Tremolo**: Classic modulation effects.
+- **Delay & Reverb**: Spatial and echo effects with wet/dry mix.
+- **Distortion**: Adds warmth or grit.
+- **Compressor & Parametric EQ**: Dynamics and tone shaping.
+- **Spectrum Analyser & Oscilloscope**: Visualise your sound.
 
 ### Presets & Settings
 
-* **Factory Presets**: 11 built-in instrument presets including:
-  - Pad Sound (lush, atmospheric)
-  - Pluck Bass (punchy, tight)
-  - Lead Synth (bright with vibrato)
-  - Wobble Bass (dubstep-style)
-  - Piano, Organ, Strings
-  - Electric Piano, Bass Guitar
-  - Flute, Brass
-* **User Presets**: Save your custom sounds with names and descriptions
-* **Export/Import**: Share settings as JSON files
-* **Auto-Save**: Current settings automatically persist in browser storage
+- **Factory Presets**: 11 built-in sounds (pads, bass, leads, keys, etc).
+- **User Presets**: Save, export, and import your own sounds (JSON).
+- **Auto-Save**: Settings persist in browser storage.
 
 ### Input Methods
 
-* **Visual Keyboard**: On-screen piano keyboard with mouse/touch support
-* **Computer Keyboard**: 
-  - Lower octave: Z-M keys (white), S-J keys (black)
-  - Upper octave: Q-U keys (white), 2-7 keys (black)
-* **MIDI Support**: Connect external MIDI keyboards and controllers
-* **Octave Selection**: Independently adjust upper and lower keyboard octaves (2-6)
+- **Visual Keyboard**: On-screen piano, mouse/touch support.
+- **Computer Keyboard**: Play notes with QWERTY keys (see shortcuts).
+- **MIDI Support**: Plug in external keyboards/controllers.
+- **Octave Selection**: Set upper/lower keyboard octaves.
 
 ### Recording
 
-* **Audio Recording**: Capture your performance and download as WebM audio files
-* **One-Click Recording**: Start/stop recording with a single button
+- **Audio Recording**: Capture and download your performance (WebM audio).
+- **One-Click Recording**: Simple record/stop button.
+
+---
 
 ## Requirements
 
-* [Bun](https://bun.sh) v1.3.0 or higher
-* Modern web browser with Web Audio API support (Chrome, Firefox, Safari, Edge)
+- [Bun](https://bun.sh) v1.3.0 or higher
+- Modern browser with Web Audio API (Chrome, Firefox, Safari, Edge)
+
+---
 
 ## Installation
 
@@ -66,97 +61,90 @@ envelopes, LFO modulation, and delay effects.
 bun install
 ```
 
+---
+
 ## Development
 
-Run the development server with hot-reload:
+Start the dev server (with hot reload):
 
 ```bash
 bun run dev
 ```
 
-The synth will be available at `http://localhost:5173`
+Open [http://localhost:5173](http://localhost:5173) in your browser.
+
+---
 
 ## Production Build
 
-Build the project for production:
-
 ```bash
 bun run build
-```
-
-Preview the production build:
-
-```bash
 bun run preview
 ```
 
-## Usage Guide
+## Running Tests
 
-### Getting Started with Presets
+```bash
+bun test
+```
 
-1. **Load a Preset**: Select from the factory presets dropdown (Pad Sound, Pluck Bass, Lead Synth, etc.)
-2. **Click "Load"**: Apply the preset settings to hear the sound
-3. **Experiment**: Adjust any parameters to customize the sound
-4. **Save Custom Presets**: Click "Save As..." to store your modifications
-5. **Export/Import**: Share your settings as JSON files with others
+See architecture.md for advanced patterns and troubleshooting.
 
-### Basic Sound Design
+---
 
-1. **Start Simple**: Begin with one oscillator to understand the basic sound
-2. **Add Oscillators**: Click "Add Oscillator" to layer sounds
-3. **Detune for Richness**: Slightly detune multiple oscillators (±10-20 cents) for a fuller sound
-4. **Shape with Envelopes**: Adjust ADSR to control how notes start and end
-5. **Filter Brightness**: Lower the filter cutoff for darker tones, raise it for brighter sounds
-6. **Add Movement**: Use LFO modulation for vibrato and filter wobble effects
-7. **Add Movement and Space**: Use chorus for width and thickness, reverb for room ambience, and delay for rhythmic echoes
+## Architecture Overview
 
-### Keyboard Shortcuts
+### Modern Modular Design
 
-* **Z-M**: Lower octave white keys (C-B)
-* **S, D, G, H, J**: Lower octave black keys (sharps/flats)
-* **Q-U**: Upper octave white keys (C-B)
-* **2, 3, 5, 6, 7**: Upper octave black keys (sharps/flats)
+- **Modules**: Each synthesis/effect block is a self-contained TypeScript class (zero-parameter constructor, no manual DOM wiring).
+- **Native Web Components**: UI is built from reusable, framework-free custom elements.
+- **Centralised UIConfigService**: All modules access UI controls and bind parameters declaratively, not imperatively.
+- **EffectsManager**: Orchestrates the audio effects chain, handles registration, ordering, and routing.
+- **Dynamic Banks**: Oscillator and LFO banks support dynamic add/remove with unique IDs and declarative parameter binding.
+- **Event-Driven**: UI changes propagate via standard DOM events; modules respond via helpers.
+- **Testable**: Architecture is designed for easy mocking and automated testing.
 
-### Architecture Overview
+### Project Structure
 
-**Core Layer** (`core/`)
-* Contains the fundamental synthesiser logic
-* `synth.ts` orchestrates all modules and manages the audio context
-* `oscillator-bank.ts` handles multiple oscillator creation and management
-* `keys.ts` maps keyboard inputs to musical frequencies
-* `settings-manager.ts` manages presets, settings persistence, and import/export
+```
+src/
+├── core/         # Synth engine, effects manager, voice allocation, settings
+├── modules/      # Audio modules (oscillators, envelopes, effects, etc.)
+├── components/   # Web components (atoms, molecules, organisms)
+├── handlers/     # UI and device event handlers
+├── services/     # UIConfigService and helpers
+└── main.ts       # App entry point
+test/
+├── core/         # Core logic tests
+├── modules/      # Module tests
+└── fixtures/     # Mocks for DOM and Web Audio API
+```
 
-**Audio Layer** (`audio/`)
-* Handles audio input/output concerns
-* `midi.ts` manages MIDI device connections and note events
+For a full developer guide and patterns, see architecture.md.
 
-**Modules Layer** (`modules/`)
-* Self-contained audio processing units
-* Each module encapsulates a specific synthesis component (envelopes, filters, LFO, etc.)
-* Modules expose configuration interfaces and Web Audio node connections
-* Designed for reusability and testability
-
-**Components Layer** (`components/`)
-* Custom web components for the user interface
-* Built with native Web Components API
-* Encapsulate both UI and behaviour
-* `preset-selector.ts` provides the preset management interface
-
-**Handlers Layer** (`handlers/`)
-* Event handlers and UI interaction logic
-* Separated from core audio logic for better maintainability
-* Each handler manages a specific aspect of user interaction
+---
 
 ## Browser Compatibility
 
-* Chrome/Edge: Full support
-* Firefox: Full support
-* Safari: Full support (MIDI may require user permission)
+- **Chrome/Edge**: Full support
+- **Firefox**: Full support
+- **Safari**: Full support (MIDI may require permission)
 
-## License
-
-MIT
+---
 
 ## Acknowledgments
 
 Built with the Web Audio API and inspired by classic hardware synthesisers.
+
+---
+
+## Resources
+
+- [Web Audio API @ MDN](https://developer.mozilla.org/en-US/docs/Web/API/Web_Audio_API)
+- [TypeScript Handbook](https://www.typescriptlang.org/docs/handbook/intro.html)
+- [Web Components](https://developer.mozilla.org/en-US/docs/Web/Web_Components)
+- [Bun Test Runner](https://bun.sh/docs/cli/test)
+
+---
+
+*See architecture.md for in-depth developer documentation, patterns, and troubleshooting.*
