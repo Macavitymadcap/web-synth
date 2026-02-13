@@ -1,4 +1,4 @@
-export class MidiHandler {
+export class MidiService {
   private readonly synth: any;
   private midiAccess: MIDIAccess | null = null;
   private readonly activeNotes: Map<number, string> = new Map();

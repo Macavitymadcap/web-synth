@@ -1,4 +1,4 @@
-import type { OscillatorBank } from "./oscillator-bank";
+import type { OscillatorBank, OscillatorConfig } from "./oscillator-bank";
 import type { BankSection } from "../components/molecules/bank-section";
 import type { RangeControl } from "../components/atoms/range-control";
 import {
@@ -30,13 +30,13 @@ const STORAGE_KEY = "web-synth-settings";
 const USER_PRESETS_KEY = "web-synth-user-presets";
 
 export class SettingsManager {
-  private oscillatorBank?: OscillatorBank;
-  private effectsManager?: EffectsManager;
-  private ampEnvelope?: EnvelopeModule;
-  private filterModule?: FilterModule;
-  private filterEnvelope?: EnvelopeModule;
-  private noiseModule?: NoiseModule;
-  private masterModule?: MasterModule;
+  private readonly oscillatorBank?: OscillatorBank;
+  private readonly effectsManager?: EffectsManager;
+  private readonly ampEnvelope?: EnvelopeModule;
+  private readonly filterModule?: FilterModule;
+  private readonly filterEnvelope?: EnvelopeModule;
+  private readonly noiseModule?: NoiseModule;
+  private readonly masterModule?: MasterModule;
 
   configure(deps: {
     oscillatorBank: OscillatorBank;
@@ -76,7 +76,7 @@ export class SettingsManager {
   }
 
   private getMasterSettings(): MasterSettings {
-    const volume = this.masterModule?.getConfig().volume ?? 0.5;
+    const volume = this.masterModule?.getConfig().volume ?? 0.3;
     const polyEl = UIConfigService.tryGetControl<HTMLInputElement>("poly");
     return {
       polyphonic: polyEl?.checked ?? true,
@@ -109,7 +109,7 @@ export class SettingsManager {
 
   private getFilterSettings(): FilterSettings {
     const filter = this.filterModule?.getConfig() ?? {
-      type: "lowpass" as FilterType, cutoff: 2000, resonance: 1, envelopeAmount: 2000
+      type: "lowpass" as FilterType, cutoff: 2000, resonance: 1, amount: 2000
     };
     const env = this.filterEnvelope?.getConfig() ?? {
       attack: 0.1, decay: 0.3, sustain: 0.5, release: 0.5
@@ -118,7 +118,7 @@ export class SettingsManager {
       type: filter.type as FilterType,
       cutoff: filter.cutoff,
       resonance: filter.resonance,
-      envAmount: filter.envelopeAmount,
+      amount: filter.amount,
       ...env,
     };
   }
@@ -194,7 +194,6 @@ export class SettingsManager {
   applySettings(settings: SynthSettings): void {
     this.applyMasterSettings(settings.master);
     this.applyOscillatorSettings(settings.oscillators);
-    this.updateOscillatorBank();
     this.applyEnvelopeSettings(settings.envelope);
     this.applyFilterSettings(settings.filter);
     this.applyLFOSettings(settings.lfos);
@@ -229,32 +228,16 @@ export class SettingsManager {
     }
   }
 
-  private applyOscillatorSettings(oscillators: Array<{ waveform: OscillatorType; detune: number; level: number }>): void {
+    private applyOscillatorSettings(oscillators: Array<{ waveform: OscillatorType; detune: number; level: number }>): void {
     const section = document.querySelector("bank-section[prefix='osc']") as BankSection;
     if (!section) return;
-
-    // Ensure we have at least one oscillator
-    const oscToAdd = oscillators.length > 0 ? oscillators : [{ waveform: "sawtooth" as OscillatorType, detune: 0, level: 1 }];
-
+  
     // Replace all items
-    section.setItems(oscToAdd);
-  }
-
-  private updateOscillatorBank(): void {
+    section.setItems(oscillators);
+  
+    // Immediately sync OscillatorBank configs
     if (this.oscillatorBank) {
-      // Give the UI time to update
-      setTimeout(() => {
-        const section = document.querySelector("bank-section[prefix='osc']") as BankSection;
-        if (section && typeof section.getItems === 'function') {
-          const items = section.getItems();
-          const configs = items.map(item => ({
-            waveform: item.waveform as OscillatorType,
-            detune: Number(item.detune),
-            level: Number(item.level)
-          }));
-          this.oscillatorBank!.setConfigs(configs);
-        }
-      }, 0);
+      this.oscillatorBank.setConfigs(section.getItems() as OscillatorConfig[]);
     }
   }
 
@@ -274,7 +257,7 @@ export class SettingsManager {
 
     this.setControlValue("filter-cutoff", settings.cutoff);
     this.setControlValue("filter-resonance", settings.resonance);
-    this.setControlValue("filter-env-amount", settings.envAmount);
+    this.setControlValue("filter-amount", settings.amount);
     this.setControlValue("filter-attack", settings.attack);
     this.setControlValue("filter-decay", settings.decay);
     this.setControlValue("filter-sustain", settings.sustain);

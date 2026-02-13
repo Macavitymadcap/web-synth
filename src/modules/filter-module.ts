@@ -5,7 +5,7 @@ export type FilterConfig = {
   type: BiquadFilterType;
   cutoff: number;
   resonance: number;
-  envelopeAmount: number;
+  amount: number;
 };
 
 export type FilterInstance = {
@@ -23,7 +23,7 @@ export class FilterModule {
     type: "filter-type",
     cutoff: "filter-cutoff",
     resonance: "filter-resonance",
-    envelopeAmount: "filter-env-amount",
+    amount: "filter-amount",
   };
 
   constructor(filterEnvelope: EnvelopeModule) {
@@ -39,19 +39,19 @@ export class FilterModule {
       },
       cutoff: this.elementIds.cutoff,
       resonance: this.elementIds.resonance,
-      envelopeAmount: this.elementIds.envelopeAmount,
+      amount: this.elementIds.amount,
     });
 
     return {
       type: (cfg.type as BiquadFilterType) || "lowpass",
       cutoff: cfg.cutoff,
       resonance: cfg.resonance,
-      envelopeAmount: cfg.envelopeAmount,
+      amount: cfg.amount,
     };
   }
 
   createFilter(audioCtx: AudioContext, lfoToFilter?: GainNode): FilterInstance {
-    const { type, cutoff, resonance, envelopeAmount } = this.getConfig();
+    const { type, cutoff, resonance, amount } = this.getConfig();
 
     const filter = audioCtx.createBiquadFilter();
     filter.type = type;
@@ -59,7 +59,7 @@ export class FilterModule {
     filter.Q.value = resonance;
 
     const envelopeGain = audioCtx.createGain();
-    envelopeGain.gain.value = envelopeAmount;
+    envelopeGain.gain.value = amount;
     envelopeGain.connect(filter.frequency);
 
     if (lfoToFilter) {
@@ -70,12 +70,12 @@ export class FilterModule {
   }
 
   applyEnvelope(filterInstance: FilterInstance, startTime: number): void {
-    const { envelopeAmount } = this.getConfig();
+    const { amount } = this.getConfig();
     this.filterEnvelope.applyEnvelope(
       filterInstance.envelopeGain.gain,
       startTime,
       0,
-      envelopeAmount
+      amount
     );
   }
 

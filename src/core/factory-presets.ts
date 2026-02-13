@@ -13,7 +13,7 @@ export const FACTORY_PRESETS: Preset[] = [
       ],
       envelope: { attack: 0.8, decay: 0.4, sustain: 0.85, release: 1.2 },
       filter: {
-        type: "lowpass", cutoff: 1200, resonance: 0.5, envAmount: 800,
+        type: "lowpass", cutoff: 1200, resonance: 0.5, amount: 800,
         attack: 1, decay: 0.5, sustain: 0.7, release: 1
       },
       lfos: [
@@ -50,7 +50,7 @@ export const FACTORY_PRESETS: Preset[] = [
       ],
       envelope: { attack: 0.005, decay: 0.15, sustain: 0.8, release: 0.2 },
       filter: {
-        type: "lowpass", cutoff: 300, resonance: 0.5, envAmount: 200,
+        type: "lowpass", cutoff: 300, resonance: 0.5, amount: 200,
         attack: 0.01, decay: 0.2, sustain: 0.4, release: 0.15
       },
       lfos: [
@@ -87,7 +87,7 @@ export const FACTORY_PRESETS: Preset[] = [
       ],
       envelope: { attack: 0.01, decay: 0.1, sustain: 0.9, release: 0.25 },
       filter: {
-        type: "notch", cutoff: 4000, resonance: 2, envAmount: 2500,
+        type: "notch", cutoff: 4000, resonance: 2, amount: 2500,
         attack: 0.02, decay: 0.15, sustain: 0.7, release: 0.2
       },
       lfos: [
@@ -124,7 +124,7 @@ export const FACTORY_PRESETS: Preset[] = [
       ],
       envelope: { attack: 0.001, decay: 0.3, sustain: 0.15, release: 0.1 },
       filter: {
-        type: "bandpass", cutoff: 800, resonance: 3, envAmount: 3000,
+        type: "bandpass", cutoff: 800, resonance: 3, amount: 3000,
         attack: 0.001, decay: 0.2, sustain: 0.1, release: 0.1
       },
       lfos: [
@@ -160,7 +160,7 @@ export const FACTORY_PRESETS: Preset[] = [
       ],
       envelope: { attack: 0.005, decay: 0.05, sustain: 1, release: 0.1 },
       filter: {
-        type: "lowpass", cutoff: 400, resonance: 12, envAmount: 0,
+        type: "lowpass", cutoff: 400, resonance: 12, amount: 0,
         attack: 0.01, decay: 0.1, sustain: 0.5, release: 0.1
       },
       lfos: [
@@ -197,7 +197,7 @@ export const FACTORY_PRESETS: Preset[] = [
       ],
       envelope: { attack: 0.008, decay: 0.6, sustain: 0.4, release: 0.5 },
       filter: {
-        type: "lowshelf", cutoff: 3500, resonance: 0.8, envAmount: 500,
+        type: "lowshelf", cutoff: 3500, resonance: 0.8, amount: 500,
         attack: 0.01, decay: 0.4, sustain: 0.6, release: 0.4
       },
       lfos: [
@@ -235,7 +235,7 @@ export const FACTORY_PRESETS: Preset[] = [
       ],
       envelope: { attack: 0.01, decay: 0.05, sustain: 1, release: 0.05 },
       filter: {
-        type: "allpass", cutoff: 8000, resonance: 0.5, envAmount: 0,
+        type: "allpass", cutoff: 8000, resonance: 0.5, amount: 0,
         attack: 0.01, decay: 0.1, sustain: 1, release: 0.05
       },
       lfos: [
@@ -273,7 +273,7 @@ export const FACTORY_PRESETS: Preset[] = [
       ],
       envelope: { attack: 1.2, decay: 0.3, sustain: 0.9, release: 1.5 },
       filter: {
-        type: "lowpass", cutoff: 2500, resonance: 0.8, envAmount: 400,
+        type: "lowpass", cutoff: 2500, resonance: 0.8, amount: 400,
         attack: 1, decay: 0.4, sustain: 0.85, release: 1.2
       },
       lfos: [
@@ -311,7 +311,7 @@ export const FACTORY_PRESETS: Preset[] = [
       ],
       envelope: { attack: 0.06, decay: 0.2, sustain: 0.9, release: 0.25 },
       filter: {
-        type: "bandpass", cutoff: 2800, resonance: 3, envAmount: 2000,
+        type: "bandpass", cutoff: 2800, resonance: 3, amount: 2000,
         attack: 0.05, decay: 0.25, sustain: 0.75, release: 0.2
       },
       lfos: [
@@ -347,7 +347,7 @@ export const FACTORY_PRESETS: Preset[] = [
       ],
       envelope: { attack: 0.12, decay: 0.08, sustain: 0.85, release: 0.35 },
       filter: {
-        type: "lowshelf", cutoff: 3500, resonance: 0.5, envAmount: 300,
+        type: "lowshelf", cutoff: 3500, resonance: 0.5, amount: 300,
         attack: 0.1, decay: 0.1, sustain: 0.8, release: 0.3
       },
       lfos: [
@@ -384,7 +384,7 @@ export const FACTORY_PRESETS: Preset[] = [
       ],
       envelope: { attack: 0.002, decay: 0.25, sustain: 0.2, release: 0.15 },
       filter: {
-        type: "highpass", cutoff: 3500, resonance: 4, envAmount: 3500,
+        type: "highpass", cutoff: 3500, resonance: 4, amount: 3500,
         attack: 0.002, decay: 0.2, sustain: 0.2, release: 0.1
       },
       lfos: [
@@ -422,7 +422,7 @@ export const FACTORY_PRESETS: Preset[] = [
       ],
       envelope: { attack: 0.001, decay: 1.2, sustain: 0.3, release: 0.8 },
       filter: {
-        type: "notch", cutoff: 8000, resonance: 0.5, envAmount: 0,
+        type: "notch", cutoff: 8000, resonance: 0.5, amount: 0,
         attack: 0.001, decay: 0.8, sustain: 0.5, release: 0.6
       },
       lfos: [
@@ -459,7 +459,7 @@ export const FACTORY_PRESETS: Preset[] = [
       ],
       envelope: { attack: 0.01, decay: 0.08, sustain: 0.7, release: 0.18 },
       filter: {
-        type: "peaking", cutoff: 3200, resonance: 1.5, envAmount: 1200,
+        type: "peaking", cutoff: 3200, resonance: 1.5, amount: 1200,
         attack: 0.01, decay: 0.1, sustain: 0.6, release: 0.12
       },
       lfos: [
@@ -496,7 +496,7 @@ export const FACTORY_PRESETS: Preset[] = [
       ],
       envelope: { attack: 0.005, decay: 0.12, sustain: 0.3, release: 0.18 },
       filter: {
-        type: "lowpass", cutoff: 1800, resonance: 2.2, envAmount: 800,
+        type: "lowpass", cutoff: 1800, resonance: 2.2, amount: 800,
         attack: 0.01, decay: 0.1, sustain: 0.2, release: 0.1
       },
       lfos: [
@@ -532,7 +532,7 @@ export const FACTORY_PRESETS: Preset[] = [
       ],
       envelope: { attack: 1.8, decay: 0.4, sustain: 0.85, release: 2.5 },
       filter: {
-        type: "highpass", cutoff: 2000, resonance: 1.5, envAmount: 1500,
+        type: "highpass", cutoff: 2000, resonance: 1.5, amount: 1500,
         attack: 1.5, decay: 0.8, sustain: 0.75, release: 2
       },
       lfos: [
@@ -570,7 +570,7 @@ export const FACTORY_PRESETS: Preset[] = [
       ],
       envelope: { attack: 1.2, decay: 0.5, sustain: 0.9, release: 1.8 },
       filter: {
-        type: "lowpass", cutoff: 1500, resonance: 0.8, envAmount: 600,
+        type: "lowpass", cutoff: 1500, resonance: 0.8, amount: 600,
         attack: 1.5, decay: 0.6, sustain: 0.8, release: 1.5
       },
       lfos: [
@@ -607,7 +607,7 @@ export const FACTORY_PRESETS: Preset[] = [
       ],
       envelope: { attack: 0.002, decay: 0.08, sustain: 0.9, release: 0.15 },
       filter: {
-        type: "lowpass", cutoff: 600, resonance: 4, envAmount: 400,
+        type: "lowpass", cutoff: 600, resonance: 4, amount: 400,
         attack: 0.002, decay: 0.1, sustain: 0.5, release: 0.1
       },
       lfos: [
@@ -645,7 +645,7 @@ export const FACTORY_PRESETS: Preset[] = [
       ],
       envelope: { attack: 0.005, decay: 0.5, sustain: 0.35, release: 0.6 },
       filter: {
-        type: "lowshelf", cutoff: 3200, resonance: 0.7, envAmount: 400,
+        type: "lowshelf", cutoff: 3200, resonance: 0.7, amount: 400,
         attack: 0.01, decay: 0.35, sustain: 0.5, release: 0.5
       },
       lfos: [
@@ -683,7 +683,7 @@ export const FACTORY_PRESETS: Preset[] = [
       ],
       envelope: { attack: 0.01, decay: 1.5, sustain: 0.25, release: 1.2 },
       filter: {
-        type: "highshelf", cutoff: 4000, resonance: 0.6, envAmount: 0,
+        type: "highshelf", cutoff: 4000, resonance: 0.6, amount: 0,
         attack: 0.01, decay: 1, sustain: 0.4, release: 1
       },
       lfos: [
@@ -721,7 +721,7 @@ export const FACTORY_PRESETS: Preset[] = [
       ],
       envelope: { attack: 0.8, decay: 0.4, sustain: 0.85, release: 1.2 },
       filter: {
-        type: "lowpass", cutoff: 1200, resonance: 0.5, envAmount: 800,
+        type: "lowpass", cutoff: 1200, resonance: 0.5, amount: 800,
         attack: 1, decay: 0.5, sustain: 0.7, release: 1
       },
       lfos: [

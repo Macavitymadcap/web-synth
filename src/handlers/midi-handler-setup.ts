@@ -1,15 +1,15 @@
 import type { Synth } from "../core/synth";
-import { MidiHandler } from "../audio/midi";
+import { MidiService } from "../services/midi-service";
 
 export function createMidiToggleHandler(
   synth: Synth,
   midiToggle: HTMLInputElement,
 ) {
-  let midiHandler: MidiHandler | null = null;
+  let midiHandler: MidiService | null = null;
 
   return async () => {
     if (midiToggle.checked) {
-      midiHandler ??= new MidiHandler(synth);
+      midiHandler ??= new MidiService(synth);
       
       const success = await midiHandler.initialize();
       if (!success) {
