@@ -28,7 +28,7 @@ export class MasterControls extends HTMLElement {
           <controls-group>
             <toggle-switch id="midi-enabled" label-on="MIDI: Connected" label-off="MIDI: Disabled"></toggle-switch>
             <toggle-switch id="poly" label-on="Polyphony: On" label-off="Polyphony: Off" checked></toggle-switch>
-            <range-control label="Master Volume" id="master-volume" min="0" max="1" step="0.01" value="0.3"
+            <range-control label="Master Volume" id="master-volume" min="0" max="1" step="0.01" value="0.5"
               formatter="%"></range-control>
             <neon-button id="record" variant="record">Rec ●</neon-button>
           </controls-group>

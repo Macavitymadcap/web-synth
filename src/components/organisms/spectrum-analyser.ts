@@ -18,14 +18,17 @@ export class SpectrumAnalyser extends HTMLElement {
 
   connectedCallback() {
     GlobalStyleService.ensureStyles(STYLE_ID, styles);
-    this.innerHTML = `
+    this.innerHTML = /* html */`
       <module-section id="spectrum-analyser" title="Analyser">
         <div slot="instructions">
-          <instructions-list>
+          <p>
+            Real-time waveform visualisation showing the frequency of the audio.
+          </p>
+          <instruction-list>
             <instruction-item label="Frequency Spectrum">
               Visualizes the real-time frequency content of the audio signal.
             </instruction-item>
-          </instructions-list>
+          </instruction-list>
         </div>
         <div slot="content">
           <canvas class="analyser-canvas"></canvas>

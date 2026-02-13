@@ -21,12 +21,12 @@ export class OscilloscopeDisplay extends HTMLElement {
     this.innerHTML = `
       <module-section id="oscilloscope-section" title="Oscilloscope">
         <div slot="instructions">
-          <p>Real-time waveform visualization showing the time-domain shape of the audio signal.</p>
-          <instructions-list>
+          <p>Real-time waveform visualisation showing the time-domain shape of the audio signal.</p>
+          <instruction-list>
             <instruction-item label="Waveform Display">
               Shows how the audio signal varies over time, useful for understanding sound shape and effects.
             </instruction-item>
-          </instructions-list>
+          </instruction-list>
         </div>
         <div slot="content">
           <canvas class="oscilloscope-canvas"></canvas>

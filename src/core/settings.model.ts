@@ -27,7 +27,7 @@ export type FilterSettings = {
   type: FilterType;
   cutoff: number;
   resonance: number;
-  envAmount: number;
+  amount: number;
   attack: number;
   decay: number;
   sustain: number;

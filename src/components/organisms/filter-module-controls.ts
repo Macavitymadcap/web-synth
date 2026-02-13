@@ -26,7 +26,7 @@ export class FilterModuleControls extends HTMLElement {
             <range-control label="Cutoff" id="filter-cutoff" min="20" max="20000" step="1" value="2000"></range-control>
             <range-control label="Resonance" id="filter-resonance" min="0.1" max="30" step="0.1"
               value="1"></range-control>
-            <range-control label="Envelope Amount" id="filter-env-amount" min="0" max="10000" step="10"
+            <range-control label="Envelope Amount" id="filter-amount" min="0" max="10000" step="10"
               value="2000"></range-control>
           </controls-group>
 
