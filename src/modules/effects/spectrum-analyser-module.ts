@@ -2,6 +2,7 @@ import type { BaseEffectModule, EffectNodes } from './base-effect-module';
 import { UIConfigService } from '../../services/ui-config-service';
 
 export type SpectrumAnalyserConfig = {
+  enabled: boolean;
   fftSize: number;
   smoothingTimeConstant: number;
   minFreq: number;
@@ -17,6 +18,7 @@ export class SpectrumAnalyserModule implements BaseEffectModule {
 
   // UI element IDs (optional controls)
   private readonly elementIds = {
+    enabled: 'spectrum-analyser-enabled',
     fftSize: 'spectrum-fft-size',
     smoothingTimeConstant: 'spectrum-smoothing',
     minFreq: 'spectrum-min-freq',
@@ -24,6 +26,7 @@ export class SpectrumAnalyserModule implements BaseEffectModule {
   };
 
   private config: SpectrumAnalyserConfig = {
+    enabled: true,
     fftSize: 2048,
     smoothingTimeConstant: 0.8,
     minFreq: 20,
@@ -38,6 +41,10 @@ export class SpectrumAnalyserModule implements BaseEffectModule {
   getConfig(): SpectrumAnalyserConfig {
     try {
       const cfg = UIConfigService.getConfig({
+        enabled: {
+          id: this.elementIds.enabled,
+          transform: () => UIConfigService.getInput(this.elementIds.enabled).checked
+        },
         fftSize: {
           id: this.elementIds.fftSize,
           transform: (v) => this.toValidFftSize(Number.parseInt(v, 10))
@@ -57,6 +64,7 @@ export class SpectrumAnalyserModule implements BaseEffectModule {
       });
 
       const next: SpectrumAnalyserConfig = {
+        enabled: cfg.enabled,
         fftSize: cfg.fftSize,
         smoothingTimeConstant: cfg.smoothingTimeConstant,
         minFreq: cfg.minFreq,
@@ -86,7 +94,11 @@ export class SpectrumAnalyserModule implements BaseEffectModule {
     this.analyserNode.connect(this.outputGain);
     this.outputGain.connect(destination);
 
-    this.startVisualization();
+    if (this.config.enabled) {
+      this.startVisualization();
+    } else {
+      this.clearCanvas();
+    }
 
     return {
       input: this.inputGain,
@@ -108,6 +120,18 @@ export class SpectrumAnalyserModule implements BaseEffectModule {
 
   private setupParameterListeners(): void {
     // Bind optional UI controls if they exist
+    if (UIConfigService.exists(this.elementIds.enabled)) {
+      UIConfigService.onInput(this.elementIds.enabled, (el) => {
+        this.config.enabled = el.checked;
+        if (this.config.enabled) {
+          this.startVisualization();
+        } else {
+          this.stopVisualization();
+          this.clearCanvas();
+        }
+      }, 'change');
+    }
+
     if (UIConfigService.exists(this.elementIds.smoothingTimeConstant)) {
       UIConfigService.onInput(this.elementIds.smoothingTimeConstant, (_el, value) => {
         const s = this.clamp(Number.parseFloat(value), 0, 1);

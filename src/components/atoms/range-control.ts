@@ -86,22 +86,9 @@ range-control {
 range-control label {
   display: flex;
   flex-direction: column;
-  font-size: 0.75rem;
-  color: var(--text-secondary);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  font-weight: 600;
   gap: 0.5rem;
-  text-shadow: 0 0 5px var(--text-secondary);
 }
 
-range-control .range-label {
-  display: block;
-  text-align: center;
-  width: 100%;
-}
-
-/* NEW: Stack input and value together */
 range-control .range-stack {
   display: flex;
   flex-direction: column;
@@ -212,7 +199,7 @@ export class RangeControl extends HTMLElement {
 
     this.innerHTML = `
       <label>
-        <span class="range-label">${label}</span>
+        <neon-label>${label}</neon-label>
         <div class="range-stack">
           <input type="range" id="${id}" min="${min}" max="${max}" step="${step}" value="${value}">
           <span class="range-value"></span>

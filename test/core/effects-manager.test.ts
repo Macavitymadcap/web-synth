@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from 'bun:test';
+import { describe, it, expect, beforeEach, jest } from 'bun:test';
 import { EffectsManager } from '../../src/core/effects-manager';
 import { MockEffectModule } from '../fixtures/mock-effect-module';
 
@@ -235,6 +235,41 @@ describe('EffectsManager - Business Logic', () => {
           category: 'modulation'
         });
       }).toThrow('Cannot register effects after initialization');
+    });
+
+    it('does not connect an effect output twice when the effect initializes its own destination', () => {
+      const outputConnect = jest.fn();
+      const effect = {
+        initializeCalled: false,
+        initialize(_audioCtx: any, destination: AudioNode) {
+          this.initializeCalled = true;
+          const output = { connect: outputConnect };
+          output.connect(destination);
+          return {
+            input: { connect: jest.fn() },
+            output
+          };
+        },
+        getInput: () => null,
+        getOutput: () => null,
+        isInitialized() {
+          return this.initializeCalled;
+        },
+        getConfig: () => ({})
+      };
+
+      manager.register(effect, {
+        id: 'self-connecting',
+        name: 'Self Connecting',
+        order: 100,
+        category: 'modulation'
+      });
+
+      const mockCtx = { createGain: () => ({ connect: jest.fn() }) } as any;
+      const mockDest = { connect: jest.fn() } as any;
+      manager.initialize(mockCtx, mockDest);
+
+      expect(outputConnect).toHaveBeenCalledTimes(1);
     });
   });
   

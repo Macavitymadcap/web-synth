@@ -66,15 +66,6 @@ neon-select {
   gap: 0.5rem;
 }
 
-neon-select .neon-select-label {
-  font-size: 0.75rem;
-  color: var(--text-secondary);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  font-weight: 600;
-  text-shadow: 0 0 5px var(--text-secondary);
-}
-
 neon-select select {
   padding: 0.5rem;
   background: rgba(10, 0, 21, 0.8);
@@ -127,7 +118,7 @@ export class NeonSelect extends HTMLElement {
 
     const optionsHtml = this.buildOptions(type, selectedValue);
     const labelHtml = label
-      ? `<span class="neon-select-label">${label}</span>`
+      ? `<neon-label>${label}</neon-label>`
       : "";
 
     this.innerHTML = `

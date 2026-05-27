@@ -9,6 +9,7 @@ export type EQBand = {
 };
 
 export type ParametricEQConfig = {
+  enabled: boolean;
   lowShelf: EQBand;
   lowMid: EQBand;
   mid: EQBand;
@@ -63,6 +64,7 @@ export class ParametricEQModule implements BaseEffectModule {
 
   getConfig(): ParametricEQConfig {
     return {
+      enabled: this.getEnabled(),
       lowShelf: {
         frequency: this.getParam(this.elementIds.lowShelfFreq, 80),
         gain: this.getParam(this.elementIds.lowShelfGain, 0),
@@ -123,6 +125,7 @@ export class ParametricEQModule implements BaseEffectModule {
 
     // Setup parameter listeners AFTER nodes are created
     this.setupParameterListeners();
+    this.setBypass(!config.enabled);
 
     return {
       input: this.inputGain,
@@ -242,6 +245,14 @@ export class ParametricEQModule implements BaseEffectModule {
       return Number.parseFloat(input.value);
     } catch {
       return defaultValue;
+    }
+  }
+
+  private getEnabled(): boolean {
+    try {
+      return UIConfigService.getInput(this.elementIds.enabled).checked;
+    } catch {
+      return true;
     }
   }
 

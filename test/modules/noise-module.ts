@@ -65,6 +65,15 @@ describe('NoiseModule', () => {
       expect(config.level).toBe(0.7);
       expect(config.enabled).toBe(false);
     });
+
+    it('falls back to a finite default level when the level value is invalid', () => {
+      const levelEl = document.getElementById('noise-level') as HTMLInputElement;
+      levelEl.value = 'not-a-number';
+
+      const config = noiseModule.getConfig();
+
+      expect(config.level).toBe(0.3);
+    });
   });
 
   describe('createNoiseSource', () => {
