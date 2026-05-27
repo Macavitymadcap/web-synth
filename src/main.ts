@@ -123,7 +123,7 @@ const effectsManager = new EffectsManager();
 effectsManager.register(compressorModule, {
   id: 'compressor',
   name: 'Compressor',
-  order: 100, // Should be first in chain to tame dynamics before other effects
+  order: 100,
   category: 'dynamics'
 });
 
@@ -179,7 +179,7 @@ effectsManager.register(distortionModule, {
 effectsManager.register(reverbModule, {
   id: 'reverb',
   name: 'Reverb',
-  order: 60, // Last effect before analyser and oscilloscope, so they can visualize the final output including reverb tail
+  order: 60,
   category: 'time-based'
 });
 
@@ -204,17 +204,14 @@ const lfoControls = document.querySelector("lfo-controls");
 const lfoSection = lfoControls?.querySelector("bank-section") as BankSection;
 let lfoModules: LFOModule[] = [];
 
-// ✅ Don't pass callback yet - we'll handle updates after synth is created
 const lfoManager = createLFOManager(
   lfoSection,
   lfoModules,
-  () => {} // Empty callback for now
+  () => {}
 );
 
-// Initialize LFO manager (populates lfoModules array)
 lfoManager.initialize();
 
-// ✅ Now lfoModules has LFOs, create voice manager
 let voiceManager = new VoiceManager(
   oscillatorBank,
   ampEnvelope,
@@ -230,18 +227,15 @@ const synth = new Synth(
   voiceManager
 );
 
-// ✅ NOW set up the LFO change handler after synth exists
 lfoSection.addEventListener('lfos-changed', () => {
-  // Recreate voice manager with updated LFOs
   const newVoiceManager = new VoiceManager(
     oscillatorBank,
     ampEnvelope,
     filterModule,
-    lfoModules,  // Array was mutated in place
+    lfoModules,
     noiseModule
   );
   
-  // Update synth
   synth.updateLFOs(lfoModules, newVoiceManager);
 });
 
@@ -318,4 +312,3 @@ document.addEventListener('decay-changed', () => {
     reverbModule.updateWithContext(synth.audioCtx);
   }
 });
-

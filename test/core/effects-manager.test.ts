@@ -271,6 +271,66 @@ describe('EffectsManager - Business Logic', () => {
 
       expect(outputConnect).toHaveBeenCalledTimes(1);
     });
+
+    it('uses higher order effects earlier in the signal chain', () => {
+      const compressorInput = { connect: jest.fn(), name: 'compressor-input' };
+      const reverbInput = { connect: jest.fn(), name: 'reverb-input' };
+      const analyserInput = { connect: jest.fn(), name: 'analyser-input' };
+
+      manager.register({
+        initialize: (_ctx: any, destination: AudioNode) => ({
+          input: compressorInput as any,
+          output: { connect: jest.fn(() => destination) } as any
+        }),
+        getInput: () => null,
+        getOutput: () => null,
+        isInitialized: () => true,
+        getConfig: () => ({})
+      }, {
+        id: 'compressor',
+        name: 'Compressor',
+        order: 100,
+        category: 'dynamics'
+      });
+
+      manager.register({
+        initialize: (_ctx: any, destination: AudioNode) => ({
+          input: reverbInput as any,
+          output: { connect: jest.fn(() => destination) } as any
+        }),
+        getInput: () => null,
+        getOutput: () => null,
+        isInitialized: () => true,
+        getConfig: () => ({})
+      }, {
+        id: 'reverb',
+        name: 'Reverb',
+        order: 60,
+        category: 'time-based'
+      });
+
+      manager.register({
+        initialize: (_ctx: any, destination: AudioNode) => ({
+          input: analyserInput as any,
+          output: { connect: jest.fn(() => destination) } as any
+        }),
+        getInput: () => null,
+        getOutput: () => null,
+        isInitialized: () => true,
+        getConfig: () => ({})
+      }, {
+        id: 'analyser',
+        name: 'Analyser',
+        order: 55,
+        category: 'utility'
+      });
+
+      const mockCtx = { createGain: () => ({ connect: jest.fn() }) } as any;
+      const mockDest = { connect: jest.fn() } as any;
+      const chainInput = manager.initialize(mockCtx, mockDest);
+
+      expect(chainInput).toBe(compressorInput as any);
+    });
   });
   
   describe('Status', () => {

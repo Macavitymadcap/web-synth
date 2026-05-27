@@ -96,7 +96,7 @@ describe("FilterModule (UIConfigService)", () => {
     expect(call[0]).toBe(instance.envelopeGain.gain); // AudioParam target
     expect(call[1]).toBe(startTime);
     expect(call[2]).toBe(0); // base
-    expect(call[3]).toBe(500); // envelopeAmount
+    expect(call[3]).toBe(500); // filter amount
   });
 
   it("applyRelease delegates to envelope.applyRelease and returns its value", () => {

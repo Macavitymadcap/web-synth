@@ -14,10 +14,10 @@ Web Synth is a browser-based polyphonic synthesizer built with TypeScript, the W
 - Bind runtime updates using helpers (`bindAudioParams`, `bindGainParam`, `onInput`, `onSelect`)
 
 This architecture provides:
-- ✅ Zero-parameter constructors (eliminates dependency injection)
-- ✅ 90% less boilerplate (declarative binding vs manual event listeners)
-- ✅ Better testability (mock DOM in tests, not fixtures)
-- ✅ Type-safe and flexible (helpers for simple cases, custom handlers for complex)
+- Centralised UI access for most modules
+- Less boilerplate through declarative bindings
+- Better testability through mocked DOM and Web Audio APIs
+- Flexible helpers for simple bindings and custom handlers for complex cases
 
 ## Core Architecture Principles
 
@@ -84,8 +84,11 @@ src/
 │   ├── effects/
 │   │   ├── base-effect-module.ts   # Effect interface
 │   │   ├── chorus-module.ts        # Chorus (UIConfigService)
-...
-│   │   └── tremolo-module.ts       # Analyser (UIConfigService)
+│   │   ├── delay-module.ts         # Delay (UIConfigService)
+│   │   ├── parametric-eq-module.ts # Parametric EQ (UIConfigService)
+│   │   ├── spectrum-analyser-module.ts
+│   │   ├── oscilloscope-module.ts
+│   │   └── tremolo-module.ts       # Tremolo (UIConfigService)
 │   ├── envelope-module.ts          # ADSR envelope (UIConfigService)
 │   ├── filter-module.ts            # Filter (UIConfigService)
 │   ├── lfo-module.ts               # LFO (UIConfigService, dynamic ID)
@@ -216,7 +219,7 @@ Orchestrates the effects chain and provides a unified API:
 ```typescript
 const effectsManager = new EffectsManager();
 
-// Register effects (zero-parameter constructors)
+// Register effects
 effectsManager.register(new CompressorModule(), {
   id: 'compressor',
   name: 'Compressor',
@@ -242,10 +245,10 @@ const modulationEffects = effectsManager.getEffectsByCategory('modulation');
 
 **Effect Order** (higher = earlier in chain):
 - 100: Dynamics (compressor)
-- 90-80: Modulation (chorus, phaser)
-- 70-60: Time-based/distortion (delay, distortion)
-- 50: Reverb
-- 40: Utility (spectrum analyser)
+- 95: Equalization (parametric EQ)
+- 90-75: Modulation (chorus, phaser, tremolo, flanger)
+- 70-60: Time-based/distortion (delay, distortion, reverb)
+- 55-50: Utility visualisers (spectrum analyser, oscilloscope)
 
 ### VoiceManager
 
@@ -890,8 +893,8 @@ graph TD
 ```
 
 **Key points:**
-- Effects initialized in reverse order (build chain backward)
-- Each effect's output connects to next effect's input
+- Effects are initialized from the destination backwards
+- Each effect module connects its own output to the destination it receives
 - LFO modules provide modulation to filter and pitch
 - Voices connect to EffectsManager input
 - Analyser and oscilloscope are passive (lowest order)
@@ -902,7 +905,7 @@ graph TD
 
 ### Module Design
 
-1. **Zero-parameter constructors**: Use UIConfigService, not dependency injection
+1. **Centralised UI access**: Use UIConfigService for DOM-backed settings
 2. **Define `elementIds`**: Centralized, type-safe ID references
 3. **Use UIConfigService helpers**: `bindAudioParams()` for simple cases
 4. **Custom handlers for complex logic**: `onInput()` when updating multiple nodes
@@ -1094,7 +1097,7 @@ export const FACTORY_PRESETS: Preset[] = [
       ],
       envelope: { attack: 0.8, decay: 0.4, sustain: 0.85, release: 1.2 },
       filter: {
-        type: "lowpass", cutoff: 1200, resonance: 0.5, envAmount: 800,
+        type: "lowpass", cutoff: 1200, resonance: 0.5, amount: 800,
         attack: 1, decay: 0.5, sustain: 0.7, release: 1
       },
       lfos: [
@@ -1102,7 +1105,7 @@ export const FACTORY_PRESETS: Preset[] = [
       ],
       chorus: { rate: 0.3, depth: 20, mix: 0.4 },
       tremolo: { rate: 0.4, depth: 0.15 },
-      reverb: { decay: 3.5, reverbMix: 0.45 },
+      reverb: { decay: 3.5, mix: 0.45 },
       delay: { time: 0.5, feedback: 0.25, mix: 0.15 },
       distortion: { drive: 0.5, blend: 0.15 },
       compressor: {
