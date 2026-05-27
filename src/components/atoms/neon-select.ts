@@ -111,7 +111,6 @@ export class NeonSelect extends HTMLElement {
     // Capture child <option> elements before we clear innerHTML
     this.customOptions = this.captureChildOptions();
 
-    const id = this.getAttribute("id") || "";
     const label = this.getAttribute("label") || "";
     const type = this.getAttribute("type");
     const selectedValue = this.getAttribute("value") || "";
@@ -123,7 +122,7 @@ export class NeonSelect extends HTMLElement {
 
     this.innerHTML = `
       ${labelHtml}
-      <select id="${id}">${optionsHtml}</select>
+      <select aria-label="${label || "Select option"}">${optionsHtml}</select>
     `;
 
     this.select = this.querySelector("select")!;

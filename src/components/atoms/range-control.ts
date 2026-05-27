@@ -177,7 +177,6 @@ export class RangeControl extends HTMLElement {
     GlobalStyleService.ensureStyles(STYLE_ID, styles);
 
     const label = this.getAttribute("label") || "";
-    const id = this.getAttribute("id") || "";
     const min = this.getAttribute("min") || "0";
     const max = this.getAttribute("max") || "100";
     const step = this.getAttribute("step") || "1";
@@ -201,7 +200,7 @@ export class RangeControl extends HTMLElement {
       <label>
         <neon-label>${label}</neon-label>
         <div class="range-stack">
-          <input type="range" id="${id}" min="${min}" max="${max}" step="${step}" value="${value}">
+          <input type="range" min="${min}" max="${max}" step="${step}" value="${value}" aria-label="${label}">
           <span class="range-value"></span>
         </div>
       </label>
