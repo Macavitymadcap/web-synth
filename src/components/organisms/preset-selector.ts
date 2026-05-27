@@ -83,7 +83,7 @@ export class PresetSelector extends HTMLElement {
   private render() {
     this.innerHTML = `
       <div class="preset-controls">
-        <select class="preset-select" id="preset-select">
+        <select class="preset-select" id="preset-select" aria-label="Preset">
           <option value="">-- Select Preset --</option>
           <optgroup label="Factory Presets">
             ${FACTORY_PRESETS.map(p => `<option value="factory:${p.name}">${p.name}</option>`).join("")}

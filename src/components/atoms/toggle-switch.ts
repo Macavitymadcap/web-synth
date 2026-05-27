@@ -142,14 +142,13 @@ export class ToggleSwitch extends HTMLElement {
   connectedCallback() {
     GlobalStyleService.ensureStyles(STYLE_ID, styles);
 
-    const id = this.getAttribute("id") || "";
     const isChecked = this.hasAttribute("checked");
 
     this.labelConfig = this.resolveLabelConfig();
 
     this.innerHTML = `
       <label class="toggle-container">
-        <input type="checkbox" id="${id}" ${isChecked ? "checked" : ""}>
+        <input type="checkbox" ${isChecked ? "checked" : ""}>
         <span class="toggle-track">
           <span class="toggle-thumb"></span>
         </span>
@@ -188,13 +187,14 @@ export class ToggleSwitch extends HTMLElement {
   }
 
   private updateLabel(): void {
-    if (this.labelConfig.mode === "static") {
-      this.neonLabel.textContent = this.labelConfig.text;
-    } else {
-      this.neonLabel.textContent = this.checkbox.checked
+    const text = this.labelConfig.mode === "static"
+      ? this.labelConfig.text
+      : this.checkbox.checked
         ? this.labelConfig.onText
         : this.labelConfig.offText;
-    }
+
+    this.neonLabel.textContent = text;
+    this.checkbox.setAttribute("aria-label", text);
   }
 
   getCheckbox(): HTMLInputElement {

@@ -308,6 +308,7 @@ export class EffectModule extends HTMLElement {
     const id = this.getAttribute("id") || "";
     const title = this.getAttribute("title") || "Effect";
     const description = this.getAttribute("description") || "";
+    this.removeAttribute("id");
 
     // Parse child config elements before clearing innerHTML
     const configs = parseChildren(this);

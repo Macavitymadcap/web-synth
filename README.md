@@ -88,6 +88,14 @@ bun run preview
 bun test
 ```
 
+Run the automated accessibility smoke test:
+
+```bash
+bun run test:a11y
+```
+
+This starts a local Vite server, runs Pa11y against the app with WCAG 2 AA checks, and exits non-zero if issues are found.
+
 See architecture.md for advanced patterns and troubleshooting.
 
 ---

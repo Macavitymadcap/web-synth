@@ -281,7 +281,6 @@ neon-button button:focus-visible {
 // ─── Forwarded attributes ───────────────────────────────────
 
 const FORWARDED_ATTRS = [
-  "id",
   "type",
   "popovertarget",
   "popovertargetaction",
