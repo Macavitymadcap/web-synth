@@ -46,9 +46,9 @@ export class EffectsManager {
     this.chainOutput = audioCtx.createGain();
     this.chainOutput.connect(destination);
 
-    // Sort effects by order (highest to lowest, since we build backwards)
+    // Build backwards so lower-order effects are closest to the destination.
     const sortedEffects = Array.from(this.effects.values())
-      .sort((a, b) => b.metadata.order - a.metadata.order);
+      .sort((a, b) => a.metadata.order - b.metadata.order);
 
     // Build chain backwards from destination
     let currentDestination: AudioNode = this.chainOutput;

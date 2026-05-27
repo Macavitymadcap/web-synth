@@ -1,4 +1,3 @@
-// filepath: /Users/dank/Code/personal/web/web-synth/src/modules/noise-module.ts
 import { UIConfigService } from '../services/ui-config-service';
 
 export type NoiseType = 'white' | 'pink' | 'brown';

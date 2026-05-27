@@ -16,7 +16,7 @@ A modern, browser-based polyphonic synthesiser built with the Web Audio API, Typ
 ### Sound Shaping
 
 - **Amplitude Envelope (ADSR)**: Attack, Decay, Sustain, Release controls.
-- **Lowpass Filter**: Adjustable cutoff (20Hz–20kHz) and resonance.
+- **Multimode Filter**: Lowpass, highpass, bandpass, notch, shelving, and peaking modes with cutoff and resonance.
 - **Filter Envelope**: Separate ADSR for dynamic filter sweeps.
 - **LFO Modulation**: Vibrato (pitch), filter wobble, and more.
 
@@ -30,7 +30,7 @@ A modern, browser-based polyphonic synthesiser built with the Web Audio API, Typ
 
 ### Presets & Settings
 
-- **Factory Presets**: 11 built-in sounds (pads, bass, leads, keys, etc).
+- **Factory Presets**: 20 built-in sounds (pads, bass, leads, keys, textures, etc).
 - **User Presets**: Save, export, and import your own sounds (JSON).
 - **Auto-Save**: Settings persist in browser storage.
 
@@ -96,7 +96,7 @@ See architecture.md for advanced patterns and troubleshooting.
 
 ### Modern Modular Design
 
-- **Modules**: Each synthesis/effect block is a self-contained TypeScript class (zero-parameter constructor, no manual DOM wiring).
+- **Modules**: Each synthesis/effect block is a self-contained TypeScript class with centralised UI access and minimal manual DOM wiring.
 - **Native Web Components**: UI is built from reusable, framework-free custom elements.
 - **Centralised UIConfigService**: All modules access UI controls and bind parameters declaratively, not imperatively.
 - **EffectsManager**: Orchestrates the audio effects chain, handles registration, ordering, and routing.

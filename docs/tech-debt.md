@@ -7,4 +7,4 @@
 - Create accompanying docs site that breaks down how to use the synth and how it was built. There should be a chapter/page/section on each module, broken down into:
   - Overview of what the given module is, it's context, history etc.
   - How to use the front end implementation, what settings mean, tips on achieving certain tones/effects etc
-  - Code overview, explaining what parts of the web audio/midi api were used, how it is configured, usage etc.
+  - Code overview, explaining what parts of the Web Audio and Web MIDI APIs were used, how they are configured, usage etc.

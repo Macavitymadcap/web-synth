@@ -97,7 +97,7 @@ describe('SpectrumAnalyserModule (UIConfigService)', () => {
     it('reads config from UI via UIConfigService', () => {
       const config = module.getConfig();
       expect(config).toEqual({
-        enabled: false, // <-- Add this
+        enabled: false,
         fftSize: 4096,
         smoothingTimeConstant: 0.6,
         minFreq: 50,

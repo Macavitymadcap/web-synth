@@ -51,7 +51,7 @@ Educational content following the signal flow diagram. Each section explains the
 API-style reference for developers wanting to understand, extend, or contribute. Draws from `architecture.md` but restructured as a formal spec.
 
 **Sections:**
-1. **Architecture Overview** — Modular design, zero-parameter constructors, UIConfigService pattern, event-driven updates
+1. **Architecture Overview** — Modular design, UIConfigService pattern, event-driven updates
 2. **Project Structure** — Directory layout with descriptions
 3. **UIConfigService API** — Element access, config parsing, binding helpers (`bindAudioParams`, `bindGainParam`, `onInput`, `onSelect`), safe access methods
 4. **Modules**

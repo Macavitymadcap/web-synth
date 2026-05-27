@@ -325,19 +325,15 @@ export class SettingsManager {
     this.setControlValue("flanger-mix", settings.mix);
   }
 
-  // Add this method
   private applyNoiseSettings(settings: NoiseConfig): void {
-    // Set noise type
     const noiseType = document.getElementById("noise-type") as HTMLSelectElement;
     if (noiseType) {
       noiseType.value = settings.type;
       noiseType.dispatchEvent(new Event("change"));
     }
 
-    // Set noise level
     this.setControlValue("noise-level", settings.level);
 
-    // Set noise enabled
     const noiseEnabled = document.getElementById("noise-enabled") as HTMLInputElement;
     if (noiseEnabled) {
       noiseEnabled.checked = settings.enabled;
@@ -349,14 +345,12 @@ export class SettingsManager {
     const element = document.getElementById(id);
     if (!element) return;
 
-    // Check if it's a RangeControl custom element
     if (element.tagName.toLowerCase() === 'range-control') {
       const rangeControl = element as RangeControl;
       if (rangeControl.setValue) {
         rangeControl.setValue(value);
       }
     } else {
-      // It's a regular input element
       const control = element as HTMLInputElement;
       control.value = value.toString();
       control.dispatchEvent(new Event("input", { bubbles: true }));
