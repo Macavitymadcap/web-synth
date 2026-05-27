@@ -38,12 +38,15 @@ export class UIConfigService {
       throw new Error(`Input element with id "${id}" not found`);
     }
     
-    // Check if it's a RangeControl custom element
-    if (element.tagName.toLowerCase() === 'range-control') {
-      const rangeControl = element as any;
-      if (typeof rangeControl.getInput === 'function') {
-        return rangeControl.getInput();
-      }
+    const customElement = element as any;
+    const tagName = element.tagName.toLowerCase();
+
+    if (tagName === 'range-control' && typeof customElement.getInput === 'function') {
+      return customElement.getInput();
+    }
+
+    if (tagName === 'toggle-switch' && typeof customElement.getCheckbox === 'function') {
+      return customElement.getCheckbox();
     }
     
     return element as HTMLInputElement;
@@ -55,7 +58,14 @@ export class UIConfigService {
    * @returns The HTMLSelectElement
    */
   static getSelect(id: string): HTMLSelectElement {
-    return this.getControl<HTMLSelectElement>(id);
+    const element = this.getControl<HTMLElement>(id);
+    const customElement = element as any;
+
+    if (element.tagName.toLowerCase() === 'neon-select' && typeof customElement.getSelect === 'function') {
+      return customElement.getSelect();
+    }
+
+    return element as HTMLSelectElement;
   }
 
   /**

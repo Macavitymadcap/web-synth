@@ -63,9 +63,6 @@ export class EffectsManager {
         throw new Error(`Effect "${metadata.id}" failed to initialize properly`);
       }
 
-      // Connect output to current destination
-      nodes.output.connect(currentDestination);
-      
       // Next effect will connect to this effect's input
       currentDestination = nodes.input;
     }

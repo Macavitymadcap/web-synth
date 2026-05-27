@@ -2,6 +2,7 @@ import type { BaseEffectModule, EffectNodes } from './base-effect-module';
 import { UIConfigService } from '../../services/ui-config-service';
 
 export type OscilloscopeConfig = {
+  enabled: boolean;
   lineColor: string;
   lineWidth: number;
   fftSize: number;
@@ -18,6 +19,7 @@ export class OscilloscopeModule implements BaseEffectModule {
 
   // UI element IDs
   private readonly elementIds = {
+    enabled: 'oscilloscope-enabled',
     lineColor: 'oscilloscope-line-color',
     lineWidth: 'oscilloscope-line-width',
     fftSize: 'oscilloscope-fft-size',
@@ -25,6 +27,7 @@ export class OscilloscopeModule implements BaseEffectModule {
   };
 
   private config: OscilloscopeConfig = {
+    enabled: true,
     lineColor: '#00ffff',
     lineWidth: 2,
     fftSize: 2048,
@@ -40,6 +43,10 @@ export class OscilloscopeModule implements BaseEffectModule {
   getConfig(): OscilloscopeConfig {
     // Try to read from UI; fall back to current config if controls are absent
     try {
+      const enabled = UIConfigService.exists(this.elementIds.enabled)
+        ? UIConfigService.getInput(this.elementIds.enabled).checked
+        : this.config.enabled;
+
       const lineColor = UIConfigService.exists(this.elementIds.lineColor)
         ? UIConfigService.getInput(this.elementIds.lineColor).value
         : this.config.lineColor;
@@ -57,6 +64,7 @@ export class OscilloscopeModule implements BaseEffectModule {
         : this.config.smoothing;
 
       return {
+        enabled,
         lineColor,
         lineWidth,
         fftSize,
@@ -87,7 +95,11 @@ export class OscilloscopeModule implements BaseEffectModule {
     this.analyserNode.connect(this.outputGain);
     this.outputGain.connect(destination);
 
+    if (this.config.enabled) {
       this.startVisualization();
+    } else {
+      this.clearCanvas();
+    }
 
     return {
       input: this.inputGain,
@@ -108,6 +120,18 @@ export class OscilloscopeModule implements BaseEffectModule {
   }
 
   private setupParameterListeners(): void {
+    if (UIConfigService.exists(this.elementIds.enabled)) {
+      UIConfigService.onInput(this.elementIds.enabled, (el) => {
+        this.config.enabled = el.checked;
+        if (this.config.enabled) {
+          this.startVisualization();
+        } else {
+          this.stopVisualization();
+          this.clearCanvas();
+        }
+      }, 'change');
+    }
+
     // Bind line color
     if (UIConfigService.exists(this.elementIds.lineColor)) {
       UIConfigService.onInput(this.elementIds.lineColor, (_el, value) => {

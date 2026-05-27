@@ -41,11 +41,11 @@ describe("FilterModule (UIConfigService)", () => {
     resonanceEl.value = "1.5";
     document.body.appendChild(resonanceEl);
 
-    const envAmtEl = document.createElement("input");
-    envAmtEl.id = "filter-env-amount";
-    envAmtEl.type = "number";
-    envAmtEl.value = "500";
-    document.body.appendChild(envAmtEl);
+    const amountEl = document.createElement("input");
+    amountEl.id = "filter-amount";
+    amountEl.type = "number";
+    amountEl.value = "500";
+    document.body.appendChild(amountEl);
 
     envelope = new MockEnvelopeModule();
     module = new FilterModule(envelope as any);
@@ -57,7 +57,7 @@ describe("FilterModule (UIConfigService)", () => {
       type: "lowpass",
       cutoff: 1200,
       resonance: 1.5,
-      envelopeAmount: 500,
+      amount: 500,
     });
   });
 

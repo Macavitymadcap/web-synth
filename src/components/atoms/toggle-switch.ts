@@ -121,17 +121,7 @@ toggle-switch input:focus + .toggle-track {
     0 0 20px rgba(0, 255, 255, 0.8);
 }
 
-toggle-switch .toggle-label {
-  font-size: 0.85rem;
-  color: var(--text-secondary);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  font-weight: 600;
-  transition: all 0.3s ease;
-  text-shadow: 0 0 5px var(--text-secondary);
-}
-
-toggle-switch input:checked ~ .toggle-label {
+toggle-switch:has(input:checked) neon-label {
   color: var(--accent-green);
   text-shadow:
     0 0 10px var(--accent-green),
@@ -146,7 +136,7 @@ type LabelConfig =
 
 export class ToggleSwitch extends HTMLElement {
   private checkbox!: HTMLInputElement;
-  private labelSpan!: HTMLSpanElement;
+  private neonLabel!: HTMLElement;
   private labelConfig!: LabelConfig;
 
   connectedCallback() {
@@ -164,11 +154,11 @@ export class ToggleSwitch extends HTMLElement {
           <span class="toggle-thumb"></span>
         </span>
       </label>
-      <span class="toggle-label"></span>
+      <neon-label></neon-label>
     `;
 
     this.checkbox = this.querySelector("input")!;
-    this.labelSpan = this.querySelector(".toggle-label")!;
+    this.neonLabel = this.querySelector("neon-label")!;
 
     this.updateLabel();
 
@@ -199,9 +189,9 @@ export class ToggleSwitch extends HTMLElement {
 
   private updateLabel(): void {
     if (this.labelConfig.mode === "static") {
-      this.labelSpan.textContent = this.labelConfig.text;
+      this.neonLabel.textContent = this.labelConfig.text;
     } else {
-      this.labelSpan.textContent = this.checkbox.checked
+      this.neonLabel.textContent = this.checkbox.checked
         ? this.labelConfig.onText
         : this.labelConfig.offText;
     }

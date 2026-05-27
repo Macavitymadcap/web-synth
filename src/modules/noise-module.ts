@@ -22,25 +22,16 @@ export class NoiseModule {
   constructor() {
     this.setupParameterListeners();
   }
-
+  
   getConfig(): NoiseConfig {
-    const typeEl = UIConfigService.getControl(this.elementIds.type);
+    const type = UIConfigService.getSelect(this.elementIds.type).value as NoiseType;
+    const level = Number.parseFloat(UIConfigService.getInput(this.elementIds.level).value);
 
-    // Get range-control's internal input
-    const levelControl = document.getElementById(this.elementIds.level);
-    const levelInput = levelControl?.querySelector('input[type="range"]') as HTMLInputElement;
-
-    // Get toggle-switch's internal checkbox
-    const toggleEl = document.getElementById(this.elementIds.enabled);
-    const checkbox = toggleEl?.querySelector('input[type="checkbox"]') as HTMLInputElement;
-
-    const config = {
-      type: typeEl.value as NoiseType,
-      level: levelInput ? Number.parseFloat(levelInput.value) : 0.3,
-      enabled: checkbox?.checked ?? false
+    return {
+      type: type || "white",
+      level: Number.isFinite(level) ? level : 0.3,
+      enabled: UIConfigService.getInput(this.elementIds.enabled).checked,
     };
-
-    return config;
   }
 
   /**

@@ -50,6 +50,21 @@ describe('UIConfigService', () => {
       expect(result.value).toBe('10');
     });
 
+    it('should unwrap ToggleSwitch custom element', () => {
+      const toggleSwitch = document.createElement('toggle-switch');
+      const innerInput = document.createElement('input');
+      innerInput.type = 'checkbox';
+      innerInput.checked = true;
+
+      toggleSwitch.id = 'test-toggle';
+      (toggleSwitch as any).getCheckbox = () => innerInput;
+      document.body.appendChild(toggleSwitch);
+
+      const result = UIConfigService.getInput('test-toggle');
+      expect(result).toBe(innerInput);
+      expect(result.checked).toBe(true);
+    });
+
     it('should throw error if input not found', () => {
       expect(() => UIConfigService.getInput('nonexistent')).toThrow(
         'Input element with id "nonexistent" not found'
@@ -68,6 +83,21 @@ describe('UIConfigService', () => {
       const result = UIConfigService.getSelect('test-select');
       expect(result).toBe(select);
       expect(result.value).toBe('foo');
+    });
+
+    it('should unwrap NeonSelect custom element', () => {
+      const neonSelect = document.createElement('neon-select');
+      const innerSelect = document.createElement('select');
+      innerSelect.innerHTML = '<option value="bar">Bar</option>';
+      innerSelect.value = 'bar';
+
+      neonSelect.id = 'test-neon-select';
+      (neonSelect as any).getSelect = () => innerSelect;
+      document.body.appendChild(neonSelect);
+
+      const result = UIConfigService.getSelect('test-neon-select');
+      expect(result).toBe(innerSelect);
+      expect(result.value).toBe('bar');
     });
   });
 
