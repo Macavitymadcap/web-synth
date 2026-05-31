@@ -98,6 +98,10 @@ This starts a local Vite server, runs Pa11y against the app with WCAG 2 AA check
 
 See architecture.md for advanced patterns and troubleshooting.
 
+## Project Tracking
+
+Planned work is tracked in GitHub Issues and the Web Synth Roadmap project. See [docs/project-tracking.md](docs/project-tracking.md) for the `synth-*` identifier convention, issue templates, labels, milestones, and project fields.
+
 ---
 
 ## Architecture Overview
