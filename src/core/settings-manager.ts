@@ -7,6 +7,9 @@ import {
   EnvelopeSettings,
   FilterSettings,
   FilterType,
+  OscillatorType,
+  ArpeggiatorSettings,
+  DEFAULT_ARPEGGIATOR_SETTINGS,
   LFOSettings,
   ChorusSettings,
   WaveShaperSettings,
@@ -57,6 +60,7 @@ export class SettingsManager {
       envelope: this.getEnvelopeSettings(),
       filter: this.getFilterSettings(),
       lfos: this.getLFOSettings(),
+      arpeggiator: this.getArpeggiatorSettings(),
       chorus: this.getChorusSettings(),
       distortion: this.getDistortionSettings(),
       compressor: this.getCompressorSettings(),
@@ -141,6 +145,10 @@ export class SettingsManager {
     return lfos.length > 0 ? lfos : [{ waveform: "sine" as OscillatorType, rate: 5, toFilter: 0, toPitch: 0 }];
   }
 
+  private getArpeggiatorSettings(): ArpeggiatorSettings {
+    return { ...DEFAULT_ARPEGGIATOR_SETTINGS };
+  }
+
   private getChorusSettings(): ChorusSettings {
     return this.getEffectConfig('chorus', { rate: 1.5, depth: 0.5, mix: 0.5 });
   }
@@ -192,26 +200,38 @@ export class SettingsManager {
   }
 
   applySettings(settings: SynthSettings): void {
-    this.applyMasterSettings(settings.master);
-    this.applyOscillatorSettings(settings.oscillators);
-    this.applyEnvelopeSettings(settings.envelope);
-    this.applyFilterSettings(settings.filter);
-    this.applyLFOSettings(settings.lfos);
+    const normalizedSettings = this.normalizeSettings(settings);
 
-    this.applyCompressorSettings(settings.compressor);
-    this.applyChorusSettings(settings.chorus);
-    this.applyPhaserSettings(settings.phaser);
-    this.applyTremoloSettings(settings.tremolo);
-    this.applyDelaySettings(settings.delay);
-    this.applyWaveShaperSettings(settings.distortion);
-    this.applyReverbSettings(settings.reverb);
-    this.applyFlangerSettings(settings.flanger);
-    if (settings.noise) {
-      this.applyNoiseSettings(settings.noise);
+    this.applyMasterSettings(normalizedSettings.master);
+    this.applyOscillatorSettings(normalizedSettings.oscillators);
+    this.applyEnvelopeSettings(normalizedSettings.envelope);
+    this.applyFilterSettings(normalizedSettings.filter);
+    this.applyLFOSettings(normalizedSettings.lfos);
+
+    this.applyCompressorSettings(normalizedSettings.compressor);
+    this.applyChorusSettings(normalizedSettings.chorus);
+    this.applyPhaserSettings(normalizedSettings.phaser);
+    this.applyTremoloSettings(normalizedSettings.tremolo);
+    this.applyDelaySettings(normalizedSettings.delay);
+    this.applyWaveShaperSettings(normalizedSettings.distortion);
+    this.applyReverbSettings(normalizedSettings.reverb);
+    this.applyFlangerSettings(normalizedSettings.flanger);
+    if (normalizedSettings.noise) {
+      this.applyNoiseSettings(normalizedSettings.noise);
     }
-    if (settings.eq) {
-      this.applyEQSettings(settings.eq);
+    if (normalizedSettings.eq) {
+      this.applyEQSettings(normalizedSettings.eq);
     }
+  }
+
+  private normalizeSettings(settings: SynthSettings): SynthSettings {
+    return {
+      ...settings,
+      arpeggiator: {
+        ...DEFAULT_ARPEGGIATOR_SETTINGS,
+        ...settings.arpeggiator,
+      },
+    };
   }
 
   private applyMasterSettings(settings: MasterSettings): void {
@@ -406,7 +426,7 @@ export class SettingsManager {
     if (!stored) return null;
 
     try {
-      return JSON.parse(stored) as SynthSettings;
+      return this.normalizeSettings(JSON.parse(stored) as SynthSettings);
     } catch {
       return null;
     }
@@ -419,7 +439,7 @@ export class SettingsManager {
 
   importFromJSON(json: string): boolean {
     try {
-      const settings = JSON.parse(json) as SynthSettings;
+      const settings = this.normalizeSettings(JSON.parse(json) as SynthSettings);
       this.applySettings(settings);
       return true;
     } catch {
@@ -440,7 +460,10 @@ export class SettingsManager {
     if (!stored) return [];
 
     try {
-      return JSON.parse(stored) as Preset[];
+      return (JSON.parse(stored) as Preset[]).map((preset) => ({
+        ...preset,
+        settings: this.normalizeSettings(preset.settings),
+      }));
     } catch {
       return [];
     }

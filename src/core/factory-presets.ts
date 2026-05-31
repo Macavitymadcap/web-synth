@@ -1,4 +1,4 @@
-import { Preset } from "./settings.model";
+import { DEFAULT_ARPEGGIATOR_SETTINGS, Preset } from "./settings.model";
 
 export const FACTORY_PRESETS: Preset[] = [
   {
@@ -19,6 +19,7 @@ export const FACTORY_PRESETS: Preset[] = [
       lfos: [
         { waveform: "sine", rate: 0.3, toFilter: 150, toPitch: 0 }
       ],
+      arpeggiator: { ...DEFAULT_ARPEGGIATOR_SETTINGS },
       chorus: { rate: 0.3, depth: 20, mix: 0.4 },
       tremolo: { rate: 0.4, depth: 0.15 },
       reverb: { decay: 3.5, mix: 0.45 },
@@ -56,6 +57,7 @@ export const FACTORY_PRESETS: Preset[] = [
       lfos: [
         { waveform: "sine", rate: 5, toFilter: 0, toPitch: 0 }
       ],
+      arpeggiator: { ...DEFAULT_ARPEGGIATOR_SETTINGS },
       chorus: { rate: 0.5, depth: 0, mix: 0 },
       tremolo: { rate: 0, depth: 0 },
       reverb: { decay: 0.3, mix: 0.05 },
@@ -93,6 +95,7 @@ export const FACTORY_PRESETS: Preset[] = [
       lfos: [
         { waveform: "sine", rate: 4.5, toFilter: 0, toPitch: 8 }
       ],
+      arpeggiator: { ...DEFAULT_ARPEGGIATOR_SETTINGS },
       chorus: { rate: 0.5, depth: 12, mix: 0.25 },
       tremolo: { rate: 0, depth: 0 },
       reverb: { decay: 1.2, mix: 0.2 },
@@ -130,6 +133,7 @@ export const FACTORY_PRESETS: Preset[] = [
       lfos: [
         { waveform: "sine", rate: 5, toFilter: 0, toPitch: 0 }
       ],
+      arpeggiator: { ...DEFAULT_ARPEGGIATOR_SETTINGS },
       chorus: { rate: 0.5, depth: 0, mix: 0 },
       tremolo: { rate: 0, depth: 0 },
       reverb: { decay: 0.5, mix: 0.1 },
@@ -166,6 +170,7 @@ export const FACTORY_PRESETS: Preset[] = [
       lfos: [
         { waveform: "square", rate: 6, toFilter: 1800, toPitch: 0 }
       ],
+      arpeggiator: { ...DEFAULT_ARPEGGIATOR_SETTINGS },
       chorus: { rate: 0.5, depth: 0, mix: 0 },
       tremolo: { rate: 0, depth: 0 },
       reverb: { decay: 0.3, mix: 0.05 },
@@ -203,6 +208,7 @@ export const FACTORY_PRESETS: Preset[] = [
       lfos: [
         { waveform: "sine", rate: 5, toFilter: 0, toPitch: 0 }
       ],
+      arpeggiator: { ...DEFAULT_ARPEGGIATOR_SETTINGS },
       chorus: { rate: 0.3, depth: 18, mix: 0.35 },
       tremolo: { rate: 6.5, depth: 0.25 },
       reverb: { decay: 1.8, mix: 0.25 },
@@ -241,6 +247,7 @@ export const FACTORY_PRESETS: Preset[] = [
       lfos: [
         { waveform: "sine", rate: 6, toFilter: 0, toPitch: 0 }
       ],
+      arpeggiator: { ...DEFAULT_ARPEGGIATOR_SETTINGS },
       chorus: { rate: 0.5, depth: 25, mix: 0.5 },
       tremolo: { rate: 0, depth: 0 },
       reverb: { decay: 2.5, mix: 0.3 },
@@ -279,6 +286,7 @@ export const FACTORY_PRESETS: Preset[] = [
       lfos: [
         { waveform: "sine", rate: 0.5, toFilter: 100, toPitch: 0 }
       ],
+      arpeggiator: { ...DEFAULT_ARPEGGIATOR_SETTINGS },
       chorus: { rate: 0.3, depth: 22, mix: 0.5 },
       tremolo: { rate: 0.35, depth: 0.12 },
       reverb: { decay: 3.5, mix: 0.5 },
@@ -317,6 +325,7 @@ export const FACTORY_PRESETS: Preset[] = [
       lfos: [
         { waveform: "sine", rate: 5, toFilter: 0, toPitch: 0 }
       ],
+      arpeggiator: { ...DEFAULT_ARPEGGIATOR_SETTINGS },
       chorus: { rate: 0.4, depth: 15, mix: 0.3 },
       tremolo: { rate: 0, depth: 0 },
       reverb: { decay: 1.8, mix: 0.25 },
@@ -353,6 +362,7 @@ export const FACTORY_PRESETS: Preset[] = [
       lfos: [
         { waveform: "sine", rate: 4.8, toFilter: 0, toPitch: 5 }
       ],
+      arpeggiator: { ...DEFAULT_ARPEGGIATOR_SETTINGS },
       chorus: { rate: 0.4, depth: 10, mix: 0.2 },
       tremolo: { rate: 4.2, depth: 0.18 },
       reverb: { decay: 2.2, mix: 0.35 },
@@ -390,6 +400,7 @@ export const FACTORY_PRESETS: Preset[] = [
       lfos: [
         { waveform: "sine", rate: 5, toFilter: 0, toPitch: 0 }
       ],
+      arpeggiator: { ...DEFAULT_ARPEGGIATOR_SETTINGS },
       chorus: { rate: 0.6, depth: 15, mix: 0.3 },
       tremolo: { rate: 0, depth: 0 },
       reverb: { decay: 1.5, mix: 0.3 },
@@ -428,6 +439,7 @@ export const FACTORY_PRESETS: Preset[] = [
       lfos: [
         { waveform: "sine", rate: 5, toFilter: 0, toPitch: 0 }
       ],
+      arpeggiator: { ...DEFAULT_ARPEGGIATOR_SETTINGS },
       chorus: { rate: 0.5, depth: 12, mix: 0.25 },
       tremolo: { rate: 0, depth: 0 },
       reverb: { decay: 3, mix: 0.4 },
@@ -465,6 +477,7 @@ export const FACTORY_PRESETS: Preset[] = [
       lfos: [
         { waveform: "sine", rate: 5, toFilter: 0, toPitch: 0 }
       ],
+      arpeggiator: { ...DEFAULT_ARPEGGIATOR_SETTINGS },
       chorus: { rate: 0.3, depth: 10, mix: 0.18 },
       tremolo: { rate: 0, depth: 0 },
       reverb: { decay: 0.7, mix: 0.18 },
@@ -502,6 +515,7 @@ export const FACTORY_PRESETS: Preset[] = [
       lfos: [
         { waveform: "triangle", rate: 2.5, toFilter: 0, toPitch: 0 }
       ],
+      arpeggiator: { ...DEFAULT_ARPEGGIATOR_SETTINGS },
       chorus: { rate: 0.2, depth: 6, mix: 0.1 },
       tremolo: { rate: 0, depth: 0 },
       reverb: { decay: 0.5, mix: 0.08 },
@@ -538,6 +552,7 @@ export const FACTORY_PRESETS: Preset[] = [
       lfos: [
         { waveform: "sine", rate: 0.25, toFilter: 1200, toPitch: 0 }
       ],
+      arpeggiator: { ...DEFAULT_ARPEGGIATOR_SETTINGS },
       chorus: { rate: 0.4, depth: 40, mix: 0.7 },
       tremolo: { rate: 0.3, depth: 0.2 },
       reverb: { decay: 5, mix: 0.75 },
@@ -576,6 +591,7 @@ export const FACTORY_PRESETS: Preset[] = [
       lfos: [
         { waveform: "sine", rate: 0.25, toFilter: 200, toPitch: 0 }
       ],
+      arpeggiator: { ...DEFAULT_ARPEGGIATOR_SETTINGS },
       chorus: { rate: 0.3, depth: 25, mix: 0.45 },
       tremolo: { rate: 0.6, depth: 0.4 },
       reverb: { decay: 4, mix: 0.5 },
@@ -613,6 +629,7 @@ export const FACTORY_PRESETS: Preset[] = [
       lfos: [
         { waveform: "sine", rate: 5, toFilter: 0, toPitch: 0 }
       ],
+      arpeggiator: { ...DEFAULT_ARPEGGIATOR_SETTINGS },
       chorus: { rate: 0.5, depth: 0, mix: 0 },
       tremolo: { rate: 12, depth: 0.75 },
       reverb: { decay: 0.4, mix: 0.08 },
@@ -651,6 +668,7 @@ export const FACTORY_PRESETS: Preset[] = [
       lfos: [
         { waveform: "sine", rate: 5, toFilter: 0, toPitch: 0 }
       ],
+      arpeggiator: { ...DEFAULT_ARPEGGIATOR_SETTINGS },
       chorus: { rate: 0.4, depth: 20, mix: 0.4 },
       tremolo: { rate: 5.5, depth: 0.5 },
       reverb: { decay: 2, mix: 0.28 },
@@ -689,6 +707,7 @@ export const FACTORY_PRESETS: Preset[] = [
       lfos: [
         { waveform: "sine", rate: 5, toFilter: 0, toPitch: 0 }
       ],
+      arpeggiator: { ...DEFAULT_ARPEGGIATOR_SETTINGS },
       chorus: { rate: 0.6, depth: 15, mix: 0.35 },
       tremolo: { rate: 4.8, depth: 0.45 },
       reverb: { decay: 3.5, mix: 0.55 },
@@ -728,6 +747,7 @@ export const FACTORY_PRESETS: Preset[] = [
         { waveform: "sine", rate: 0.5, toFilter: 200, toPitch: 0 },
         { waveform: "triangle", rate: 0.8, toFilter: 100, toPitch: 5 }
       ],
+      arpeggiator: { ...DEFAULT_ARPEGGIATOR_SETTINGS },
       chorus: { rate: 0.3, depth: 20, mix: 0.4 },
       tremolo: { rate: 0.4, depth: 0.15 },
       reverb: { decay: 3.5, mix: 0.45 },
