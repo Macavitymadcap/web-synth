@@ -13,3 +13,5 @@ globalThis.HTMLElement = window.HTMLElement;
 globalThis.Element = window.Element;
 // @ts-ignore - Assign to global
 globalThis.Event = window.Event;
+// @ts-ignore - Assign to global
+globalThis.localStorage = window.localStorage;

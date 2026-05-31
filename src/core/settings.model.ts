@@ -41,6 +41,24 @@ export type LFOSettings = {
   toPitch: number;
 };
 
+export type ArpeggiatorMode = "up" | "down" | "up-down" | "random";
+
+export type ArpeggiatorSettings = {
+  enabled: boolean;
+  mode: ArpeggiatorMode;
+  rate: number;
+  octaveSpan: number;
+  gate: number;
+};
+
+export const DEFAULT_ARPEGGIATOR_SETTINGS: ArpeggiatorSettings = {
+  enabled: false,
+  mode: "up",
+  rate: 1,
+  octaveSpan: 1,
+  gate: 0.8,
+};
+
 export type CompressorSettings = {
   threshold: number;
   ratio: number;
@@ -97,6 +115,7 @@ export interface SynthSettings {
   envelope: EnvelopeSettings;
   filter: FilterSettings;
   lfos: LFOSettings[];
+  arpeggiator: ArpeggiatorSettings;
   noise: NoiseConfig;
 
   compressor: CompressorSettings;
